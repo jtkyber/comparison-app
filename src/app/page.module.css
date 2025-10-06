@@ -5,5 +5,5 @@
 	display: grid;
 	grid-template-columns: 15rem 1fr;
 	grid-template-rows: 1fr;
-	grid-template-areas: 'table_manager .';
+	grid-template-areas: 'table_manager table_display';
 }
