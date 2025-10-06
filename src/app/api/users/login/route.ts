@@ -14,7 +14,13 @@ export async function POST(req: Request) {
 	const match = await bcrypt.compare(password, user.hash);
 	if (!match) throw new Error('Wrong password');
 
-	delete user.hash;
+	const comparisons = await sql`
+		SELECT * FROM comparisons
+		WHERE id IN (${user.comparisons.toString()})
+	;`;
 
-	return NextResponse.json(user);
+	return NextResponse.json({
+		username: user.username,
+		comparisons: comparisons,
+	});
 }

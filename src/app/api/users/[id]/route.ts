@@ -1,7 +1,7 @@
-import db from '@/src/lib/db';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-	const id = params.id;
+export async function GET(req: Request, { params }: { params: any }) {
+	const { id } = params;
+
 	return NextResponse.json(id);
 }

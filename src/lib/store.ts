@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import attributesReducer from './features/attributes/attributesSlice';
+import entriesReducer from './features/entries/entriesSlice';
 
 export const makeStore = () => {
 	return configureStore({
 		reducer: {
 			attributes: attributesReducer,
+			entries: entriesReducer,
 		},
 	});
 };

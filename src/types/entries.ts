@@ -1,11 +1,8 @@
-import { IAttributeType } from './attributes';
-
-export interface ICell {
-	value: IAttributeType;
-	rating?: number;
-}
+export type CellType = number | boolean | string;
 
 export interface IEntry {
 	name: string;
-	cells: [key: ICell]; // key = attributeID
+	values: {
+		[key: number]: CellType; // key = attributeID
+	};
 }

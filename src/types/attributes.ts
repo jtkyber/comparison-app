@@ -1,16 +1,13 @@
-export interface IAttributeType {
-	range2value: [number, number];
-	range3value: [number, number, number];
-	yesNo: boolean;
-	text: string;
-	link: string;
-}
+export type AttributeType = 'range2value' | 'range3value' | 'yesNo' | 'text' | 'link';
+export type AttributeDataType = [number, number] | [number, number, number] | boolean | string;
 
 export interface IAttribute {
 	name: string;
 	importance: number;
-	type: IAttributeType;
-	units: string;
+	type: AttributeType;
+	data: AttributeDataType;
+	prefix: string;
+	suffix: string;
 	rangeBest?: 0 | 1 | 2;
 	selfRated?: boolean;
 }
