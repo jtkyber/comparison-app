@@ -18,7 +18,8 @@
     "pg-query-stream": "^4.10.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "react-select": "^5.10.2"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

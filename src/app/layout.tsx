@@ -1,18 +1,23 @@
+import Footer from '../components/footer/footer';
 import Nav from '../components/nav/nav';
 import './globals.css';
 import StoreProvider from './StoreProvider';
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const res = await fetch(`${process.env.API_URL}/data/comparisons/1`);
+	const comparisons = await res.json();
+
 	return (
 		<html lang='en'>
 			<StoreProvider>
 				<body className='layout'>
-					<Nav />
+					<Nav comparisons={comparisons} />
 					{children}
+					<Footer />
 				</body>
 			</StoreProvider>
 		</html>

@@ -1,1 +1,1 @@
-export type TableManagerMode = 'attributes' | 'options';
+export type TableManagerMode = 'attributes' | 'entries';

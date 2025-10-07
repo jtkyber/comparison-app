@@ -1,6 +1,15 @@
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
+	--color-grey0: rgb(200, 200, 200);
+	--color-grey1: grey;
+	--color-grey2: rgb(90, 90, 90);
+	--color-grey3: rgb(70, 70, 70);
+	--color-grey4: rgb(50, 50, 50);
+	--color-grey5: rgb(30, 30, 30);
+	--color-light-text: rgb(220, 220, 220);
+
+	--nav-height: 3rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +29,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	display: grid;
-	grid-template-rows: 3rem 1fr;
+	grid-template-rows: var(--nav-height) 1fr 1rem;
 	grid-template-columns: 1fr;
 	color: var(--foreground);
 	background: var(--background);
@@ -33,11 +42,25 @@ body {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
+	color: var(--color-light-text);
 }
 
 a {
 	color: inherit;
 	text-decoration: none;
+}
+
+button {
+	border: none;
+}
+
+select {
+	outline: none;
+}
+
+input {
+	outline: none;
+	border: none;
 }
 
 @media (prefers-color-scheme: dark) {
