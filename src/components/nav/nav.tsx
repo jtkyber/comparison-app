@@ -3,9 +3,9 @@
 import { setAttributes } from '@/src/lib/features/attributes/attributesSlice';
 import { setEntries } from '@/src/lib/features/entries/entriesSlice';
 import { useAppDispatch } from '@/src/lib/hooks';
-import { IComparison } from '@/src/types/comparisons';
+import { IComparison } from '@/src/types/comparisons.types';
 import { useEffect, useState } from 'react';
-import Combobox from '../combobox/combobox';
+import Combobox from '../inputs/combobox/combobox';
 import styles from './nav.module.css';
 
 const Nav = ({ comparisons }: { comparisons: IComparison[] }) => {

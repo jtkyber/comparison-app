@@ -1,5 +1,5 @@
-import { IAttribute } from './attributes';
-import { IEntry } from './entries';
+import { IAttribute } from './attributes.types';
+import { IEntry } from './entries.types';
 
 export type TableManagerMode = 'attributes' | 'entries';
 

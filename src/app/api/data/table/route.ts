@@ -1,5 +1,5 @@
 import { sql } from '@/src/lib/db';
-import { IEntry } from '@/src/types/entries';
+import { IEntry } from '@/src/types/entries.types';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {

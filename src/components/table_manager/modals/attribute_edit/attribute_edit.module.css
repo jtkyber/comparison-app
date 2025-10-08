@@ -1,0 +1,55 @@
+.attribute_modal_container {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	z-index: 3;
+	backdrop-filter: blur(2px);
+
+	.attribute_modal {
+		width: 30rem;
+		height: 30rem;
+		background-color: var(--color-grey5);
+		border-radius: 1.5rem;
+		box-shadow: 0 0 1rem var(--color-grey5);
+		overflow-y: auto;
+
+		.attribute_modal_contents {
+			width: 100%;
+			height: max-content;
+			padding: 1rem;
+			display: flex;
+			flex-flow: column nowrap;
+			gap: 1rem;
+
+			.name_input_section {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+
+				.name_input {
+					width: 18em;
+					height: 2rem;
+					padding: 0.5rem;
+					border-radius: 1rem;
+					text-align: center;
+					background-color: inherit;
+					border: 1px solid var(--color-grey1);
+				}
+			}
+
+			.importance_section {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+
+				.importance {
+					width: 12rem;
+				}
+			}
+		}
+	}
+}

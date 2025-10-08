@@ -1,13 +1,31 @@
 import { useAppSelector } from '@/src/lib/hooks';
-import { IAttribute } from '@/src/types/attributes';
-import { IEntry } from '@/src/types/entries';
+import { IAttribute } from '@/src/types/attributes.types';
+import { IEntry } from '@/src/types/entries.types';
 import { ActiveElement, TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useState } from 'react';
 import AddElement from '../svg/element/add.svg';
 import EditSVG from '../svg/element/edit.svg';
 import VisibleSVG from '../svg/element/visible.svg';
-import AttributeEdit from './modals/attribute_edit';
+import AttributeEdit from './modals/attribute_edit/attribute_edit';
 import styles from './table_manager.module.css';
+
+const attributeDefault: IAttribute = {
+	id: -1,
+	name: '',
+	importance: null,
+	type: 'text',
+	data: '',
+	prefix: null,
+	suffix: null,
+	rangeBest: null,
+	selfRated: false,
+};
+
+const entryDefault: IEntry = {
+	id: -1,
+	name: '',
+	values: {},
+};
 
 const TableManager = () => {
 	const [mode, setMode] = useState<TableManagerMode>('attributes');
@@ -29,15 +47,20 @@ const TableManager = () => {
 		}
 	};
 
-	const handle_edit_element = (id: number): void => {
+	const handle_edit_element = (id?: number): void => {
 		switch (mode) {
 			case 'attributes':
-				const attribute: IAttribute | undefined = attributes.find(att => att.id === id);
-				if (attribute !== undefined) setActiveElement(attribute);
+				if (id) {
+					const attribute: IAttribute | undefined = attributes.find(att => att.id === id);
+					if (attribute !== undefined) setActiveElement(attribute);
+				} else setActiveElement(attributeDefault);
+
 				break;
 			case 'entries':
-				const entry: IEntry | undefined = entries.find(ent => ent.id === id);
-				if (entry !== undefined) setActiveElement(entry);
+				if (id) {
+					const entry: IEntry | undefined = entries.find(ent => ent.id === id);
+					if (entry !== undefined) setActiveElement(entry);
+				} else setActiveElement(entryDefault);
 				break;
 		}
 	};
@@ -48,7 +71,7 @@ const TableManager = () => {
 				<div className={styles.tool_section}>
 					<div className={styles.left}></div>
 					<div className={styles.right}>
-						<div className={styles.add_element_btn}>
+						<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
 							<AddElement />
 						</div>
 					</div>

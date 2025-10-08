@@ -1,4 +1,4 @@
-import { IAttribute } from '@/src/types/attributes';
+import { IAttribute } from '@/src/types/attributes.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: IAttribute[] = [];

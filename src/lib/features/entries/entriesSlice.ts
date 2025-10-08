@@ -1,4 +1,4 @@
-import { IEntry } from '@/src/types/entries';
+import { IEntry } from '@/src/types/entries.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: IEntry[] = [];

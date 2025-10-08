@@ -1,4 +1,4 @@
-import { IComparison } from './comparisons';
+import { IComparison } from './comparisons.types';
 
 export interface IUser {
 	username: string;
