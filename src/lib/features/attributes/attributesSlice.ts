@@ -8,7 +8,7 @@ export const attributesSlice = createSlice({
 	initialState,
 	reducers: {
 		setAttributes: (state, action: PayloadAction<IAttribute[]>) => {
-			state = [...action.payload];
+			return action.payload;
 		},
 		addAttribute: (state, action: PayloadAction<IAttribute>) => {
 			state.push(action.payload);

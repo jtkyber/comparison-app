@@ -2,6 +2,7 @@ export type AttributeType = 'range2value' | 'range3value' | 'yesNo' | 'text' | '
 export type AttributeDataType = [number, number] | [number, number, number] | boolean | string;
 
 export interface IAttribute {
+	id: number;
 	name: string;
 	importance: number;
 	type: AttributeType;

@@ -8,7 +8,7 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const res = await fetch(`${process.env.API_URL}/data/comparisons/1`);
+	const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/${[1, 3]}`);
 	const comparisons = await res.json();
 
 	return (

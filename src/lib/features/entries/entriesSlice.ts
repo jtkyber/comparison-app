@@ -8,7 +8,7 @@ export const entriesSlice = createSlice({
 	initialState,
 	reducers: {
 		setEntries: (state, action: PayloadAction<IEntry[]>) => {
-			state = [...action.payload];
+			return action.payload;
 		},
 		addEntries: (state, action: PayloadAction<IEntry>) => {
 			state.push(action.payload);

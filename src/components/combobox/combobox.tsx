@@ -1,9 +1,25 @@
 'use client';
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, { Dispatch, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 import styles from './combobox.module.css';
 
-const Combobox = ({ options, width, height }: { options: string[]; width: string; height: string }) => {
-	const [selected, setSelected] = useState(options[0]);
+const Combobox = ({
+	width,
+	height,
+	defaultValue,
+	values,
+	ids,
+	setSelectedID,
+}: {
+	width: string;
+	height: string;
+	defaultValue: string;
+	values: string[];
+	ids: number[];
+	setSelectedID: Dispatch<SetStateAction<any>>;
+}) => {
+	const options = ids.map((o, i) => ({ id: o, name: values[i] }));
+
+	const [selectedName, setSelectedName] = useState<string>(defaultValue);
 	const [isDropped, setIsDropped] = useState<boolean>(false);
 	const [enteredText, setEnteredText] = useState<string>('');
 
@@ -28,7 +44,8 @@ const Combobox = ({ options, width, height }: { options: string[]; width: string
 
 	const handleSelection: MouseEventHandler<HTMLHeadingElement> = e => {
 		const target = e.target as HTMLHeadingElement;
-		setSelected(target.id);
+		setSelectedID(target.id);
+		setSelectedName(target.innerText);
 		setIsDropped(false);
 	};
 
@@ -43,7 +60,7 @@ const Combobox = ({ options, width, height }: { options: string[]; width: string
 					onInput={handleDisplayChange}
 					className={styles.display_text}
 					style={{ lineHeight: height }}>
-					{isDropped ? '' : selected}
+					{isDropped ? '' : selectedName}
 				</h4>
 				<h4 style={{ lineHeight: height }} onClick={handleDisplayClick} className={styles.down_arrow}>
 					&#8964;
@@ -53,15 +70,15 @@ const Combobox = ({ options, width, height }: { options: string[]; width: string
 				<div className={styles.dropdown}>
 					<div className={styles.options}>
 						{options
-							?.filter(o => o.toLowerCase().includes(enteredText))
+							?.filter(o => o.name.toLowerCase().includes(enteredText))
 							.map(option => (
 								<h5
 									style={{ height: height }}
-									id={option}
+									id={option.id.toString()}
 									onClick={handleSelection}
-									key={option}
+									key={option.id}
 									className={styles.option}>
-									{option}
+									{option.name}
 								</h5>
 							))}
 					</div>
