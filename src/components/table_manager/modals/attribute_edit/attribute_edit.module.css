@@ -8,9 +8,11 @@
 	top: 0;
 	z-index: 3;
 	backdrop-filter: blur(2px);
+	--section-padding: 0 0 1rem 0;
+	--section-margin-top: 1rem;
 
 	.attribute_modal {
-		width: 30rem;
+		width: 40rem;
 		height: 30rem;
 		background-color: var(--color-grey5);
 		border-radius: 1.5rem;
@@ -20,15 +22,25 @@
 		.attribute_modal_contents {
 			width: 100%;
 			height: max-content;
-			padding: 1rem;
+			padding: 1rem 2rem;
 			display: flex;
 			flex-flow: column nowrap;
-			gap: 1rem;
+
+			.section_label {
+				position: absolute;
+				width: max-content;
+				color: var(--color-grey2);
+				transform: translateY(calc(-50% - var(--section-margin-top)));
+				background-color: var(--color-grey5);
+				padding: 0 0.5rem;
+			}
 
 			.name_input_section {
 				width: 100%;
 				display: flex;
 				justify-content: center;
+				padding: var(--section-padding);
+				border-bottom: var(--modal-border);
 
 				.name_input {
 					width: 18em;
@@ -41,10 +53,26 @@
 				}
 			}
 
+			.data_section {
+				width: 100%;
+				padding: var(--section-padding);
+				margin-top: var(--section-margin-top);
+				border-bottom: var(--modal-border);
+				display: flex;
+				justify-content: center;
+
+				.attribute_type_dropdown {
+					width: 11rem;
+					height: 2rem;
+				}
+			}
+
 			.importance_section {
 				width: 100%;
 				display: flex;
 				justify-content: center;
+				padding: var(--section-padding);
+				border-bottom: var(--modal-border);
 
 				.importance {
 					width: 12rem;

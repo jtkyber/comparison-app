@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styles from './importance_slider.module.css';
 
 const sliderColors: { [key: number]: string } = {
@@ -15,7 +15,13 @@ const sliderColors: { [key: number]: string } = {
 	100: '#008000',
 };
 
-const ImportanceSlider = ({ defaultImportance }: { defaultImportance: number }) => {
+const ImportanceSlider = ({
+	importance,
+	setImportance,
+}: {
+	importance: number;
+	setImportance: Dispatch<SetStateAction<number | null>>;
+}) => {
 	const [holdingOnSlider, setHoldingOnSlider] = useState<boolean>(false);
 
 	const sliderRef = useRef<HTMLDivElement>(null);
@@ -27,8 +33,8 @@ const ImportanceSlider = ({ defaultImportance }: { defaultImportance: number }) 
 		if (!sliderRef?.current) return;
 		const slider = sliderRef.current;
 
-		slider.style.setProperty('--slider-progress', `${defaultImportance * 10}%`);
-		slider.style.setProperty('--slider-color', `${sliderColors[defaultImportance * 10]}`);
+		slider.style.setProperty('--slider-progress', `${importance * 10}%`);
+		slider.style.setProperty('--slider-color', `${sliderColors[importance * 10]}`);
 	}, []);
 
 	useEffect(() => {
@@ -50,7 +56,7 @@ const ImportanceSlider = ({ defaultImportance }: { defaultImportance: number }) 
 
 			slider.style.setProperty('--slider-progress', `${percentAccrossRounded}%`);
 			slider.style.setProperty('--slider-color', `${sliderColors[percentAccrossRounded]}`);
-			importanceRating.innerText = `${percentAccrossRounded / 10}`;
+			setImportance(percentAccrossRounded / 10);
 		};
 
 		document.addEventListener('mousemove', handle_mouse_move);
@@ -65,7 +71,7 @@ const ImportanceSlider = ({ defaultImportance }: { defaultImportance: number }) 
 	return (
 		<div className={styles.importance_slider_container}>
 			<h4 ref={importanceRatingRef} className={styles.importance_rating}>
-				{defaultImportance}
+				{importance}
 			</h4>
 			<div ref={sliderRef} onMouseDown={() => setHoldingOnSlider(true)} className={styles.importance_slider}>
 				<div className={styles.slider_fill}></div>
