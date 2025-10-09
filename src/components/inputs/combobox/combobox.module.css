@@ -1,10 +1,13 @@
 .combobox_container {
+	width: 100%;
 	position: relative;
 	display: flex;
 	flex-flow: column nowrap;
 	border-radius: 0.5rem;
 
 	.select_display {
+		width: 100%;
+		height: 2rem;
 		display: flex;
 		flex: none;
 		justify-content: space-between;
@@ -24,6 +27,7 @@
 			padding-left: 0.7rem;
 			color: var(--color-grey0);
 			font-size: 0.9rem;
+			line-height: 2rem;
 
 			&[contenteditable='true'] {
 				outline: none;
@@ -52,15 +56,21 @@
 		position: absolute;
 		top: 100%;
 		width: 100%;
+		height: max-content;
+		max-height: 15rem;
 		border-radius: inherit;
 		box-shadow: var(--dropdown-shadow);
 		z-index: -1;
-		overflow: hidden;
+		overflow: auto;
 
 		.options {
+			width: 100%;
+			height: max-content;
 			background-color: var(--color-grey2);
 
 			.option {
+				width: 100%;
+				height: 2rem;
 				display: flex;
 				align-items: center;
 				padding: 0 0.7rem;

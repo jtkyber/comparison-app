@@ -22,15 +22,14 @@ const Dropdown = ({
 	const handleSelection: MouseEventHandler<HTMLHeadingElement> = e => {
 		const target = e.target as HTMLHeadingElement;
 		setSelected(target.id);
-		console.log(target.id);
 		setIsDropped(false);
 	};
 
 	return (
 		<div className={`${styles.dropdown_container} ${isDropped ? styles.dropped : null}`}>
 			<div onClick={handleDisplayClick} className={styles.dropdown_display}>
-				<h4 className={styles.dropdown_display_text}>{conversionObject[selected]}</h4>
-				<h4 className={styles.down_arrow}>&#8964;</h4>
+				<h5 className={styles.dropdown_display_text}>{conversionObject[selected]}</h5>
+				<h5 className={styles.down_arrow}>&#8964;</h5>
 			</div>
 			{isDropped ? (
 				<div className={styles.dropdown}>

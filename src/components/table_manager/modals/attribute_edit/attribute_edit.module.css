@@ -59,11 +59,18 @@
 				margin-top: var(--section-margin-top);
 				border-bottom: var(--modal-border);
 				display: flex;
-				justify-content: center;
+				justify-content: space-around;
 
 				.attribute_type_dropdown {
-					width: 11rem;
-					height: 2rem;
+					width: 10rem;
+				}
+
+				.type_data_input {
+					width: 10rem;
+					display: flex;
+					flex-flow: row nowrap;
+					background-color: var(--color-grey5);
+					color: var(--color-grey0);
 				}
 			}
 
