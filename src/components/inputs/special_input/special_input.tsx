@@ -9,7 +9,7 @@ const SpecialInput = ({
 	inputType,
 	styling = {},
 }: {
-	value: string | number;
+	value: string | number | null;
 	setValue: Dispatch<SetStateAction<any>>;
 	label: string;
 	inputType: 'string' | 'number';
@@ -20,12 +20,19 @@ const SpecialInput = ({
 	useEffect(() => {
 		const input = inputRef?.current;
 		if (input === null && input !== '') return;
-		input.innerText = value.toString();
-	}, [label]);
+		input.innerText = value === null ? '' : value.toString();
+		moveCaretToEnd(input);
+	}, [inputRef.current]);
 
 	const handle_input_change: MouseEventHandler<HTMLHeadingElement> = e => {
 		const target = e.target as HTMLHeadingElement;
 		const value = target.innerText.trim();
+
+		if (value === '') {
+			setValue('');
+			return;
+		}
+
 		if (
 			inputType === 'number' &&
 			(!Number.isFinite(Number(value)) || (value[0] === '0' && value.length > 1 && value[1] !== '.'))

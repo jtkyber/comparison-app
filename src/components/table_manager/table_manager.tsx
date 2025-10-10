@@ -68,13 +68,8 @@ const TableManager = () => {
 	return (
 		<>
 			<div className={styles.table_manager_container}>
-				<div className={styles.tool_section}>
-					<div className={styles.left}></div>
-					<div className={styles.right}>
-						<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
-							<AddElement />
-						</div>
-					</div>
+				<div className={styles.manager_title_section}>
+					<h4 className={styles.manager_title}>Comparison Manager</h4>
 				</div>
 
 				<div className={styles.tab_section}>
@@ -90,29 +85,37 @@ const TableManager = () => {
 						className={`${styles.tab} ${mode === 'entries' ? styles.active : null}`}>
 						Entries
 					</button>
-					<div className={styles.empty_space}></div>
+					<div className={styles.tool_section}>
+						<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
+							<AddElement />
+						</div>
+					</div>
 				</div>
 
 				<div className={styles.manager_section}>
-					<div className={styles.element_list}>
-						{(mode === 'attributes' ? attributes : entries).map(el => (
-							<div key={el.id} className={styles.element}>
-								<div className={styles.show_hide_btn}>
-									<VisibleSVG />
+					{activeElement && mode === 'attributes' ? (
+						<AttributeEdit attribute={activeElement as IAttribute} />
+					) : (
+						<div className={styles.element_list}>
+							{(mode === 'attributes' ? attributes : entries).map(el => (
+								<div key={el.id} className={styles.element}>
+									<div className={styles.show_hide_btn}>
+										<VisibleSVG />
+									</div>
+									<div onClick={() => handle_edit_element(el.id)} className={styles.edit_btn}>
+										<EditSVG />
+									</div>
+									<h5 className={styles.name}>{el.name}</h5>
 								</div>
-								<div onClick={() => handle_edit_element(el.id)} className={styles.edit_btn}>
-									<EditSVG />
-								</div>
-								<h5 className={styles.name}>{el.name}</h5>
-							</div>
-						))}
-					</div>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 
-			{activeElement && mode === 'attributes' ? (
+			{/* {activeElement && mode === 'attributes' ? (
 				<AttributeEdit attribute={activeElement as IAttribute} />
-			) : null}
+			) : null} */}
 		</>
 	);
 };

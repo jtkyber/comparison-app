@@ -14,9 +14,9 @@ import styles from './attribute_edit.module.css';
 const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 	const [importance, setImportance] = useState<number | null>(attribute.importance);
 	const [attributeType, setAttributeType] = useState<AttributeType>('text');
-	const [rangeValueOne, setRangeValueOne] = useState<number>(0);
-	const [rangeValueTwo, setRangeValueTwo] = useState<number>(0);
-	const [rangeValueThree, setRangeValueThree] = useState<number>(0);
+	const [rangeValueOne, setRangeValueOne] = useState<number | null>(null);
+	const [rangeValueTwo, setRangeValueTwo] = useState<number | null>(null);
+	const [rangeValueThree, setRangeValueThree] = useState<number | null>(null);
 	const [rangeErrorIndex, setRangeErrorIndex] = useState<number>(-1);
 
 	useEffect(() => {
@@ -30,11 +30,11 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 			if (attributeType !== 'range2value' && attributeType !== 'range3value') return;
 			setRangeErrorIndex(-1);
 
-			if (rangeValueOne >= rangeValueTwo) setRangeErrorIndex(0);
+			if (rangeValueOne && rangeValueTwo && rangeValueOne >= rangeValueTwo) setRangeErrorIndex(0);
 
 			if (attributeType === 'range3value') {
-				if (rangeValueTwo >= rangeValueThree) setRangeErrorIndex(1);
-				if (rangeValueOne >= rangeValueThree) setRangeErrorIndex(2);
+				if (rangeValueTwo && rangeValueThree && rangeValueTwo >= rangeValueThree) setRangeErrorIndex(1);
+				if (rangeValueOne && rangeValueThree && rangeValueOne >= rangeValueThree) setRangeErrorIndex(2);
 			}
 		};
 
@@ -44,18 +44,16 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 	return (
 		<div className={styles.attribute_modal_container}>
 			<div className={styles.attribute_modal}>
-				<div className={styles.attribute_modal_contents}>
-					<div className={styles.name_input_section}>
-						<input
-							type='text'
-							className={styles.name_input}
-							placeholder='Attribute Name'
-							defaultValue={attribute.name}
-						/>
-					</div>
+				<div className={styles.name_input_section}>
+					<label htmlFor='name_input'>Name:</label>
+					<input id='name_input' type='text' placeholder='e.g. Price' defaultValue={attribute.name} />
+				</div>
 
-					<div className={styles.data_section}>
-						<h5 className={`${styles.section_label} ${styles.data_label}`}>Data</h5>
+				<div className={styles.data_section}>
+					<h5 className={`${styles.section_label} ${styles.data_label}`}>Data</h5>
+
+					<div className={styles.input_wrapper}>
+						<h5 className={styles.input_label}>Type of attribute:</h5>
 						<div className={styles.attribute_type_dropdown}>
 							<Dropdown
 								selected={attributeType}
@@ -64,7 +62,9 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 								conversionObject={attributeTypeListDisplayed}
 							/>
 						</div>
-
+					</div>
+					<div className={styles.input_wrapper}>
+						<h5 className={styles.input_label}>Number range (used to ):</h5>
 						<div className={styles.type_data_input}>
 							{attributeType === 'range2value' ? (
 								<>
@@ -133,14 +133,14 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 							) : null}
 						</div>
 					</div>
+				</div>
 
-					<div className={styles.importance_section}>
-						{importance !== null ? (
-							<div className={styles.importance}>
-								<ImportanceSlider importance={importance} setImportance={setImportance} />
-							</div>
-						) : null}
-					</div>
+				<div className={styles.importance_section}>
+					{importance !== null ? (
+						<div className={styles.importance}>
+							<ImportanceSlider importance={importance} setImportance={setImportance} />
+						</div>
+					) : null}
 				</div>
 			</div>
 		</div>
