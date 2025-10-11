@@ -1,4 +1,6 @@
 .table_display_container {
 	grid-area: table_display;
+	width: 100%;
+	height: 100%;
 	background-color: var(--color-grey0);
 }

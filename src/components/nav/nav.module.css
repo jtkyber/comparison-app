@@ -1,4 +1,5 @@
 .nav_container {
+	height: var(--nav-height);
 	background-color: var(--color-grey1);
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;

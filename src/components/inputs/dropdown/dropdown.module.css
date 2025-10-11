@@ -2,7 +2,6 @@
 	position: relative;
 	width: 100%;
 	height: max-content;
-	background-color: black;
 	cursor: pointer;
 	--padding: 0.5rem 0.8rem;
 	z-index: 1;
@@ -22,13 +21,18 @@
 		align-items: center;
 		padding: var(--padding);
 		user-select: none;
+		background-color: var(--color-grey3);
+		border-radius: inherit;
+		color: var(--color-grey0);
 
 		.dropdown_display_text {
 			width: 100%;
+			color: inherit;
 		}
 
 		.down_arrow {
 			width: max-content;
+			color: inherit;
 		}
 	}
 
@@ -37,13 +41,14 @@
 		width: 100%;
 		height: max-content;
 		max-height: 15rem;
-		background-color: black;
-		z-index: -1;
-		box-shadow: var(--dropdown-shadow);
+		background-color: var(--color-grey3);
+		/* box-shadow: var(--dropdown-shadow); */
+		border-top: 1px solid var(--color-grey4);
 		border-radius: 0.5rem;
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
 		overflow-y: auto;
+		z-index: -1;
 
 		.options {
 			width: 100%;
@@ -55,6 +60,7 @@
 				display: flex;
 				align-items: center;
 				padding: var(--padding);
+				color: var(--color-grey0);
 
 				&:hover {
 					background-color: var(--color-grey4);

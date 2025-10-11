@@ -1,97 +1,100 @@
-.attribute_modal_container {
+.attribute_edit_container {
 	width: 100%;
-	height: 100%;
-	overflow-y: auto;
+	height: max-content;
+	display: flex;
+	flex-flow: column nowrap;
 	--section-padding-bottom: 1rem;
 	--section-margin-top: var(--section-padding-bottom);
 
-	.attribute_modal {
+	.section_label {
+		width: max-content;
+		color: var(--color-grey4);
+		transform: translateY(calc(-50% - var(--section-margin-top)));
+		background-color: var(--color-grey2);
+		padding: 0 0.5rem;
+		margin-bottom: calc(-1 * var(--section-margin-top));
+	}
+
+	.name_input_section {
 		width: 100%;
-		height: max-content;
 		display: flex;
 		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: center;
+		padding-bottom: calc(var(--section-padding-bottom) + 0.5rem);
+		border-bottom: var(--manager-border);
+		gap: 0.5rem;
 
-		.section_label {
-			position: absolute;
+		input {
 			width: max-content;
-			color: var(--color-grey4);
-			transform: translateY(calc(-50% - var(--section-margin-top)));
-			background-color: var(--color-grey2);
-			padding: 0 0.5rem;
+			min-width: 8rem;
+			field-sizing: content;
+			padding: 0.2rem 0.5rem;
+			text-align: center;
+			background-color: inherit;
+			border-bottom: var(--manager-border);
+			font-size: 0.9rem;
+			color: var(--color-grey0);
+
+			&::placeholder {
+				color: inherit;
+				opacity: 0.6;
+			}
 		}
 
-		.name_input_section {
+		.prefix_suffix_wrapper {
 			width: 100%;
 			display: flex;
-			flex-flow: column nowrap;
-			justify-content: center;
-			align-items: center;
-			padding-bottom: calc(var(--section-padding-bottom) + 0.5rem);
-			border-bottom: var(--manager-border);
-			gap: 0.5rem;
+			flex-flow: row nowrap;
+			gap: 1rem;
+			background-color: var(--color-grey2);
+		}
+	}
 
-			input {
-				width: max-content;
-				min-width: 8rem;
-				field-sizing: content;
-				padding: 0.2rem 0.5rem;
-				text-align: center;
-				background-color: inherit;
-				border-bottom: var(--manager-border);
-				font-size: 0.9rem;
-				color: var(--color-grey0);
+	.type_section {
+		position: relative;
+		width: 100%;
+		padding-bottom: var(--section-padding-bottom);
+		margin-top: var(--section-margin-top);
+		border-bottom: var(--modal-border);
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: center;
+		gap: 0.5rem;
 
-				&::placeholder {
-					color: inherit;
-					opacity: 0.6;
-				}
+		.type_info_wrapper {
+			position: absolute;
+			width: 100%;
+			display: flex;
+			justify-content: end;
+			margin-top: -0.5rem;
+		}
+
+		.input_wrapper {
+			.attribute_type_dropdown {
+				width: 10rem;
 			}
 
-			.prefix_suffix_wrapper {
-				width: 100%;
+			.type_data_input {
+				margin-top: 0.5rem;
+				width: 10rem;
 				display: flex;
 				flex-flow: row nowrap;
-				gap: 1rem;
 				background-color: var(--color-grey2);
+				color: var(--color-grey0);
 			}
 		}
+	}
 
-		.data_section {
-			width: 100%;
-			padding-bottom: var(--section-padding-bottom);
-			margin-top: var(--section-margin-top);
-			border-bottom: var(--modal-border);
-			display: flex;
-			flex-flow: column nowrap;
-			align-items: center;
-			gap: 0.5rem;
+	.importance_section {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		padding-bottom: var(--section-padding-bottom);
+		border-bottom: var(--manager-border);
 
-			.input_wrapper {
-				.attribute_type_dropdown {
-					width: 10rem;
-				}
-
-				.type_data_input {
-					margin-top: 0.5rem;
-					width: 10rem;
-					display: flex;
-					flex-flow: row nowrap;
-					background-color: var(--color-grey5);
-					color: var(--color-grey0);
-				}
-			}
-		}
-
-		.importance_section {
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			padding-bottom: var(--section-padding-bottom);
-			border-bottom: var(--manager-border);
-
-			.importance {
-				width: 12rem;
-			}
+		.importance {
+			width: 12rem;
 		}
 	}
 }

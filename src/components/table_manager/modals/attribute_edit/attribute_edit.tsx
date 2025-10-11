@@ -1,6 +1,8 @@
 import Dropdown from '@/src/components/inputs/dropdown/dropdown';
 import ImportanceSlider from '@/src/components/inputs/importance_slider/importance_slider';
 import SpecialInput from '@/src/components/inputs/special_input/special_input';
+import Info from '@/src/components/svg/info.svg';
+import Tooltip from '@/src/components/tooltip/tooltip';
 import {
 	AttributeType,
 	attributeTypeList,
@@ -43,109 +45,113 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 	}, [attributeType, rangeValueOne, rangeValueTwo, rangeValueThree]);
 
 	return (
-		<div className={styles.attribute_modal_container}>
-			<div className={styles.attribute_modal}>
-				<div className={styles.name_input_section}>
-					<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
-					<div className={styles.prefix_suffix_wrapper}>
-						<SpecialInput value={prefix} setValue={setPrefix} label='Prefix' inputType='string' />
-						<SpecialInput value={suffix} setValue={setSuffix} label='Suffix' inputType='string' />
-					</div>
+		<div className={styles.attribute_edit_container}>
+			<div className={styles.name_input_section}>
+				<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
+				<div className={styles.prefix_suffix_wrapper}>
+					<SpecialInput value={prefix} setValue={setPrefix} label='Prefix' inputType='string' />
+					<SpecialInput value={suffix} setValue={setSuffix} label='Suffix' inputType='string' />
+				</div>
+			</div>
+
+			<div className={styles.type_section}>
+				<h5 className={`${styles.section_label} ${styles.data_label}`}>Type</h5>
+
+				<div className={styles.type_info_wrapper}>
+					<Tooltip text='Choose the data type for this attribute'>
+						<Info />
+					</Tooltip>
 				</div>
 
-				<div className={styles.data_section}>
-					<h5 className={`${styles.section_label} ${styles.data_label}`}>Data</h5>
-
-					<div className={styles.input_wrapper}>
-						<h5 className={styles.input_label}>Type of attribute:</h5>
-						<div className={styles.attribute_type_dropdown}>
-							<Dropdown
-								selected={attributeType}
-								setSelected={setAttributeType}
-								options={attributeTypeList}
-								conversionObject={attributeTypeListDisplayed}
-							/>
-						</div>
-					</div>
-					<div className={styles.input_wrapper}>
-						<h5 className={styles.input_label}>Number range (used to ):</h5>
-						<div className={styles.type_data_input}>
-							{attributeType === 'range2value' ? (
-								<>
-									<SpecialInput
-										value={rangeValueOne}
-										setValue={setRangeValueOne}
-										label='Low'
-										inputType='number'
-										styling={{
-											borderTopRightRadius: 0,
-											borderBottomRightRadius: 0,
-											borderRight: 'none',
-											color: rangeErrorIndex === 0 ? 'red' : '',
-										}}
-									/>
-									<SpecialInput
-										value={rangeValueTwo}
-										setValue={setRangeValueTwo}
-										label='High'
-										inputType='number'
-										styling={{
-											borderTopLeftRadius: 0,
-											borderBottomLeftRadius: 0,
-											color: rangeErrorIndex === 0 ? 'red' : '',
-										}}
-									/>
-								</>
-							) : attributeType === 'range3value' ? (
-								<>
-									<SpecialInput
-										value={rangeValueOne}
-										setValue={setRangeValueOne}
-										label='Low'
-										inputType='number'
-										styling={{
-											borderTopRightRadius: 0,
-											borderBottomRightRadius: 0,
-											borderRight: 'none',
-											color: rangeErrorIndex === 0 || rangeErrorIndex === 2 ? 'red' : '',
-										}}
-									/>
-									<SpecialInput
-										value={rangeValueTwo}
-										setValue={setRangeValueTwo}
-										label='Mid'
-										inputType='number'
-										styling={{
-											borderRadius: '0',
-											borderRight: 'none',
-											color:
-												rangeErrorIndex === 0 || rangeErrorIndex === 1 || rangeErrorIndex === 2 ? 'red' : '',
-										}}
-									/>
-									<SpecialInput
-										value={rangeValueThree}
-										setValue={setRangeValueThree}
-										label='High'
-										inputType='number'
-										styling={{
-											borderTopLeftRadius: 0,
-											borderBottomLeftRadius: 0,
-											color: rangeErrorIndex === 1 || rangeErrorIndex === 2 ? 'red' : '',
-										}}
-									/>
-								</>
-							) : null}
-						</div>
+				<div className={styles.input_wrapper}>
+					{/* <h5 className={styles.input_label}>Type of attribute:</h5> */}
+					<div className={styles.attribute_type_dropdown}>
+						<Dropdown
+							selected={attributeType}
+							setSelected={setAttributeType}
+							options={attributeTypeList}
+							conversionObject={attributeTypeListDisplayed}
+						/>
 					</div>
 				</div>
-
-				<div className={styles.importance_section}>
-					{importance !== null ? (
-						<div className={styles.importance}>
-							<ImportanceSlider importance={importance} setImportance={setImportance} />
-						</div>
-					) : null}
+				<div className={styles.input_wrapper}>
+					<h5 className={styles.input_label}>Number range (used to ):</h5>
+					<div className={styles.type_data_input}>
+						{attributeType === 'range2value' ? (
+							<>
+								<SpecialInput
+									value={rangeValueOne}
+									setValue={setRangeValueOne}
+									label='Low'
+									inputType='number'
+									styling={{
+										borderTopRightRadius: 0,
+										borderBottomRightRadius: 0,
+										borderRight: 'none',
+										color: rangeErrorIndex === 0 ? 'red' : '',
+									}}
+								/>
+								<SpecialInput
+									value={rangeValueTwo}
+									setValue={setRangeValueTwo}
+									label='High'
+									inputType='number'
+									styling={{
+										borderTopLeftRadius: 0,
+										borderBottomLeftRadius: 0,
+										color: rangeErrorIndex === 0 ? 'red' : '',
+									}}
+								/>
+							</>
+						) : attributeType === 'range3value' ? (
+							<>
+								<SpecialInput
+									value={rangeValueOne}
+									setValue={setRangeValueOne}
+									label='Low'
+									inputType='number'
+									styling={{
+										borderTopRightRadius: 0,
+										borderBottomRightRadius: 0,
+										borderRight: 'none',
+										color: rangeErrorIndex === 0 || rangeErrorIndex === 2 ? 'red' : '',
+									}}
+								/>
+								<SpecialInput
+									value={rangeValueTwo}
+									setValue={setRangeValueTwo}
+									label='Mid'
+									inputType='number'
+									styling={{
+										borderRadius: '0',
+										borderRight: 'none',
+										color:
+											rangeErrorIndex === 0 || rangeErrorIndex === 1 || rangeErrorIndex === 2 ? 'red' : '',
+									}}
+								/>
+								<SpecialInput
+									value={rangeValueThree}
+									setValue={setRangeValueThree}
+									label='High'
+									inputType='number'
+									styling={{
+										borderTopLeftRadius: 0,
+										borderBottomLeftRadius: 0,
+										color: rangeErrorIndex === 1 || rangeErrorIndex === 2 ? 'red' : '',
+									}}
+								/>
+							</>
+						) : null}
+					</div>
 				</div>
+			</div>
+
+			<div className={styles.importance_section}>
+				{importance !== null ? (
+					<div className={styles.importance}>
+						<ImportanceSlider importance={importance} setImportance={setImportance} />
+					</div>
+				) : null}
 			</div>
 		</div>
 	);
