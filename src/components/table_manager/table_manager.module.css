@@ -4,25 +4,25 @@
 	display: flex;
 	flex-flow: column nowrap;
 	border-right: 1px solid var(--color-grey4);
-	width: 17rem;
+	width: 18rem;
 
 	.manager_title_section {
-		height: 2.5rem;
+		height: 2rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
 		.manager_title {
-			font-weight: 400;
+			font-weight: 600;
+			font-size: 0.9rem;
 			color: var(--color-grey0);
 		}
 	}
 
 	.tab_section {
-		--tab-border-color: var(--color-grey4);
 		height: 2.5rem;
 		background-color: var(--color-grey3);
-		border-top: 1px solid var(--tab-border-color);
+		border-top: var(--manager-border);
 		display: flex;
 		flex-flow: row nowrap;
 		user-select: none;
@@ -31,8 +31,8 @@
 			height: 100%;
 			width: 5.5rem;
 			border-radius: 0;
-			border-right: 1px solid var(--tab-border-color);
-			border-bottom: 1px solid var(--tab-border-color);
+			border-right: var(--manager-border);
+			border-bottom: var(--manager-border);
 			background-color: var(--color-grey3);
 			flex: none;
 			cursor: pointer;
@@ -44,40 +44,31 @@
 				border-bottom: none;
 			}
 		}
-
-		.tool_section {
-			width: 100%;
-			border-bottom: 1px solid var(--tab-border-color);
-			display: flex;
-			flex-flow: row nowrap;
-			align-items: center;
-			justify-content: flex-end;
-			padding: 0 0.5rem;
-
-			.add_element_btn {
-				cursor: pointer;
-				margin-bottom: -4px;
-
-				svg {
-					width: 16px;
-					height: auto;
-
-					* {
-						fill: var(--color-grey0);
-					}
-				}
-			}
-		}
 	}
 
 	.manager_section {
 		height: 100%;
 		background-color: var(--color-grey2);
+		padding: 1rem 1rem;
+
+		.element_editor_section {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			flex-flow: column nowrap;
+			align-items: center;
+			gap: 1rem;
+
+			.element_editor_title {
+				color: var(--color-grey0);
+				font-weight: 400;
+				font-size: x-large;
+			}
+		}
 
 		.element_list {
 			width: 100%;
 			height: max-content;
-			padding: 1rem 1rem;
 
 			.element {
 				width: 100%;
@@ -122,6 +113,43 @@
 					-webkit-box-orient: vertical;
 					padding-left: 0.5rem;
 					user-select: none;
+				}
+			}
+		}
+	}
+
+	.action_section {
+		width: 100%;
+		height: 1.8rem;
+		display: flex;
+		flex-flow: row nowrap;
+		background-color: var(--color-grey3);
+		border-top: var(--manager-border);
+		padding: 0 0.5rem;
+
+		.actions_left {
+			width: 100%;
+		}
+
+		.actions_right {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-flow: row nowrap;
+			justify-content: end;
+			align-items: center;
+
+			.add_element_btn {
+				cursor: pointer;
+				margin-bottom: -3px;
+
+				svg {
+					width: 16px;
+					height: auto;
+
+					* {
+						fill: var(--color-grey0);
+					}
 				}
 			}
 		}

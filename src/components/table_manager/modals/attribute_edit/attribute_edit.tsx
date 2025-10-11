@@ -2,7 +2,6 @@ import Dropdown from '@/src/components/inputs/dropdown/dropdown';
 import ImportanceSlider from '@/src/components/inputs/importance_slider/importance_slider';
 import SpecialInput from '@/src/components/inputs/special_input/special_input';
 import {
-	AttributeDataType,
 	AttributeType,
 	attributeTypeList,
 	attributeTypeListDisplayed,
@@ -18,6 +17,8 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 	const [rangeValueTwo, setRangeValueTwo] = useState<number | null>(null);
 	const [rangeValueThree, setRangeValueThree] = useState<number | null>(null);
 	const [rangeErrorIndex, setRangeErrorIndex] = useState<number>(-1);
+	const [prefix, setPrefix] = useState<string>('');
+	const [suffix, setSuffix] = useState<string>('');
 
 	useEffect(() => {
 		setRangeValueOne(0);
@@ -45,8 +46,11 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 		<div className={styles.attribute_modal_container}>
 			<div className={styles.attribute_modal}>
 				<div className={styles.name_input_section}>
-					<label htmlFor='name_input'>Name:</label>
-					<input id='name_input' type='text' placeholder='e.g. Price' defaultValue={attribute.name} />
+					<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
+					<div className={styles.prefix_suffix_wrapper}>
+						<SpecialInput value={prefix} setValue={setPrefix} label='Prefix' inputType='string' />
+						<SpecialInput value={suffix} setValue={setSuffix} label='Suffix' inputType='string' />
+					</div>
 				</div>
 
 				<div className={styles.data_section}>
