@@ -23,59 +23,7 @@
 		margin-top: -1.2rem;
 	}
 
-	.name_input_section {
-		width: 100%;
-		display: flex;
-		flex-flow: column nowrap;
-		justify-content: center;
-		align-items: center;
-		padding-bottom: calc(var(--section-padding-bottom) + 0.5rem);
-		border-bottom: var(--manager-border);
-		gap: 0.5rem;
-
-		input {
-			width: max-content;
-			min-width: 8rem;
-			field-sizing: content;
-			padding: 0.2rem 0.5rem;
-			text-align: center;
-			background-color: inherit;
-			border-bottom: var(--manager-border);
-			color: var(--color-grey0);
-
-			&::placeholder {
-				color: inherit;
-				opacity: 0.6;
-			}
-		}
-
-		.prefix_suffix_wrapper {
-			width: 100%;
-			display: flex;
-			flex-flow: row nowrap;
-			gap: 1rem;
-			background-color: var(--color-grey2);
-		}
-	}
-
-	.type_section {
-		position: relative;
-		width: 100%;
-		padding-bottom: var(--section-padding-bottom);
-		margin-top: var(--section-margin-top);
-		border-bottom: var(--modal-border);
-		display: flex;
-		flex-flow: column nowrap;
-		align-items: center;
-		gap: 0.5rem;
-		border-bottom: var(--manager-border);
-
-		.attribute_type_dropdown {
-			width: 10rem;
-		}
-	}
-
-	.range_setup_section {
+	.attribute_edit_section {
 		position: relative;
 		width: 100%;
 		padding-bottom: var(--section-padding-bottom);
@@ -84,81 +32,130 @@
 		flex-flow: column nowrap;
 		align-items: center;
 		gap: 1rem;
+		border-bottom: var(--manager-border);
 
-		.input_wrapper {
-			width: 100%;
-			display: flex;
-			flex-flow: row nowrap;
-			justify-content: start;
-			align-items: end;
-
-			.input_label {
+		&.name_input_section {
+			input {
+				width: max-content;
 				min-width: 8rem;
+				field-sizing: content;
+				padding: 0.2rem 0.5rem;
+				text-align: center;
+				background-color: inherit;
+				border-bottom: var(--manager-border);
 				color: var(--color-grey0);
-			}
 
-			.range_selectors {
-				width: 100%;
-				display: flex;
-				flex-flow: row nowrap;
-				justify-content: space-between;
-
-				.range_selector {
-					display: flex;
-					flex-flow: column nowrap;
-					gap: 0.25rem;
-
-					label {
-					}
-
-					input {
-					}
+				&::placeholder {
+					color: inherit;
+					opacity: 0.6;
 				}
 			}
 
-			.range_input {
-				margin-top: 0.5rem;
-				width: 10rem;
+			.prefix_suffix_wrapper {
+				width: 100%;
 				display: flex;
 				flex-flow: row nowrap;
+				gap: 1rem;
 				background-color: var(--color-grey2);
-				color: var(--color-grey0);
 			}
+		}
 
-			.range_best_wrapper {
-				width: calc(100% - 10.5rem);
+		&.type_section {
+			.attribute_type_dropdown {
+				width: 10rem;
+			}
+		}
+
+		&.range_setup_section {
+			.input_wrapper {
+				width: 100%;
 				display: flex;
 				flex-flow: row nowrap;
-				justify-content: space-between;
-				margin-left: 1.3rem;
+				justify-content: start;
+				align-items: end;
 
-				.range_best_selector {
+				.input_label {
+					min-width: 8rem;
+					color: var(--color-grey0);
+				}
+
+				.range_selectors {
+					width: 100%;
 					display: flex;
-					flex-flow: column nowrap;
-					align-items: center;
-					gap: 0.25rem;
+					flex-flow: row nowrap;
+					justify-content: space-between;
 
-					label {
-						font-size: large;
-						transform: scaleX(1.5);
+					.range_selector {
+						display: flex;
+						flex-flow: column nowrap;
+						gap: 0.25rem;
+
+						label {
+						}
+
+						input {
+						}
 					}
+				}
 
-					input {
+				.range_input {
+					margin-top: 0.5rem;
+					width: 10rem;
+					display: flex;
+					flex-flow: row nowrap;
+					background-color: var(--color-grey2);
+					color: var(--color-grey0);
+				}
+
+				.range_best_wrapper {
+					width: calc(100% - 9.6rem);
+					display: flex;
+					flex-flow: row nowrap;
+					justify-content: space-between;
+					margin-left: 0.9rem;
+
+					.range_best_selector {
+						display: flex;
+						flex-flow: column nowrap;
+						align-items: center;
+						gap: 0.25rem;
+
+						label {
+						}
+
+						input {
+						}
 					}
 				}
 			}
 		}
-	}
 
-	.importance_section {
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		padding-bottom: var(--section-padding-bottom);
-		border-bottom: var(--manager-border);
+		&.best_boolean_section {
+			.best_boolean_selectors {
+				width: 100%;
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: center;
+				gap: 3rem;
 
-		.importance {
-			width: 12rem;
+				.best_boolean_selector {
+					display: flex;
+					flex-flow: row nowrap;
+					gap: 0.5rem;
+				}
+			}
+		}
+
+		&.importance_section {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			padding-bottom: var(--section-padding-bottom);
+			border-bottom: var(--manager-border);
+
+			.importance {
+				width: 12rem;
+			}
 		}
 	}
 }

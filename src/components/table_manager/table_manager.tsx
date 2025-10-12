@@ -66,9 +66,13 @@ const TableManager = () => {
 			<div className={styles.manager_section}>
 				{editingIndex !== null && mode === 'attributes' ? (
 					<div className={styles.element_editor_section}>
-						<h2 className={styles.element_editor_title}>
-							{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
-						</h2>
+						<div className={styles.element_editor_title_wrapper}>
+							<div className={styles.element_editor_title_shape}></div>
+							<h4 className={styles.element_editor_title}>
+								{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
+							</h4>
+						</div>
+
 						<AttributeEdit
 							attribute={attributes[editingIndex >= 0 ? editingIndex : attributes.length] as IAttribute}
 						/>

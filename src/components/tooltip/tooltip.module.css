@@ -10,4 +10,5 @@
 	font-weight: 400;
 	border-radius: 0.3rem;
 	transform: translateY(-100%);
+	white-space: pre-line;
 }

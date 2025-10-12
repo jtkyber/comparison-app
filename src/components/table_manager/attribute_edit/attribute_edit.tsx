@@ -76,9 +76,16 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 		}
 	};
 
+	const handle_best_boolean_selection = (e: FormEvent<HTMLInputElement>) => {
+		const target = e?.target as HTMLInputElement;
+		if (!target) return;
+
+		setRangeBest(target.id === 'yesBest' ? 1 : 0);
+	};
+
 	return (
 		<div className={styles.attribute_edit_container}>
-			<div className={styles.name_input_section}>
+			<div className={`${styles.attribute_edit_section} ${styles.name_input_section}`}>
 				<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
 				<div className={styles.prefix_suffix_wrapper}>
 					<SpecialInput value={prefix} setValue={setPrefix} label='Prefix' inputType='string' />
@@ -86,11 +93,11 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 				</div>
 			</div>
 
-			<div className={styles.type_section}>
+			<div className={`${styles.attribute_edit_section} ${styles.type_section}`}>
 				<h5 className={`${styles.section_label} ${styles.data_label}`}>Data Type</h5>
 
 				<div className={styles.section_info_wrapper}>
-					<Tooltip text='Choose a data type for this attribute'>
+					<Tooltip text='The type of value you want this column to hold'>
 						<Info />
 					</Tooltip>
 				</div>
@@ -106,11 +113,16 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 			</div>
 
 			{attributeType === 'number' ? (
-				<div className={styles.range_setup_section}>
+				<div className={`${styles.attribute_edit_section} ${styles.range_setup_section}`}>
 					<h5 className={`${styles.section_label} ${styles.data_label}`}>Range Setup</h5>
 
 					<div className={styles.section_info_wrapper}>
-						<Tooltip text="Entry values will be compared against this range to calculate a rating. An entry's attribute value that matches your 'best' selection will be rated a 10">
+						<Tooltip
+							text={`
+							* Range Type: The number of values you want in your range\n
+							* Range Values: Entry values will be compared against these numbers to generate a rating\n
+							* Range Best: The value you consider to "best". Entry values that match this number will be rated a 10
+							`}>
 							<Info />
 						</Tooltip>
 					</div>
@@ -213,7 +225,7 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 						<h5 className={styles.input_label}>Range Best:</h5>
 						<div className={styles.range_best_wrapper}>
 							<div className={styles.range_best_selector}>
-								<label htmlFor='low'>&#8593;</label>
+								<label htmlFor='low'>Low</label>
 								<input
 									onInput={e => handle_range_best_selection(e)}
 									type='radio'
@@ -224,7 +236,7 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 							</div>
 							{rangeType === 1 ? (
 								<div className={styles.range_best_selector}>
-									<label htmlFor='mid'>&#8593;</label>
+									<label htmlFor='mid'>Mid</label>
 									<input
 										onInput={e => handle_range_best_selection(e)}
 										type='radio'
@@ -234,7 +246,7 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 								</div>
 							) : null}
 							<div className={styles.range_best_selector}>
-								<label htmlFor='high'>&#8593;</label>
+								<label htmlFor='high'>High</label>
 								<input
 									onInput={e => handle_range_best_selection(e)}
 									type='radio'
@@ -242,6 +254,38 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 									name='range_best'
 								/>
 							</div>
+						</div>
+					</div>
+				</div>
+			) : attributeType === 'yesNo' ? (
+				<div className={`${styles.attribute_edit_section} ${styles.best_boolean_section}`}>
+					<h5 className={`${styles.section_label} ${styles.data_label}`}>Best Value</h5>
+
+					<div className={styles.section_info_wrapper}>
+						<Tooltip text='The value you consider to be "best". Entry values that match this selection will be rated a 10'>
+							<Info />
+						</Tooltip>
+					</div>
+
+					<div className={styles.best_boolean_selectors}>
+						<div className={styles.best_boolean_selector}>
+							<label htmlFor='yesBest'>Yes</label>
+							<input
+								onInput={e => handle_best_boolean_selection(e)}
+								type='radio'
+								id='yesBest'
+								name='yesNoBest'
+								defaultChecked
+							/>
+						</div>
+						<div className={styles.best_boolean_selector}>
+							<label htmlFor='noBest'>No</label>
+							<input
+								onInput={e => handle_best_boolean_selection(e)}
+								type='radio'
+								id='noBest'
+								name='yesNoBest'
+							/>
 						</div>
 					</div>
 				</div>
