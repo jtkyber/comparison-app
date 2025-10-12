@@ -26,7 +26,6 @@
 			cursor: pointer;
 			padding-left: 0.7rem;
 			color: var(--color-grey0);
-			font-size: 0.9rem;
 			line-height: 2rem;
 
 			&[contenteditable='true'] {

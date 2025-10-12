@@ -1,5 +1,5 @@
 .table_manager_container {
-	width: 18rem;
+	width: 20rem;
 	height: 100%;
 	grid-area: table_manager;
 	background-color: var(--color-grey2);
@@ -9,7 +9,7 @@
 	overflow: hidden;
 
 	.manager_title_section {
-		height: 1.5rem;
+		height: 2rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -17,7 +17,6 @@
 
 		.manager_title {
 			font-weight: 600;
-			font-size: 0.9rem;
 			color: var(--color-grey0);
 		}
 	}
@@ -48,6 +47,12 @@
 				border-bottom: none;
 			}
 		}
+
+		.tab_section_fill {
+			width: 100%;
+			height: 100%;
+			border-bottom: var(--manager-border);
+		}
 	}
 
 	.manager_section {
@@ -68,8 +73,8 @@
 
 			.element_editor_title {
 				color: var(--color-grey0);
-				font-weight: 400;
-				font-size: x-large;
+				font-weight: 600;
+				font-size: large;
 			}
 		}
 

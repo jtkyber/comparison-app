@@ -1,8 +1,7 @@
-export const attributeTypeList = ['range2value', 'range3value', 'yesNo', 'text', 'link'] as const;
+export const attributeTypeList = ['number', 'yesNo', 'text', 'link'] as const;
 export const attributeTypeListDisplayed = {
-	range2value: 'Range (2 values)',
-	range3value: 'Range (3 values)',
-	yesNo: 'Yes or No',
+	number: 'Number',
+	yesNo: 'Yes / No',
 	text: 'Text',
 	link: 'Link',
 };
@@ -13,7 +12,7 @@ export interface IAttribute {
 	name: string;
 	type: AttributeType;
 	importance: number | null;
-	range: [number, number] | [number, number, number];
+	range: [number, number, number];
 	bestindex: 0 | 1 | 2 | null;
 	selfRated: boolean;
 	prefix: string | null;

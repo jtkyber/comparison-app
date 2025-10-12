@@ -3,7 +3,7 @@
 	height: max-content;
 	display: flex;
 	flex-flow: column nowrap;
-	--section-padding-bottom: 1rem;
+	--section-padding-bottom: 1.5rem;
 	--section-margin-top: var(--section-padding-bottom);
 
 	.section_label {
@@ -13,6 +13,14 @@
 		background-color: var(--color-grey2);
 		padding: 0 0.5rem;
 		margin-bottom: calc(-1 * var(--section-margin-top));
+	}
+
+	.section_info_wrapper {
+		position: absolute;
+		width: 100%;
+		display: flex;
+		justify-content: end;
+		margin-top: -1.2rem;
 	}
 
 	.name_input_section {
@@ -33,7 +41,6 @@
 			text-align: center;
 			background-color: inherit;
 			border-bottom: var(--manager-border);
-			font-size: 0.9rem;
 			color: var(--color-grey0);
 
 			&::placeholder {
@@ -61,27 +68,84 @@
 		flex-flow: column nowrap;
 		align-items: center;
 		gap: 0.5rem;
+		border-bottom: var(--manager-border);
 
-		.type_info_wrapper {
-			position: absolute;
-			width: 100%;
-			display: flex;
-			justify-content: end;
-			margin-top: -0.5rem;
+		.attribute_type_dropdown {
+			width: 10rem;
 		}
+	}
+
+	.range_setup_section {
+		position: relative;
+		width: 100%;
+		padding-bottom: var(--section-padding-bottom);
+		margin-top: var(--section-margin-top);
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: center;
+		gap: 1rem;
 
 		.input_wrapper {
-			.attribute_type_dropdown {
-				width: 10rem;
+			width: 100%;
+			display: flex;
+			flex-flow: row nowrap;
+			justify-content: start;
+			align-items: end;
+
+			.input_label {
+				min-width: 8rem;
+				color: var(--color-grey0);
 			}
 
-			.type_data_input {
+			.range_selectors {
+				width: 100%;
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: space-between;
+
+				.range_selector {
+					display: flex;
+					flex-flow: column nowrap;
+					gap: 0.25rem;
+
+					label {
+					}
+
+					input {
+					}
+				}
+			}
+
+			.range_input {
 				margin-top: 0.5rem;
 				width: 10rem;
 				display: flex;
 				flex-flow: row nowrap;
 				background-color: var(--color-grey2);
 				color: var(--color-grey0);
+			}
+
+			.range_best_wrapper {
+				width: calc(100% - 10.5rem);
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: space-between;
+				margin-left: 1.3rem;
+
+				.range_best_selector {
+					display: flex;
+					flex-flow: column nowrap;
+					align-items: center;
+					gap: 0.25rem;
+
+					label {
+						font-size: large;
+						transform: scaleX(1.5);
+					}
+
+					input {
+					}
+				}
 			}
 		}
 	}

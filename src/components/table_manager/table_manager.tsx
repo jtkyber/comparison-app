@@ -5,7 +5,7 @@ import React, { MouseEventHandler, useState } from 'react';
 import AddElement from '../svg/element/add.svg';
 import EditSVG from '../svg/element/edit.svg';
 import VisibleSVG from '../svg/element/visible.svg';
-import AttributeEdit from './modals/attribute_edit/attribute_edit';
+import AttributeEdit from './attribute_edit/attribute_edit';
 import styles from './table_manager.module.css';
 
 const TableManager = () => {
@@ -60,14 +60,15 @@ const TableManager = () => {
 					className={`${styles.tab} ${mode === 'entries' ? styles.active : null}`}>
 					Entries
 				</button>
+				<div className={styles.tab_section_fill}></div>
 			</div>
 
 			<div className={styles.manager_section}>
 				{editingIndex !== null && mode === 'attributes' ? (
 					<div className={styles.element_editor_section}>
-						<h3 className={styles.element_editor_title}>
+						<h2 className={styles.element_editor_title}>
 							{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
-						</h3>
+						</h2>
 						<AttributeEdit
 							attribute={attributes[editingIndex >= 0 ? editingIndex : attributes.length] as IAttribute}
 						/>
