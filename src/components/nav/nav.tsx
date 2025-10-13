@@ -1,19 +1,18 @@
 'use client';
-import { setAttributes } from '@/src/lib/features/attributes/attributesSlice';
-import { setEntries } from '@/src/lib/features/entries/entriesSlice';
+import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch } from '@/src/lib/hooks';
-import { IComparison } from '@/src/types/comparisons.types';
+import { IComparisonItem } from '@/src/types/comparisons.types';
 import { useEffect, useState } from 'react';
 import Combobox from '../inputs/combobox/combobox';
 import styles from './nav.module.css';
 
-const Nav = ({ comparisons }: { comparisons: IComparison[] }) => {
+const Nav = ({ comparisons }: { comparisons: IComparisonItem[] }) => {
 	const [selected, setSelected] = useState<string>(comparisons[0].id.toString());
 
 	const dispatch = useAppDispatch();
 
 	const getComparisonTable = async () => {
-		const comparison: IComparison | undefined = comparisons.find(c => c.id.toString() === selected);
+		const comparison: IComparisonItem | undefined = comparisons.find(c => c.id.toString() === selected);
 		if (!comparison) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/table`, {
@@ -28,8 +27,15 @@ const Nav = ({ comparisons }: { comparisons: IComparison[] }) => {
 		});
 
 		const data = await res.json();
-		dispatch(setAttributes(data.attributes));
-		dispatch(setEntries(data.entries));
+
+		dispatch(
+			setComparison({
+				id: comparison.id,
+				name: comparison.name,
+				attributes: data.attributes,
+				entries: data.entries,
+			})
+		);
 	};
 
 	const buildReferenceTable = (): { [key: string]: string } => {

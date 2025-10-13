@@ -4,58 +4,75 @@ import SpecialInput from '@/src/components/inputs/special_input/special_input';
 import Info from '@/src/components/svg/info.svg';
 import Tooltip from '@/src/components/tooltip/tooltip';
 import {
-	AttributeType,
-	attributeTypeList,
-	attributeTypeListDisplayed,
-	IAttribute,
-} from '@/src/types/attributes.types';
-import React, { FormEvent, MouseEvent, useEffect, useState } from 'react';
+	setAttributeBestIndex,
+	setAttributeImportance,
+	setAttributePrefix,
+	setAttributeRangeLength,
+	setAttributeRangeValue,
+	setAttributeSelfRated,
+	setAttributeSuffix,
+	setAttributeType,
+} from '@/src/lib/features/comparison/comparisonSlice';
+import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
+import { AttributeType, attributeTypeList, attributeTypeListDisplayed } from '@/src/types/attributes.types';
+import React, { FormEvent, useEffect, useState } from 'react';
 import styles from './attribute_edit.module.css';
 
-const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
-	const [attributeType, setAttributeType] = useState<AttributeType>(attribute.type || 'text');
-	const [rangeType, setRangeType] = useState<0 | 1>(0);
+const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
+	const attribute = useAppSelector(state => state.comparison.attributes[attributeIndex]);
 
-	const [prefix, setPrefix] = useState<string>('');
-	const [suffix, setSuffix] = useState<string>('');
+	const dispatch = useAppDispatch();
 
-	const [rangeValueOne, setRangeValueOne] = useState<number | null>(null);
-	const [rangeValueTwo, setRangeValueTwo] = useState<number | null>(null);
-	const [rangeValueThree, setRangeValueThree] = useState<number | null>(null);
+	const setPrefix = (value: string) => {
+		dispatch(setAttributePrefix({ index: attributeIndex, value: value }));
+	};
 
-	const [rangeBest, setRangeBest] = useState<number>(0);
+	const setSuffix = (value: string) => {
+		dispatch(setAttributeSuffix({ index: attributeIndex, value: value }));
+	};
+
+	const setType = (value: AttributeType) => {
+		dispatch(setAttributeType({ index: attributeIndex, value: value }));
+	};
+
+	const setRange = (rangeIndex: 0 | 1 | 2) => (value: number) => {
+		dispatch(setAttributeRangeValue({ index: attributeIndex, rangeIndex: rangeIndex, value: value }));
+	};
+
+	const setImportance = (value: number) => {
+		dispatch(setAttributeImportance({ index: attributeIndex, value: value }));
+	};
 
 	const [rangeErrorIndex, setRangeErrorIndex] = useState<number>(-1);
 
-	const [importance, setImportance] = useState<number | null>(attribute.importance);
-
-	useEffect(() => {
-		setRangeValueOne(0);
-		setRangeValueTwo(100);
-		if (rangeType === 1) setRangeValueThree(200);
-	}, [attributeType]);
-
 	useEffect(() => {
 		const checkRanges = () => {
-			if (attributeType !== 'number') return;
+			if (attribute.type !== 'number') return;
 			setRangeErrorIndex(-1);
 
-			if (rangeValueOne && rangeValueTwo && rangeValueOne >= rangeValueTwo) setRangeErrorIndex(0);
+			if (attribute.range[0] >= attribute.range[1]) setRangeErrorIndex(0);
 
-			if (rangeType === 1) {
-				if (rangeValueTwo && rangeValueThree && rangeValueTwo >= rangeValueThree) setRangeErrorIndex(1);
-				if (rangeValueOne && rangeValueThree && rangeValueOne >= rangeValueThree) setRangeErrorIndex(2);
+			if (attribute.range.length === 3) {
+				if (attribute.range[1] >= attribute.range[2]) setRangeErrorIndex(1);
+				if (attribute.range[0] >= attribute.range[2]) setRangeErrorIndex(2);
 			}
 		};
 
 		checkRanges();
-	}, [attributeType, rangeValueOne, rangeValueTwo, rangeValueThree]);
+	}, [attribute.type, attribute.range]);
 
 	const handle_range_type_selection = (e: FormEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
-		setRangeType(target.id === 'range3value' ? 1 : 0);
+		dispatch(setAttributeRangeLength({ index: attributeIndex, value: target.id === 'range3value' ? 3 : 2 }));
+
+		dispatch(
+			setAttributeBestIndex({
+				index: attributeIndex,
+				value: 0,
+			})
+		);
 	};
 
 	const handle_range_best_selection = (e: FormEvent<HTMLInputElement>) => {
@@ -65,13 +82,28 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 		const id = target.id;
 		switch (id) {
 			case 'low':
-				setRangeBest(0);
+				dispatch(
+					setAttributeBestIndex({
+						index: attributeIndex,
+						value: 0,
+					})
+				);
 				break;
 			case 'mid':
-				setRangeBest(1);
+				dispatch(
+					setAttributeBestIndex({
+						index: attributeIndex,
+						value: 1,
+					})
+				);
 				break;
 			case 'high':
-				setRangeBest(2);
+				dispatch(
+					setAttributeBestIndex({
+						index: attributeIndex,
+						value: attribute.range.length === 2 ? 1 : 2,
+					})
+				);
 				break;
 		}
 	};
@@ -80,7 +112,23 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
-		setRangeBest(target.id === 'yesBest' ? 1 : 0);
+		dispatch(setAttributeBestIndex({ index: attributeIndex, value: target.id === 'yesBest' ? 1 : 0 }));
+	};
+
+	const handle_self_rated_selection = (e: FormEvent<HTMLInputElement>) => {
+		const target = e?.target as HTMLInputElement;
+		if (!target) return;
+
+		dispatch(setAttributeSelfRated({ index: attributeIndex, value: target.checked }));
+	};
+
+	const show_importance = (): boolean => {
+		const attributeType = attribute.type;
+		return (
+			attributeType === 'number' ||
+			attributeType === 'yesNo' ||
+			(attributeType === 'text' && attribute.selfRated === true)
+		);
 	};
 
 	return (
@@ -88,8 +136,8 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 			<div className={`${styles.attribute_edit_section} ${styles.name_input_section}`}>
 				<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
 				<div className={styles.prefix_suffix_wrapper}>
-					<SpecialInput value={prefix} setValue={setPrefix} label='Prefix' inputType='string' />
-					<SpecialInput value={suffix} setValue={setSuffix} label='Suffix' inputType='string' />
+					<SpecialInput value={attribute.prefix} setValue={setPrefix} label='Prefix' inputType='string' />
+					<SpecialInput value={attribute.suffix} setValue={setSuffix} label='Suffix' inputType='string' />
 				</div>
 			</div>
 
@@ -104,15 +152,15 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 
 				<div className={styles.attribute_type_dropdown}>
 					<Dropdown
-						selected={attributeType}
-						setSelected={setAttributeType}
+						selected={attribute.type}
+						setSelected={setType}
 						options={attributeTypeList}
 						conversionObject={attributeTypeListDisplayed}
 					/>
 				</div>
 			</div>
 
-			{attributeType === 'number' ? (
+			{attribute.type === 'number' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.range_setup_section}`}>
 					<h5 className={`${styles.section_label} ${styles.data_label}`}>Range Setup</h5>
 
@@ -128,37 +176,38 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 					</div>
 
 					<div className={styles.input_wrapper}>
-						<h5 className={styles.input_label}>Range Type:</h5>
-						<div className={styles.range_selectors}>
-							<div className={styles.range_selector}>
+						<h5 className={styles.input_label}>Type:</h5>
+						<div className={styles.range_length_selectors}>
+							<div className={styles.range_length_selector}>
 								<label htmlFor='range2value'>2 Values</label>
 								<input
 									onInput={e => handle_range_type_selection(e)}
 									type='radio'
 									id='range2value'
 									name='range_type'
-									defaultChecked
+									defaultChecked={attribute.range.length === 2}
 								/>
 							</div>
-							<div className={styles.range_selector}>
+							<div className={styles.range_length_selector}>
 								<label htmlFor='range3value'>3 Values</label>
 								<input
 									onInput={e => handle_range_type_selection(e)}
 									type='radio'
 									id='range3value'
 									name='range_type'
+									defaultChecked={attribute.range.length === 3}
 								/>
 							</div>
 						</div>
 					</div>
 					<div className={styles.input_wrapper}>
-						<h5 className={styles.input_label}>Range Values:</h5>
+						<h5 className={styles.input_label}>Values:</h5>
 						<div className={styles.range_input}>
-							{rangeType === 0 ? (
+							{attribute.range.length === 2 ? (
 								<>
 									<SpecialInput
-										value={rangeValueOne}
-										setValue={setRangeValueOne}
+										value={attribute.range[0]}
+										setValue={setRange(0)}
 										label='Low'
 										inputType='number'
 										styling={{
@@ -169,8 +218,8 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 										}}
 									/>
 									<SpecialInput
-										value={rangeValueTwo}
-										setValue={setRangeValueTwo}
+										value={attribute.range[1]}
+										setValue={setRange(1)}
 										label='High'
 										inputType='number'
 										styling={{
@@ -180,11 +229,11 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 										}}
 									/>
 								</>
-							) : rangeType === 1 ? (
+							) : attribute.range.length === 3 ? (
 								<>
 									<SpecialInput
-										value={rangeValueOne}
-										setValue={setRangeValueOne}
+										value={attribute.range[0]}
+										setValue={setRange(0)}
 										label='Low'
 										inputType='number'
 										styling={{
@@ -195,8 +244,8 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 										}}
 									/>
 									<SpecialInput
-										value={rangeValueTwo}
-										setValue={setRangeValueTwo}
+										value={attribute.range[1]}
+										setValue={setRange(1)}
 										label='Mid'
 										inputType='number'
 										styling={{
@@ -207,8 +256,8 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 										}}
 									/>
 									<SpecialInput
-										value={rangeValueThree}
-										setValue={setRangeValueThree}
+										value={attribute.range[2]}
+										setValue={setRange(2)}
 										label='High'
 										inputType='number'
 										styling={{
@@ -222,42 +271,47 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 						</div>
 					</div>
 					<div className={styles.input_wrapper}>
-						<h5 className={styles.input_label}>Range Best:</h5>
+						<h5 className={styles.input_label}>Best:</h5>
 						<div className={styles.range_best_wrapper}>
 							<div className={styles.range_best_selector}>
 								<label htmlFor='low'>Low</label>
 								<input
-									onInput={e => handle_range_best_selection(e)}
+									onChange={e => handle_range_best_selection(e)}
 									type='radio'
 									id='low'
 									name='range_best'
-									defaultChecked
+									checked={attribute.bestIndex === 0}
 								/>
 							</div>
-							{rangeType === 1 ? (
+							{attribute.range.length === 3 ? (
 								<div className={styles.range_best_selector}>
 									<label htmlFor='mid'>Mid</label>
 									<input
-										onInput={e => handle_range_best_selection(e)}
+										onChange={e => handle_range_best_selection(e)}
 										type='radio'
 										id='mid'
 										name='range_best'
+										checked={attribute.bestIndex === 1}
 									/>
 								</div>
 							) : null}
 							<div className={styles.range_best_selector}>
 								<label htmlFor='high'>High</label>
 								<input
-									onInput={e => handle_range_best_selection(e)}
+									onChange={e => handle_range_best_selection(e)}
 									type='radio'
 									id='high'
 									name='range_best'
+									checked={
+										(attribute.range.length === 3 && attribute.bestIndex === 2) ||
+										(attribute.range.length === 2 && attribute.bestIndex === 1)
+									}
 								/>
 							</div>
 						</div>
 					</div>
 				</div>
-			) : attributeType === 'yesNo' ? (
+			) : attribute.type === 'yesNo' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.best_boolean_section}`}>
 					<h5 className={`${styles.section_label} ${styles.data_label}`}>Best Value</h5>
 
@@ -289,15 +343,43 @@ const AttributeEdit = ({ attribute }: { attribute: IAttribute }) => {
 						</div>
 					</div>
 				</div>
+			) : attribute.type === 'text' ? (
+				<div className={`${styles.attribute_edit_section} ${styles.self_rated_section}`}>
+					<h5 className={`${styles.section_label} ${styles.self_rated_label}`}>Text Settings</h5>
+
+					<div className={styles.section_info_wrapper}>
+						<Tooltip text='Enable this if you want to assign manual ratings for this attribute'>
+							<Info />
+						</Tooltip>
+					</div>
+
+					<div className={styles.self_rated_selector}>
+						<label htmlFor='selfRated'>Self-rated</label>
+						<input
+							onInput={e => handle_self_rated_selection(e)}
+							type='checkbox'
+							id='selfRated'
+							defaultChecked={attribute.selfRated === true}
+						/>
+					</div>
+				</div>
 			) : null}
 
-			{/* <div className={styles.importance_section}>
-				{importance !== null ? (
-					<div className={styles.importance}>
-						<ImportanceSlider importance={importance} setImportance={setImportance} />
+			{show_importance() ? (
+				<div className={`${styles.attribute_edit_section} ${styles.importance_section}`}>
+					<h5 className={`${styles.section_label} ${styles.self_rated_label}`}>Importance Level</h5>
+
+					<div className={styles.section_info_wrapper}>
+						<Tooltip text="This determines how much weight should be applied to a rating. Values with low importance will have less impact on the entry's final rating">
+							<Info />
+						</Tooltip>
 					</div>
-				) : null}
-			</div> */}
+
+					<div className={styles.importance}>
+						<ImportanceSlider importance={attribute.importance ?? 10} setImportance={setImportance} />
+					</div>
+				</div>
+			) : null}
 		</div>
 	);
 };

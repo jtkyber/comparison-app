@@ -1,12 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import attributesReducer from './features/attributes/attributesSlice';
-import entriesReducer from './features/entries/entriesSlice';
+import comparisonReducer from './features/comparison/comparisonSlice';
 
 export const makeStore = () => {
 	return configureStore({
 		reducer: {
-			attributes: attributesReducer,
-			entries: entriesReducer,
+			comparison: comparisonReducer,
 		},
 	});
 };

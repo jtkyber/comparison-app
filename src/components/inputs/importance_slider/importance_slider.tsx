@@ -20,7 +20,7 @@ const ImportanceSlider = ({
 	setImportance,
 }: {
 	importance: number;
-	setImportance: Dispatch<SetStateAction<number | null>>;
+	setImportance: (value: number) => void;
 }) => {
 	const [holdingOnSlider, setHoldingOnSlider] = useState<boolean>(false);
 
@@ -41,7 +41,6 @@ const ImportanceSlider = ({
 		const handle_mouse_move = (e: MouseEvent) => {
 			if (!sliderRef?.current || !importanceRatingRef?.current || !holdingOnSlider) return;
 			const slider = sliderRef.current;
-			const importanceRating = importanceRatingRef.current;
 
 			const sliderLeftX: number = slider.getBoundingClientRect().left;
 			const sliderRightX: number = slider.getBoundingClientRect().right;

@@ -1,4 +1,5 @@
-import { useAppSelector } from '@/src/lib/hooks';
+import { addAttribute } from '@/src/lib/features/comparison/comparisonSlice';
+import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useState } from 'react';
@@ -8,12 +9,26 @@ import VisibleSVG from '../svg/element/visible.svg';
 import AttributeEdit from './attribute_edit/attribute_edit';
 import styles from './table_manager.module.css';
 
+const defaultAttribute: IAttribute = {
+	id: -1,
+	name: '',
+	prefix: '',
+	suffix: '',
+	type: 'text',
+	range: [0, 100],
+	bestIndex: 1,
+	selfRated: true,
+	importance: 10,
+};
+
 const TableManager = () => {
 	const [mode, setMode] = useState<TableManagerMode>('attributes');
 	const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-	const attributes = useAppSelector(state => state.attributes);
-	const entries = useAppSelector(state => state.entries);
+	const attributes = useAppSelector(state => state.comparison.attributes);
+	const entries = useAppSelector(state => state.comparison.entries);
+
+	const dispatch = useAppDispatch();
 
 	const switchMode: MouseEventHandler<HTMLButtonElement> = e => {
 		const id: string = (e.target as HTMLButtonElement).id;
@@ -32,7 +47,15 @@ const TableManager = () => {
 		switch (mode) {
 			case 'attributes':
 				if (index !== undefined) setEditingIndex(index);
-				else setEditingIndex(-1);
+				else {
+					setEditingIndex(-1);
+					dispatch(
+						addAttribute({
+							attribute: defaultAttribute,
+							value: '',
+						})
+					);
+				}
 				break;
 			case 'entries':
 				if (index !== undefined) setEditingIndex(index);
@@ -72,10 +95,11 @@ const TableManager = () => {
 								{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
 							</h4>
 						</div>
-
-						<AttributeEdit
-							attribute={attributes[editingIndex >= 0 ? editingIndex : attributes.length] as IAttribute}
-						/>
+						{editingIndex >= 0 ? (
+							<AttributeEdit attributeIndex={editingIndex} />
+						) : (
+							<AttributeEdit attributeIndex={attributes.length - 1} />
+						)}
 					</div>
 				) : (
 					<div className={styles.element_list}>

@@ -1,5 +1,5 @@
 import { moveCaretToEnd } from '@/src/utils/dom';
-import React, { CSSProperties, Dispatch, MouseEventHandler, SetStateAction, useEffect, useRef } from 'react';
+import React, { CSSProperties, MouseEventHandler, useEffect, useRef } from 'react';
 import styles from './special_input.module.css';
 
 const SpecialInput = ({
@@ -10,7 +10,7 @@ const SpecialInput = ({
 	styling = {},
 }: {
 	value: string | number | null;
-	setValue: Dispatch<SetStateAction<any>>;
+	setValue: (value: any) => void;
 	label: string;
 	inputType: 'string' | 'number';
 	styling?: CSSProperties;

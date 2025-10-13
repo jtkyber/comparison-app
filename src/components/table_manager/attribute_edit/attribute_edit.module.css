@@ -34,6 +34,10 @@
 		gap: 1rem;
 		border-bottom: var(--manager-border);
 
+		&:last-child {
+			border-bottom: none;
+		}
+
 		&.name_input_section {
 			input {
 				width: max-content;
@@ -52,7 +56,7 @@
 			}
 
 			.prefix_suffix_wrapper {
-				width: 100%;
+				width: 12rem;
 				display: flex;
 				flex-flow: row nowrap;
 				gap: 1rem;
@@ -71,26 +75,26 @@
 				width: 100%;
 				display: flex;
 				flex-flow: row nowrap;
-				justify-content: start;
+				justify-content: space-between;
 				align-items: end;
 
 				.input_label {
-					min-width: 8rem;
+					min-width: 5rem;
 					color: var(--color-grey0);
 				}
 
-				.range_selectors {
-					width: 100%;
+				.range_length_selectors {
+					width: calc(100% - 6.5rem);
 					display: flex;
 					flex-flow: row nowrap;
 					justify-content: space-between;
 
-					.range_selector {
+					.range_length_selector {
 						display: flex;
 						flex-flow: column nowrap;
-						gap: 0.25rem;
 
 						label {
+							padding-bottom: 0.25rem;
 						}
 
 						input {
@@ -108,19 +112,19 @@
 				}
 
 				.range_best_wrapper {
-					width: calc(100% - 9.6rem);
+					width: calc(100% - 8.5rem);
 					display: flex;
 					flex-flow: row nowrap;
 					justify-content: space-between;
-					margin-left: 0.9rem;
+					margin-right: 0.9rem;
 
 					.range_best_selector {
 						display: flex;
 						flex-flow: column nowrap;
 						align-items: center;
-						gap: 0.25rem;
 
 						label {
+							padding-bottom: 0.25rem;
 						}
 
 						input {
@@ -141,18 +145,28 @@
 				.best_boolean_selector {
 					display: flex;
 					flex-flow: row nowrap;
-					gap: 0.5rem;
+
+					label {
+						padding-right: 0.5rem;
+					}
+				}
+			}
+		}
+
+		&.self_rated_section {
+			.self_rated_selector {
+				display: flex;
+				flex-flow: row nowrap;
+
+				label {
+					padding-right: 0.5rem;
+				}
+				input {
 				}
 			}
 		}
 
 		&.importance_section {
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			padding-bottom: var(--section-padding-bottom);
-			border-bottom: var(--manager-border);
-
 			.importance {
 				width: 12rem;
 			}

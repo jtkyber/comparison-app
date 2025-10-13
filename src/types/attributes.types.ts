@@ -10,11 +10,11 @@ export type AttributeType = (typeof attributeTypeList)[number];
 export interface IAttribute {
 	id: number;
 	name: string;
-	type: AttributeType;
-	importance: number | null;
-	range: [number, number, number];
-	bestindex: 0 | 1 | 2 | null;
-	selfRated: boolean;
 	prefix: string | null;
 	suffix: string | null;
+	type: AttributeType;
+	range: [number, number] | [number, number, number];
+	bestIndex: 0 | 1 | 2 | null;
+	selfRated: boolean | null;
+	importance: number | null;
 }
