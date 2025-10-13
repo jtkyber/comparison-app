@@ -1,6 +1,4 @@
-import React from 'react';
-
-const AddElement = () => {
+const AddSVG = () => {
 	return (
 		<svg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
 			<path
@@ -11,4 +9,4 @@ const AddElement = () => {
 	);
 };
 
-export default AddElement;
+export default AddSVG;

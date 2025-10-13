@@ -1,9 +1,18 @@
 import { sql } from '@/src/lib/db';
+import { IComparison } from '@/src/types/comparisons.types';
 import { IEntry } from '@/src/types/entries.types';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-	const { attributeIDs, entryIDs } = await req.json();
+	const { comparisonID } = await req.json();
+
+	const [comparisonData] = await sql`
+		SELECT * FROM comparisons
+		WHERE id = ${comparisonID}
+    ;`;
+
+	const attributeIDs: number[] = comparisonData.attributes;
+	const entryIDs: number[] = comparisonData.entries;
 
 	const query = `
 		SELECT json_build_object(
@@ -47,8 +56,12 @@ export async function POST(req: Request) {
 		entries.push(entryTemp);
 	}
 
-	return NextResponse.json({
+	const returnData: IComparison = {
+		id: comparisonData.id,
+		name: comparisonData.name,
 		attributes: table.attributes || [],
 		entries: entries,
-	});
+	};
+
+	return NextResponse.json(returnData);
 }

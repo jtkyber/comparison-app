@@ -6,6 +6,7 @@ import Tooltip from '@/src/components/tooltip/tooltip';
 import {
 	setAttributeBestIndex,
 	setAttributeImportance,
+	setAttributeName,
 	setAttributePrefix,
 	setAttributeRangeLength,
 	setAttributeRangeValue,
@@ -60,6 +61,13 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 		checkRanges();
 	}, [attribute.type, attribute.range]);
+
+	const handle_name_change = (e: FormEvent<HTMLInputElement>) => {
+		const target = e?.target as HTMLInputElement;
+		if (!target) return;
+
+		dispatch(setAttributeName({ index: attributeIndex, value: target.value }));
+	};
 
 	const handle_range_type_selection = (e: FormEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
@@ -134,7 +142,13 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 	return (
 		<div className={styles.attribute_edit_container}>
 			<div className={`${styles.attribute_edit_section} ${styles.name_input_section}`}>
-				<input id='name_input' type='text' placeholder='Enter Name' defaultValue={attribute.name} />
+				<input
+					onChange={handle_name_change}
+					id='name_input'
+					type='text'
+					placeholder='Enter Name'
+					value={attribute.name ?? ''}
+				/>
 				<div className={styles.prefix_suffix_wrapper}>
 					<SpecialInput value={attribute.prefix} setValue={setPrefix} label='Prefix' inputType='string' />
 					<SpecialInput value={attribute.suffix} setValue={setSuffix} label='Suffix' inputType='string' />
@@ -181,21 +195,21 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 							<div className={styles.range_length_selector}>
 								<label htmlFor='range2value'>2 Values</label>
 								<input
-									onInput={e => handle_range_type_selection(e)}
+									onChange={handle_range_type_selection}
 									type='radio'
 									id='range2value'
 									name='range_type'
-									defaultChecked={attribute.range.length === 2}
+									checked={attribute.range.length === 2}
 								/>
 							</div>
 							<div className={styles.range_length_selector}>
 								<label htmlFor='range3value'>3 Values</label>
 								<input
-									onInput={e => handle_range_type_selection(e)}
+									onChange={handle_range_type_selection}
 									type='radio'
 									id='range3value'
 									name='range_type'
-									defaultChecked={attribute.range.length === 3}
+									checked={attribute.range.length === 3}
 								/>
 							</div>
 						</div>
@@ -325,20 +339,21 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 						<div className={styles.best_boolean_selector}>
 							<label htmlFor='yesBest'>Yes</label>
 							<input
-								onInput={e => handle_best_boolean_selection(e)}
+								onChange={e => handle_best_boolean_selection(e)}
 								type='radio'
 								id='yesBest'
 								name='yesNoBest'
-								defaultChecked
+								checked={attribute.bestIndex === 1}
 							/>
 						</div>
 						<div className={styles.best_boolean_selector}>
 							<label htmlFor='noBest'>No</label>
 							<input
-								onInput={e => handle_best_boolean_selection(e)}
+								onChange={e => handle_best_boolean_selection(e)}
 								type='radio'
 								id='noBest'
 								name='yesNoBest'
+								checked={attribute.bestIndex === 0}
 							/>
 						</div>
 					</div>
@@ -356,10 +371,10 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 					<div className={styles.self_rated_selector}>
 						<label htmlFor='selfRated'>Self-rated</label>
 						<input
-							onInput={e => handle_self_rated_selection(e)}
+							onChange={e => handle_self_rated_selection(e)}
 							type='checkbox'
 							id='selfRated'
-							defaultChecked={attribute.selfRated === true}
+							checked={attribute.selfRated === true}
 						/>
 					</div>
 				</div>

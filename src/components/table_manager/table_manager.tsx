@@ -1,10 +1,14 @@
-import { addAttribute } from '@/src/lib/features/comparison/comparisonSlice';
+import { addAttribute, setComparison } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
+import { IComparisonItem } from '@/src/types/comparisons.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
-import React, { MouseEventHandler, useState } from 'react';
-import AddElement from '../svg/element/add.svg';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import AddSVG from '../svg/action_center/add.svg';
+import DeleteSVG from '../svg/action_center/delete.svg';
+import SaveSVG from '../svg/action_center/save.svg';
 import EditSVG from '../svg/element/edit.svg';
+import SelectSVG from '../svg/element/select.svg';
 import VisibleSVG from '../svg/element/visible.svg';
 import AttributeEdit from './attribute_edit/attribute_edit';
 import styles from './table_manager.module.css';
@@ -24,7 +28,9 @@ const defaultAttribute: IAttribute = {
 const TableManager = () => {
 	const [mode, setMode] = useState<TableManagerMode>('attributes');
 	const [editingIndex, setEditingIndex] = useState<number | null>(null);
+	const [idsChecked, setIdsChecked] = useState<number[]>([]);
 
+	const comparisonID = useAppSelector(state => state.comparison.id);
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
 
@@ -64,8 +70,83 @@ const TableManager = () => {
 		}
 	};
 
+	const handle_element_select = (elementID: number): void => {
+		if (idsChecked.includes(elementID)) {
+			setIdsChecked(idsChecked.filter(id => id !== elementID));
+		} else setIdsChecked([...idsChecked, elementID]);
+	};
+
+	const refresh_comparison = async () => {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/table`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+			}),
+		});
+
+		const data = await res.json();
+
+		dispatch(
+			setComparison({
+				id: data.id,
+				name: data.name,
+				attributes: data.attributes,
+				entries: data.entries,
+			})
+		);
+	};
+
+	const add_element = async () => {
+		if (editingIndex === null) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/addAttribute`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				attribute: attributes[editingIndex >= 0 ? editingIndex : attributes.length - 1],
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refresh_comparison();
+
+			setEditingIndex(null);
+		}
+	};
+
+	const delete_elements = async () => {
+		if (editingIndex !== null) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/removeAttributes`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				attributeIDs: idsChecked,
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refresh_comparison();
+
+			setIdsChecked([]);
+		}
+	};
+
 	return (
-		<div className={styles.table_manager_container}>
+		<div className={`${styles.table_manager_container} ${comparisonID === 0 ? styles.disabled : null}`}>
 			<div className={styles.manager_title_section}>
 				<h4 className={styles.manager_title}>Comparison Manager</h4>
 			</div>
@@ -104,7 +185,14 @@ const TableManager = () => {
 				) : (
 					<div className={styles.element_list}>
 						{(mode === 'attributes' ? attributes : entries).map((el, index) => (
-							<div key={el.id} className={styles.element}>
+							<div
+								key={el.id}
+								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
+								<div
+									onClick={() => handle_element_select(el.id)}
+									className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
+									<SelectSVG />
+								</div>
 								<div className={styles.show_hide_btn}>
 									<VisibleSVG />
 								</div>
@@ -119,11 +207,27 @@ const TableManager = () => {
 			</div>
 
 			<div className={styles.action_section}>
-				<div className={styles.actions_left}></div>
+				<div className={styles.actions_left}>
+					{editingIndex === null && idsChecked.length ? (
+						<>
+							<div onClick={delete_elements} className={styles.delete_element_btn}>
+								<DeleteSVG />
+							</div>
+						</>
+					) : null}
+				</div>
 				<div className={styles.actions_right}>
-					<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
-						<AddElement />
-					</div>
+					{editingIndex === null ? (
+						<>
+							<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
+								<AddSVG />
+							</div>
+						</>
+					) : (
+						<div onClick={() => add_element()} className={styles.save_element_btn}>
+							<SaveSVG />
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

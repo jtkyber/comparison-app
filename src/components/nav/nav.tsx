@@ -21,8 +21,7 @@ const Nav = ({ comparisons }: { comparisons: IComparisonItem[] }) => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				attributeIDs: comparison.attributes,
-				entryIDs: comparison.entries,
+				comparisonID: comparison.id,
 			}),
 		});
 
@@ -30,8 +29,8 @@ const Nav = ({ comparisons }: { comparisons: IComparisonItem[] }) => {
 
 		dispatch(
 			setComparison({
-				id: comparison.id,
-				name: comparison.name,
+				id: data.id,
+				name: data.name,
 				attributes: data.attributes,
 				entries: data.entries,
 			})
