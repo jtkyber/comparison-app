@@ -1,14 +1,19 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './tooltip.module.css';
 
-const Tooltip = ({ children, text }: { children: ReactNode; text: string }) => {
-	const childElement = useRef<HTMLDivElement>(null);
+const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: string; delay?: number }) => {
+	const childRef = useRef<HTMLElement>(null);
+
+	let timeoutID: NodeJS.Timeout;
+	let mouseOver: boolean = false;
 
 	const [xPos, setXPos] = useState<number>(0);
 	const [yPos, setYPos] = useState<number>(0);
 
+	const [isVisible, setIsVisible] = useState<boolean>(false);
+
 	useEffect(() => {
-		const childEl: HTMLDivElement | null = childElement?.current;
+		const childEl: HTMLElement | null = childRef?.current;
 		if (!childEl) return;
 
 		childEl.addEventListener('mouseenter', handleMouseEnter);
@@ -21,31 +26,44 @@ const Tooltip = ({ children, text }: { children: ReactNode; text: string }) => {
 	}, []);
 
 	function handleMouseEnter() {
-		const childEl: HTMLDivElement | null = childElement?.current;
-		if (!childEl) return;
+		mouseOver = true;
 
-		const x: number = childEl.getBoundingClientRect().right;
-		const y: number = childEl.getBoundingClientRect().top;
+		timeoutID = setTimeout(() => {
+			const childEl: HTMLElement | null = childRef?.current;
+			if (!childEl || !mouseOver) return;
 
-		setXPos(x);
-		setYPos(y);
+			const x: number = childEl.getBoundingClientRect().right;
+			const y: number = childEl.getBoundingClientRect().top;
+
+			setXPos(x);
+			setYPos(y);
+			setIsVisible(true);
+		}, delay);
 	}
 
 	function handleMouseLeave() {
-		setXPos(0);
-		setYPos(0);
+		mouseOver = false;
+
+		// setXPos(0);
+		// setYPos(0);
+		setIsVisible(false);
+
+		clearTimeout(timeoutID);
 	}
 
 	return (
 		<div className={styles.tooltip_container}>
-			<div ref={childElement} className={styles.child_wrapper}>
-				{children}
-			</div>
-			{xPos && yPos ? (
-				<h5 style={{ left: `${xPos}px`, top: `${yPos}px` }} className={styles.tooltip}>
-					{text}
-				</h5>
-			) : null}
+			{React.cloneElement(
+				children as React.ReactElement,
+				{
+					ref: childRef,
+				} as any
+			)}
+			<h5
+				style={{ left: `${xPos}px`, top: `${yPos}px` }}
+				className={`${styles.tooltip} ${isVisible ? styles.visible : null}`}>
+				{text}
+			</h5>
 		</div>
 	);
 };

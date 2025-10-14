@@ -160,7 +160,9 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 				<div className={styles.section_info_wrapper}>
 					<Tooltip text='The type of value you want this column to hold'>
-						<Info />
+						<span>
+							<Info />
+						</span>
 					</Tooltip>
 				</div>
 
@@ -185,7 +187,9 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 							* Range Values: Entry values will be compared against these numbers to generate a rating\n
 							* Range Best: The value you consider to "best". Entry values that match this number will be rated a 10
 							`}>
-							<Info />
+							<span>
+								<Info />
+							</span>
 						</Tooltip>
 					</div>
 
@@ -331,7 +335,9 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text='The value you consider to be "best". Entry values that match this selection will be rated a 10'>
-							<Info />
+							<span>
+								<Info />
+							</span>
 						</Tooltip>
 					</div>
 
@@ -364,7 +370,9 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text='Enable this if you want to assign manual ratings for this attribute'>
-							<Info />
+							<span>
+								<Info />
+							</span>
 						</Tooltip>
 					</div>
 
@@ -386,7 +394,9 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text="This determines how much weight should be applied to a rating. Values with low importance will have less impact on the entry's final rating">
-							<Info />
+							<span>
+								<Info />
+							</span>
 						</Tooltip>
 					</div>
 

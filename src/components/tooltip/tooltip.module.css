@@ -11,4 +11,11 @@
 	border-radius: 0.3rem;
 	transform: translateY(-100%);
 	white-space: pre-line;
+	opacity: 0;
+	transition: opacity 0.1s linear;
+
+	&.visible {
+		transition: opacity 0.2s linear;
+		opacity: 1;
+	}
 }

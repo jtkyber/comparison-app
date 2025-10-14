@@ -1,15 +1,17 @@
-import { addAttribute, setComparison } from '@/src/lib/features/comparison/comparisonSlice';
+import { addAttribute, removeAttribute, setComparison } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IComparisonItem } from '@/src/types/comparisons.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
+import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
 import SaveSVG from '../svg/action_center/save.svg';
 import EditSVG from '../svg/element/edit.svg';
 import SelectSVG from '../svg/element/select.svg';
 import VisibleSVG from '../svg/element/visible.svg';
+import Tooltip from '../tooltip/tooltip';
 import AttributeEdit from './attribute_edit/attribute_edit';
 import styles from './table_manager.module.css';
 
@@ -26,6 +28,8 @@ const defaultAttribute: IAttribute = {
 };
 
 const TableManager = () => {
+	const tooltipDelay: number = 800;
+
 	const [mode, setMode] = useState<TableManagerMode>('attributes');
 	const [editingIndex, setEditingIndex] = useState<number | null>(null);
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
@@ -74,6 +78,16 @@ const TableManager = () => {
 		if (idsChecked.includes(elementID)) {
 			setIdsChecked(idsChecked.filter(id => id !== elementID));
 		} else setIdsChecked([...idsChecked, elementID]);
+	};
+
+	const handle_cancel_edit = () => {
+		let index = editingIndex;
+
+		if (index === null) return;
+		if (index === -1) index = attributes.length - 1;
+
+		dispatch(removeAttribute(attributes[index].id));
+		setEditingIndex(null);
 	};
 
 	const refresh_comparison = async () => {
@@ -193,12 +207,16 @@ const TableManager = () => {
 									className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
 									<SelectSVG />
 								</div>
-								<div className={styles.show_hide_btn}>
-									<VisibleSVG />
-								</div>
-								<div onClick={() => handle_edit_element(index)} className={styles.edit_btn}>
-									<EditSVG />
-								</div>
+								<Tooltip text='Hide' key={`hide${el.id}`} delay={tooltipDelay}>
+									<div className={styles.show_hide_btn}>
+										<VisibleSVG />
+									</div>
+								</Tooltip>
+								<Tooltip text='Edit' key={`edit${el.id}`} delay={tooltipDelay}>
+									<div onClick={() => handle_edit_element(index)} className={styles.edit_btn}>
+										<EditSVG />
+									</div>
+								</Tooltip>
 								<h5 className={styles.name}>{el.name}</h5>
 							</div>
 						))}
@@ -210,23 +228,44 @@ const TableManager = () => {
 				<div className={styles.actions_left}>
 					{editingIndex === null && idsChecked.length ? (
 						<>
-							<div onClick={delete_elements} className={styles.delete_element_btn}>
-								<DeleteSVG />
-							</div>
+							<Tooltip text='Delete' key='delete' delay={tooltipDelay}>
+								<div
+									onClick={delete_elements}
+									className={`${styles.action_btn} ${styles.delete_element_btn}`}>
+									<DeleteSVG />
+								</div>
+							</Tooltip>
 						</>
 					) : null}
 				</div>
 				<div className={styles.actions_right}>
 					{editingIndex === null ? (
 						<>
-							<div onClick={() => handle_edit_element()} className={styles.add_element_btn}>
-								<AddSVG />
-							</div>
+							<Tooltip text='Add' key='add' delay={tooltipDelay}>
+								<div
+									onClick={() => handle_edit_element()}
+									className={`${styles.action_btn} ${styles.add_element_btn}`}>
+									<AddSVG />
+								</div>
+							</Tooltip>
 						</>
 					) : (
-						<div onClick={() => add_element()} className={styles.save_element_btn}>
-							<SaveSVG />
-						</div>
+						<>
+							<Tooltip text='Cancel' key='cancel' delay={tooltipDelay}>
+								<div
+									onClick={() => handle_cancel_edit()}
+									className={`${styles.action_btn} ${styles.save_element_btn}`}>
+									<CancelSVG />
+								</div>
+							</Tooltip>
+							<Tooltip text='Save' key='save' delay={tooltipDelay}>
+								<div
+									onClick={() => add_element()}
+									className={`${styles.action_btn} ${styles.save_element_btn}`}>
+									<SaveSVG />
+								</div>
+							</Tooltip>
+						</>
 					)}
 				</div>
 			</div>

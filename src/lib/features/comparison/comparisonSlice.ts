@@ -29,6 +29,16 @@ export const comparisonSlice = createSlice({
 				state.entries = newEntries;
 			}
 		},
+		removeAttribute: (state, action: PayloadAction<number>) => {
+			const idExists: boolean = state.attributes.some(attr => attr.id === action.payload);
+			if (idExists) {
+				state.entries.forEach(entry => {
+					delete (entry as any)[action.payload];
+				});
+
+				state.attributes = state.attributes.filter(attr => attr.id !== action.payload);
+			}
+		},
 		setAttributeName: (state, action: PayloadAction<{ index: number; value: string }>) => {
 			state.attributes[action.payload.index].name = action.payload.value;
 		},
@@ -67,6 +77,7 @@ export const comparisonSlice = createSlice({
 export const {
 	setComparison,
 	addAttribute,
+	removeAttribute,
 	setAttributeName,
 	setAttributePrefix,
 	setAttributeSuffix,
