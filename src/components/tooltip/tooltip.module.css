@@ -1,3 +1,9 @@
+.child_element {
+	position: relative;
+	height: 100%;
+	display: block;
+}
+
 .tooltip {
 	position: fixed;
 	background-color: var(--color-grey5);
@@ -12,10 +18,12 @@
 	transform: translateY(-100%);
 	white-space: pre-line;
 	opacity: 0;
-	transition: opacity 0.1s linear;
+	visibility: hidden;
+	transition: opacity 0.1s linear, visibility 0s linear 0.1s;
 
 	&.visible {
 		transition: opacity 0.2s linear;
 		opacity: 1;
+		visibility: visible;
 	}
 }

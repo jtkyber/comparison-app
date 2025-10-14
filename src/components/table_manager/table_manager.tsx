@@ -1,9 +1,8 @@
 import { addAttribute, removeAttribute, setComparison } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
-import { IComparisonItem } from '@/src/types/comparisons.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';

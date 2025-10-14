@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './tooltip.module.css';
 
 const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: string; delay?: number }) => {
-	const childRef = useRef<HTMLElement>(null);
+	const childRef = useRef<HTMLDivElement>(null);
 
 	let timeoutID: NodeJS.Timeout;
 	let mouseOver: boolean = false;
@@ -44,27 +44,23 @@ const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: str
 	function handleMouseLeave() {
 		mouseOver = false;
 
-		// setXPos(0);
-		// setYPos(0);
 		setIsVisible(false);
 
 		clearTimeout(timeoutID);
 	}
 
 	return (
-		<div className={styles.tooltip_container}>
-			{React.cloneElement(
-				children as React.ReactElement,
-				{
-					ref: childRef,
-				} as any
-			)}
+		<>
+			<div ref={childRef} className={styles.child_element}>
+				{children}
+			</div>
+
 			<h5
 				style={{ left: `${xPos}px`, top: `${yPos}px` }}
 				className={`${styles.tooltip} ${isVisible ? styles.visible : null}`}>
 				{text}
 			</h5>
-		</div>
+		</>
 	);
 };
 
