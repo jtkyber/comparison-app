@@ -1,6 +1,8 @@
 import { sql } from '@/src/lib/db';
+import { IAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { IEntry } from '@/src/types/entries.types';
+import { toCamelAttribute } from '@/src/utils/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -17,20 +19,22 @@ export async function POST(req: Request) {
 	const query = `
 		SELECT json_build_object(
 			'attributes', (
-				SELECT json_agg(row_to_json(t))
+				SELECT json_agg(row_to_json(t) ORDER BY t.pos)
 				FROM (
-					SELECT * FROM attributes
-					WHERE id = ANY($1)
+				SELECT a.*, array_position($1::int[], a.id) AS pos
+				FROM attributes a
+				WHERE a.id = ANY($1)
 				) t
 			),
 			'entries', (
-				SELECT json_agg(row_to_json(t))
+				SELECT json_agg(row_to_json(t) ORDER BY t.pos)
 				FROM (
-					SELECT * FROM entries
-					WHERE id = ANY($2)
+				SELECT e.*, array_position($2::int[], e.id) AS pos
+				FROM entries e
+				WHERE e.id = ANY($2)
 				) t
 			)
-		) AS data
+		) AS data;
 	`;
 
 	const data = await sql.query(query, [attributeIDs, entryIDs]);
@@ -56,10 +60,12 @@ export async function POST(req: Request) {
 		entries.push(entryTemp);
 	}
 
+	const attributes = table?.attributes.map((attr: IAttribute) => toCamelAttribute(attr));
+
 	const returnData: IComparison = {
 		id: comparisonData.id,
 		name: comparisonData.name,
-		attributes: table.attributes || [],
+		attributes: attributes || [],
 		entries: entries,
 	};
 

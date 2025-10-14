@@ -7,6 +7,17 @@ export const attributeTypeListDisplayed = {
 };
 export type AttributeType = (typeof attributeTypeList)[number];
 
+export const attributeInterfaceKeys = [
+	'id',
+	'name',
+	'prefix',
+	'suffix',
+	'type',
+	'range',
+	'bestIndex',
+	'selfRated',
+	'importance',
+];
 export interface IAttribute {
 	id: number;
 	name: string;

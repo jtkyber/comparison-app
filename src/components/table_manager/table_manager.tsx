@@ -135,6 +135,28 @@ const TableManager = () => {
 		}
 	};
 
+	const update_element = async () => {
+		if (editingIndex === null) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/updateAttribute`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				...attributes[editingIndex],
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refresh_comparison();
+
+			setEditingIndex(null);
+		}
+	};
+
 	const delete_elements = async () => {
 		if (editingIndex !== null) return;
 
@@ -259,7 +281,7 @@ const TableManager = () => {
 							</Tooltip>
 							<Tooltip text='Save' key='save' delay={tooltipDelay}>
 								<div
-									onClick={() => add_element()}
+									onClick={() => (editingIndex === -1 ? add_element() : update_element())}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<SaveSVG />
 								</div>
