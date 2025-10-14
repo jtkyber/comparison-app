@@ -79,16 +79,6 @@ const TableManager = () => {
 		} else setIdsChecked([...idsChecked, elementID]);
 	};
 
-	const handle_cancel_edit = () => {
-		let index = editingIndex;
-
-		if (index === null) return;
-		if (index === -1) index = attributes.length - 1;
-
-		dispatch(removeAttribute(attributes[index].id));
-		setEditingIndex(null);
-	};
-
 	const refresh_comparison = async () => {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/table`, {
 			method: 'POST',
@@ -178,6 +168,21 @@ const TableManager = () => {
 
 			setIdsChecked([]);
 		}
+	};
+
+	const handle_cancel_edit = async () => {
+		let index = editingIndex;
+
+		if (index === null) return;
+		if (index === -1) index = attributes.length - 1;
+
+		if (editingIndex === -1) {
+			dispatch(removeAttribute(attributes[index].id));
+		} else {
+			await refresh_comparison();
+		}
+
+		setEditingIndex(null);
 	};
 
 	return (
