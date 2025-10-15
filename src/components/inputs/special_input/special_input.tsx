@@ -1,5 +1,5 @@
-import { moveCaretToEnd } from '@/src/utils/dom';
-import React, { CSSProperties, MouseEventHandler, useEffect, useRef } from 'react';
+import { sanitizeNumInputValue } from '@/src/utils/dom';
+import React, { ChangeEvent, CSSProperties, useEffect } from 'react';
 import styles from './special_input.module.css';
 
 const SpecialInput = ({
@@ -15,45 +15,50 @@ const SpecialInput = ({
 	inputType: 'string' | 'number';
 	styling?: CSSProperties;
 }) => {
-	const inputRef = useRef<HTMLHeadingElement>(null);
+	const handle_input_change = (e: ChangeEvent<HTMLInputElement>) => {
+		const target = e.target as HTMLInputElement;
+		const text = target.value.trim();
 
-	useEffect(() => {
-		const input = inputRef?.current;
-		if (input === null && input !== '') return;
-		input.innerText = value === null ? '' : value.toString();
-		moveCaretToEnd(input);
-	}, [inputRef.current]);
-
-	const handle_input_change: MouseEventHandler<HTMLHeadingElement> = e => {
-		const target = e.target as HTMLHeadingElement;
-		const value = target.innerText.trim();
-
-		if (value === '') {
-			setValue('');
-			return;
+		switch (inputType) {
+			case 'string':
+				setValue(text);
+				break;
+			case 'number':
+				const sanitized = sanitizeNumInputValue(text);
+				if ((Number(sanitized) || sanitized === '0') && sanitized[sanitized.length - 1] !== '.') {
+					setValue(Number(sanitized));
+				} else setValue(sanitized);
+				break;
 		}
+	};
 
-		if (
-			inputType === 'number' &&
-			(!Number.isFinite(Number(value)) || (value[0] === '0' && value.length > 1 && value[1] !== '.'))
-		) {
-			target.innerText = target.innerText.slice(0, -1);
-			moveCaretToEnd(target);
-			return;
-		}
+	const formattedValue = (): string => {
+		const val: string = value?.toString() || '';
+		if (inputType === 'string' || !val) return val;
 
-		setValue(inputType === 'string' ? value : Number(value));
+		const splitValue: string[] = val.split('.');
+
+		let integerPart: string = splitValue[0];
+		integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		let fractionPart: string = splitValue[1];
+		if (fractionPart !== undefined) fractionPart = '.'.concat(fractionPart);
+		else fractionPart = '';
+
+		const finalValue: string = integerPart.concat(fractionPart);
+		return finalValue;
 	};
 
 	return (
 		<div className={styles.special_input_container}>
-			<h5
-				ref={inputRef}
-				onInput={handle_input_change}
-				contentEditable
-				suppressContentEditableWarning
+			<input
+				type='text'
+				inputMode='decimal'
+				value={formattedValue()}
+				onChange={handle_input_change}
 				className={styles.special_input}
-				style={styling}></h5>
+				style={styling}
+				autoComplete='off'
+			/>
 			<h5 className={`${styles.special_input_label} ${value !== '' ? styles.filled : null}`}>{label}</h5>
 		</div>
 	);

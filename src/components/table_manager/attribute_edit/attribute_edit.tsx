@@ -16,7 +16,7 @@ import {
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { AttributeType, attributeTypeList, attributeTypeListDisplayed } from '@/src/types/attributes.types';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import styles from './attribute_edit.module.css';
 
 const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
@@ -62,14 +62,14 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		checkRanges();
 	}, [attribute.type, attribute.range]);
 
-	const handle_name_change = (e: FormEvent<HTMLInputElement>) => {
+	const handle_name_change = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
 		dispatch(setAttributeName({ index: attributeIndex, value: target.value }));
 	};
 
-	const handle_range_type_selection = (e: FormEvent<HTMLInputElement>) => {
+	const handle_range_type_selection = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
@@ -83,7 +83,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		);
 	};
 
-	const handle_range_best_selection = (e: FormEvent<HTMLInputElement>) => {
+	const handle_range_best_selection = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
@@ -116,14 +116,14 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		}
 	};
 
-	const handle_best_boolean_selection = (e: FormEvent<HTMLInputElement>) => {
+	const handle_best_boolean_selection = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
 		dispatch(setAttributeBestIndex({ index: attributeIndex, value: target.id === 'yesBest' ? 1 : 0 }));
 	};
 
-	const handle_self_rated_selection = (e: FormEvent<HTMLInputElement>) => {
+	const handle_self_rated_selection = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
@@ -147,6 +147,8 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 					id='name_input'
 					type='text'
 					placeholder='Enter Name'
+					className={styles.name_input}
+					autoComplete='off'
 					value={attribute.name ?? ''}
 				/>
 				<div className={styles.prefix_suffix_wrapper}>

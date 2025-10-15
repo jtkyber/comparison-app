@@ -39,7 +39,7 @@
 		}
 
 		&.name_input_section {
-			input {
+			.name_input {
 				width: max-content;
 				min-width: 8rem;
 				field-sizing: content;
