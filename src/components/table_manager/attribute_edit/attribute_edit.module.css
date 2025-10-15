@@ -3,42 +3,25 @@
 	height: max-content;
 	display: flex;
 	flex-flow: column nowrap;
-	--section-padding-bottom: 1.5rem;
-	--section-margin-top: var(--section-padding-bottom);
-
-	.section_label {
-		width: max-content;
-		color: var(--color-grey4);
-		transform: translateY(calc(-50% - var(--section-margin-top)));
-		background-color: var(--color-grey2);
-		padding: 0 0.5rem;
-		margin-bottom: calc(-1 * var(--section-margin-top));
-	}
+	padding-bottom: 2rem;
 
 	.section_info_wrapper {
-		position: absolute;
 		width: 100%;
 		display: flex;
 		justify-content: end;
-		margin-top: -1.2rem;
 	}
 
 	.attribute_edit_section {
 		position: relative;
 		width: 100%;
-		padding-bottom: var(--section-padding-bottom);
-		margin-top: var(--section-margin-top);
 		display: flex;
 		flex-flow: column nowrap;
 		align-items: center;
-		gap: 1rem;
-		border-bottom: var(--manager-border);
-
-		&:last-child {
-			border-bottom: none;
-		}
 
 		&.name_input_section {
+			padding: 1rem 0;
+			gap: 1rem;
+
 			.name_input {
 				width: max-content;
 				min-width: 8rem;
@@ -65,12 +48,16 @@
 		}
 
 		&.type_section {
+			padding-bottom: 1rem;
+
 			.attribute_type_dropdown {
 				width: 10rem;
 			}
 		}
 
 		&.range_setup_section {
+			padding-bottom: 1rem;
+
 			.input_wrapper {
 				width: 100%;
 				display: flex;
@@ -78,23 +65,30 @@
 				justify-content: space-between;
 				align-items: end;
 
+				padding-top: 1rem;
+
 				.input_label {
 					min-width: 5rem;
 					color: var(--color-grey0);
 				}
 
 				.range_length_selectors {
-					width: calc(100% - 6.5rem);
+					width: 100%;
 					display: flex;
 					flex-flow: row nowrap;
-					justify-content: space-between;
+					justify-content: space-around;
 
 					.range_length_selector {
+						position: relative;
 						display: flex;
 						flex-flow: column nowrap;
 
 						label {
-							padding-bottom: 0.25rem;
+							position: absolute;
+							width: max-content;
+							top: -0.2rem;
+							left: 50%;
+							transform: translate(-50%, -100%);
 						}
 
 						input {
@@ -104,7 +98,7 @@
 
 				.range_input {
 					margin-top: 0.5rem;
-					width: 10rem;
+					width: 100%;
 					display: flex;
 					flex-flow: row nowrap;
 					background-color: var(--color-grey2);
@@ -112,19 +106,23 @@
 				}
 
 				.range_best_wrapper {
-					width: calc(100% - 8.5rem);
+					width: 100%;
 					display: flex;
 					flex-flow: row nowrap;
-					justify-content: space-between;
-					margin-right: 0.9rem;
+					justify-content: space-around;
+					margin-top: 1.5rem;
 
 					.range_best_selector {
+						position: relative;
 						display: flex;
 						flex-flow: column nowrap;
-						align-items: center;
 
 						label {
-							padding-bottom: 0.25rem;
+							position: absolute;
+							width: max-content;
+							top: -0.2rem;
+							left: 50%;
+							transform: translate(-50%, -100%);
 						}
 
 						input {
@@ -135,6 +133,8 @@
 		}
 
 		&.best_boolean_section {
+			padding: 1rem 0;
+
 			.best_boolean_selectors {
 				width: 100%;
 				display: flex;
@@ -154,6 +154,8 @@
 		}
 
 		&.self_rated_section {
+			padding: 1rem 0;
+
 			.self_rated_selector {
 				display: flex;
 				flex-flow: row nowrap;

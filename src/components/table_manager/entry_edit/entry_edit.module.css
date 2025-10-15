@@ -1,0 +1,30 @@
+.entry_edit_container {
+	width: 100%;
+	height: max-content;
+	display: flex;
+	flex-flow: column nowrap;
+	gap: 1rem;
+	margin-top: 1.5rem;
+
+	.name_input_section {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+
+		.name_input {
+			width: max-content;
+			min-width: 8rem;
+			field-sizing: content;
+			padding: 0.2rem 0.5rem;
+			text-align: center;
+			background-color: inherit;
+			border-bottom: var(--manager-border);
+			color: var(--color-grey0);
+
+			&::placeholder {
+				color: inherit;
+				opacity: 0.6;
+			}
+		}
+	}
+}

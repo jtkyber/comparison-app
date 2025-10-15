@@ -1,6 +1,12 @@
-import { addAttribute, removeAttribute, setComparison } from '@/src/lib/features/comparison/comparisonSlice';
+import {
+	addAttribute,
+	addEntry,
+	removeAttribute,
+	setComparison,
+} from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
+import { IEntry } from '@/src/types/entries.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
@@ -12,6 +18,7 @@ import SelectSVG from '../svg/element/select.svg';
 import VisibleSVG from '../svg/element/visible.svg';
 import Tooltip from '../tooltip/tooltip';
 import AttributeEdit from './attribute_edit/attribute_edit';
+import EntryEdit from './entry_edit/entry_edit';
 import styles from './table_manager.module.css';
 
 const defaultAttribute: IAttribute = {
@@ -24,6 +31,12 @@ const defaultAttribute: IAttribute = {
 	bestIndex: 1,
 	selfRated: true,
 	importance: 10,
+};
+
+const defaultEntry: IEntry = {
+	id: -1,
+	name: '',
+	values: {},
 };
 
 const TableManager = () => {
@@ -40,6 +53,8 @@ const TableManager = () => {
 	const dispatch = useAppDispatch();
 
 	const switchMode: MouseEventHandler<HTMLButtonElement> = e => {
+		if (editingIndex !== null) return;
+
 		const id: string = (e.target as HTMLButtonElement).id;
 
 		switch (id) {
@@ -52,7 +67,7 @@ const TableManager = () => {
 		}
 	};
 
-	const handle_edit_element = (index?: number): void => {
+	const handleEditElement = (index?: number): void => {
 		switch (mode) {
 			case 'attributes':
 				if (index !== undefined) setEditingIndex(index);
@@ -68,18 +83,21 @@ const TableManager = () => {
 				break;
 			case 'entries':
 				if (index !== undefined) setEditingIndex(index);
-				else setEditingIndex(-1);
+				else {
+					setEditingIndex(-1);
+					dispatch(addEntry(defaultEntry));
+				}
 				break;
 		}
 	};
 
-	const handle_element_select = (elementID: number): void => {
+	const handleElementSelect = (elementID: number): void => {
 		if (idsChecked.includes(elementID)) {
 			setIdsChecked(idsChecked.filter(id => id !== elementID));
 		} else setIdsChecked([...idsChecked, elementID]);
 	};
 
-	const refresh_comparison = async () => {
+	const refreshComparison = async () => {
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/table`, {
 			method: 'POST',
 			headers: {
@@ -102,7 +120,7 @@ const TableManager = () => {
 		);
 	};
 
-	const add_element = async () => {
+	const addAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/addAttribute`, {
@@ -119,13 +137,13 @@ const TableManager = () => {
 		const data = await res.json();
 
 		if (data) {
-			await refresh_comparison();
+			await refreshComparison();
 
 			setEditingIndex(null);
 		}
 	};
 
-	const update_element = async () => {
+	const updateAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/updateAttribute`, {
@@ -141,13 +159,13 @@ const TableManager = () => {
 		const data = await res.json();
 
 		if (data) {
-			await refresh_comparison();
+			await refreshComparison();
 
 			setEditingIndex(null);
 		}
 	};
 
-	const delete_elements = async () => {
+	const deleteAttributesInDB = async () => {
 		if (editingIndex !== null) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/removeAttributes`, {
@@ -164,13 +182,13 @@ const TableManager = () => {
 		const data = await res.json();
 
 		if (data) {
-			await refresh_comparison();
+			await refreshComparison();
 
 			setIdsChecked([]);
 		}
 	};
 
-	const handle_cancel_edit = async () => {
+	const handleCancelEdit = async () => {
 		let index = editingIndex;
 
 		if (index === null) return;
@@ -179,7 +197,7 @@ const TableManager = () => {
 		if (editingIndex === -1) {
 			dispatch(removeAttribute(attributes[index].id));
 		} else {
-			await refresh_comparison();
+			await refreshComparison();
 		}
 
 		setEditingIndex(null);
@@ -222,6 +240,20 @@ const TableManager = () => {
 							<AttributeEdit attributeIndex={attributes.length - 1} />
 						)}
 					</div>
+				) : editingIndex !== null && mode === 'entries' ? (
+					<div className={styles.element_editor_section}>
+						<div className={styles.element_editor_title_wrapper}>
+							<div className={styles.element_editor_title_shape}></div>
+							<h4 className={styles.element_editor_title}>
+								{editingIndex >= 0 ? 'Edit Entry' : 'Add New Entry'}
+							</h4>
+						</div>
+						{editingIndex >= 0 ? (
+							<EntryEdit entryIndex={editingIndex} />
+						) : (
+							<EntryEdit entryIndex={entries.length - 1} />
+						)}
+					</div>
 				) : (
 					<div className={styles.element_list}>
 						{(mode === 'attributes' ? attributes : entries).map((el, index) => (
@@ -229,7 +261,7 @@ const TableManager = () => {
 								key={el.id}
 								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
 								<div
-									onClick={() => handle_element_select(el.id)}
+									onClick={() => handleElementSelect(el.id)}
 									className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
 									<SelectSVG />
 								</div>
@@ -239,7 +271,7 @@ const TableManager = () => {
 									</div>
 								</Tooltip>
 								<Tooltip text='Edit' key={`edit${el.id}`} delay={tooltipDelay}>
-									<div onClick={() => handle_edit_element(index)} className={styles.edit_btn}>
+									<div onClick={() => handleEditElement(index)} className={styles.edit_btn}>
 										<EditSVG />
 									</div>
 								</Tooltip>
@@ -256,7 +288,7 @@ const TableManager = () => {
 						<>
 							<Tooltip text='Delete' key='delete' delay={tooltipDelay}>
 								<div
-									onClick={delete_elements}
+									onClick={deleteAttributesInDB}
 									className={`${styles.action_btn} ${styles.delete_element_btn}`}>
 									<DeleteSVG />
 								</div>
@@ -269,7 +301,7 @@ const TableManager = () => {
 						<>
 							<Tooltip text='Add' key='add' delay={tooltipDelay}>
 								<div
-									onClick={() => handle_edit_element()}
+									onClick={() => handleEditElement()}
 									className={`${styles.action_btn} ${styles.add_element_btn}`}>
 									<AddSVG />
 								</div>
@@ -279,14 +311,14 @@ const TableManager = () => {
 						<>
 							<Tooltip text='Cancel' key='cancel' delay={tooltipDelay}>
 								<div
-									onClick={() => handle_cancel_edit()}
+									onClick={() => handleCancelEdit()}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<CancelSVG />
 								</div>
 							</Tooltip>
 							<Tooltip text='Save' key='save' delay={tooltipDelay}>
 								<div
-									onClick={() => (editingIndex === -1 ? add_element() : update_element())}
+									onClick={() => (editingIndex === -1 ? addAttributeInDB() : updateAttributeInDB())}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<SaveSVG />
 								</div>

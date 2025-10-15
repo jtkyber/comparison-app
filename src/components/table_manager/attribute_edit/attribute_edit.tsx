@@ -17,6 +17,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { AttributeType, attributeTypeList, attributeTypeListDisplayed } from '@/src/types/attributes.types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import SectionLabel from '../../inputs/section_label/section_label';
 import styles from './attribute_edit.module.css';
 
 const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
@@ -158,7 +159,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 			</div>
 
 			<div className={`${styles.attribute_edit_section} ${styles.type_section}`}>
-				<h5 className={`${styles.section_label} ${styles.data_label}`}>Data Type</h5>
+				<SectionLabel text='Data Type' color='var(--color-grey4)' />
 
 				<div className={styles.section_info_wrapper}>
 					<Tooltip text='The type of value you want this column to hold'>
@@ -178,7 +179,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 			{attribute.type === 'number' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.range_setup_section}`}>
-					<h5 className={`${styles.section_label} ${styles.data_label}`}>Range Setup</h5>
+					<SectionLabel text='Range Setup' color='var(--color-grey4)' />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip
@@ -329,7 +330,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 				</div>
 			) : attribute.type === 'yesNo' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.best_boolean_section}`}>
-					<h5 className={`${styles.section_label} ${styles.data_label}`}>Best Value</h5>
+					<SectionLabel text='Best Value' color='var(--color-grey4)' />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text='The value you consider to be "best". Entry values that match this selection will be rated a 10'>
@@ -362,7 +363,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 				</div>
 			) : attribute.type === 'text' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.self_rated_section}`}>
-					<h5 className={`${styles.section_label} ${styles.self_rated_label}`}>Text Settings</h5>
+					<SectionLabel text='Text Settings' color='var(--color-grey4)' />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text='Enable this if you want to assign manual ratings for this attribute'>
@@ -384,7 +385,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 
 			{show_importance() ? (
 				<div className={`${styles.attribute_edit_section} ${styles.importance_section}`}>
-					<h5 className={`${styles.section_label} ${styles.self_rated_label}`}>Importance Level</h5>
+					<SectionLabel text='Importance Level' color='var(--color-grey4)' />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text="This determines how much weight should be applied to a rating. Values with low importance will have less impact on the entry's final rating">

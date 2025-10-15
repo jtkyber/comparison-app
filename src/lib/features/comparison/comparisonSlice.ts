@@ -1,6 +1,6 @@
 import { AttributeType, IAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
-import { CellType } from '@/src/types/entries.types';
+import { CellType, IEntry } from '@/src/types/entries.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: IComparison = {
@@ -71,6 +71,13 @@ export const comparisonSlice = createSlice({
 		setAttributeImportance: (state, action: PayloadAction<{ index: number; value: number }>) => {
 			state.attributes[action.payload.index].importance = action.payload.value;
 		},
+		addEntry: (state, action: PayloadAction<IEntry>) => {
+			const idExists: boolean = state.entries.some(e => e.id === action.payload.id);
+			if (!idExists) state.entries.push(action.payload);
+		},
+		setEntryName: (state, action: PayloadAction<{ index: number; value: string }>) => {
+			state.entries[action.payload.index].name = action.payload.value;
+		},
 	},
 });
 
@@ -87,5 +94,7 @@ export const {
 	setAttributeBestIndex,
 	setAttributeSelfRated,
 	setAttributeImportance,
+	addEntry,
+	setEntryName,
 } = comparisonSlice.actions;
 export default comparisonSlice.reducer;
