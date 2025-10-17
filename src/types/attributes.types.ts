@@ -21,6 +21,7 @@ export const attributeInterfaceKeys = [
 export interface IAttribute {
 	id: number;
 	name: string;
+	hidden: boolean;
 	prefix: string | null;
 	suffix: string | null;
 	type: AttributeType;

@@ -5,7 +5,6 @@ import SectionLabel from '../../inputs/section_label/section_label';
 import SpecialInput from '../../inputs/special_input/special_input';
 
 import RatingSlider from '../../inputs/rating_slider/rating_slider';
-import Tooltip from '../../tooltip/tooltip';
 import styles from './entry_edit.module.css';
 const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 	const attributes = useAppSelector(state => state.comparison.attributes);

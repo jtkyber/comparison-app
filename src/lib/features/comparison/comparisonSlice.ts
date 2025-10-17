@@ -46,6 +46,9 @@ export const comparisonSlice = createSlice({
 		setAttributeName: (state, action: PayloadAction<{ index: number; value: string }>) => {
 			state.attributes[action.payload.index].name = action.payload.value;
 		},
+		toggleAttributeHidden: (state, action: PayloadAction<number>) => {
+			state.attributes[action.payload].hidden = !state.attributes[action.payload].hidden;
+		},
 		setAttributePrefix: (state, action: PayloadAction<{ index: number; value: string }>) => {
 			state.attributes[action.payload.index].prefix = action.payload.value;
 		},
@@ -117,6 +120,9 @@ export const comparisonSlice = createSlice({
 			} else
 				state.entries[action.payload.index].cells[action.payload.valueKey].rating = action.payload.rating;
 		},
+		toggleEntryHidden: (state, action: PayloadAction<number>) => {
+			state.entries[action.payload].hidden = !state.entries[action.payload].hidden;
+		},
 	},
 });
 
@@ -125,6 +131,7 @@ export const {
 	addAttribute,
 	removeAttribute,
 	setAttributeName,
+	toggleAttributeHidden,
 	setAttributePrefix,
 	setAttributeSuffix,
 	setAttributeType,
@@ -138,5 +145,6 @@ export const {
 	setEntryName,
 	setEntryValue,
 	setEntryRating,
+	toggleEntryHidden,
 } = comparisonSlice.actions;
 export default comparisonSlice.reducer;

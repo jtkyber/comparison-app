@@ -47,6 +47,7 @@ export async function POST(req: Request) {
 		const entryTemp: IEntry = {
 			id: entryFromDB.id,
 			name: entryFromDB.name,
+			hidden: entryFromDB.hidden,
 			cells: {},
 		};
 

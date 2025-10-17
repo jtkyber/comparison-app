@@ -6,6 +6,8 @@ import {
 	setComparison,
 	setEntryRating,
 	setEntryValue,
+	toggleAttributeHidden,
+	toggleEntryHidden,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
@@ -27,6 +29,7 @@ import styles from './table_manager.module.css';
 const defaultAttribute: IAttribute = {
 	id: -1,
 	name: '',
+	hidden: false,
 	prefix: '',
 	suffix: '',
 	type: 'text',
@@ -39,6 +42,7 @@ const defaultAttribute: IAttribute = {
 const defaultEntry: IEntry = {
 	id: -1,
 	name: '',
+	hidden: false,
 	cells: {},
 };
 
@@ -93,6 +97,38 @@ const TableManager = () => {
 		if (idsChecked.includes(elementID)) {
 			setIdsChecked(idsChecked.filter(id => id !== elementID));
 		} else setIdsChecked([...idsChecked, elementID]);
+	};
+
+	const handleAttributeHideToggle = async (index: number): Promise<void> => {
+		dispatch(toggleAttributeHidden(index));
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/toggleAttributeHidden`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: attributes[index].id,
+			}),
+		});
+
+		await res.json();
+	};
+
+	const handleEntryHideToggle = async (index: number): Promise<void> => {
+		dispatch(toggleEntryHidden(index));
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/toggleEntryHidden`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: entries[index].id,
+			}),
+		});
+
+		await res.json();
 	};
 
 	const refreshComparison = async () => {
@@ -325,14 +361,20 @@ const TableManager = () => {
 						{(mode === 'attributes' ? attributes : entries).map((el, index) => (
 							<div
 								key={el.id}
-								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
+								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null} ${
+									el.hidden ? styles.hidden : null
+								}`}>
 								<div
 									onClick={() => handleElementSelect(el.id)}
 									className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
 									<SelectSVG />
 								</div>
 								<Tooltip text='Hide' key={`hide${el.id}`} delay={tooltipDelay}>
-									<div className={styles.show_hide_btn}>
+									<div
+										onClick={() =>
+											mode === 'attributes' ? handleAttributeHideToggle(index) : handleEntryHideToggle(index)
+										}
+										className={styles.show_hide_btn}>
 										<VisibleSVG />
 									</div>
 								</Tooltip>

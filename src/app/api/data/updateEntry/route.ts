@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function PUT(req: Request) {
 	const { comparisonID, entry }: { comparisonID: number; entry: IEntry } = await req.json();
-	const { id, name, cells } = entry;
+	const { id, name, hidden, cells } = entry;
 
 	const [comparisonData] = await sql`
         SELECT * FROM comparisons
@@ -37,7 +37,8 @@ export async function PUT(req: Request) {
         SET name = ${name},
             attributeids = ${attributeIDs},
             values = ${values},
-            ratings = ${ratings}
+            ratings = ${ratings},
+			hidden = ${hidden}
         WHERE id = ${id}
         RETURNING id
     ;`;

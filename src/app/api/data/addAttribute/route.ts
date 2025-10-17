@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const { comparisonID, attribute }: { comparisonID: number; attribute: IAttribute } = await req.json();
-	const { name, prefix, suffix, type, range, bestIndex, selfRated, importance } = attribute;
+	const { name, hidden, prefix, suffix, type, range, bestIndex, selfRated, importance } = attribute;
 
 	let [data] = await sql`
-	    INSERT INTO attributes (name, type, importance, range, bestindex, selfrated, prefix, suffix)
-	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, ${selfRated}, ${prefix}, ${suffix})
+	    INSERT INTO attributes (name, type, importance, range, bestindex, selfrated, prefix, suffix, hidden)
+	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, ${selfRated}, ${prefix}, ${suffix}, ${hidden})
 	    RETURNING id
 	    ;`;
 

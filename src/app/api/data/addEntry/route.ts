@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const { comparisonID, entry }: { comparisonID: number; entry: IEntry } = await req.json();
-	const { name, cells } = entry;
+	const { name, hidden, cells } = entry;
 
 	const [comparisonData] = await sql`
         SELECT * FROM comparisons
@@ -33,8 +33,8 @@ export async function POST(req: Request) {
 	}
 
 	let [data] = await sql`
-	    INSERT INTO entries (name, attributeids, values, ratings)
-	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings})
+	    INSERT INTO entries (name, attributeids, values, ratings, hidden)
+	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden})
 	    RETURNING id
 	;`;
 

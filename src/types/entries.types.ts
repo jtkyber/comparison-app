@@ -12,6 +12,7 @@ export interface ICellValue {
 export interface IEntry {
 	id: number;
 	name: string;
+	hidden: boolean;
 	cells: {
 		[key: number]: ICellValue; // key = attributeID
 	};
