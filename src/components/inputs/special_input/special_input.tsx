@@ -17,7 +17,7 @@ const SpecialInput = ({
 }) => {
 	const handle_input_change = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e.target as HTMLInputElement;
-		const text = target.value.trim();
+		const text = target.value;
 
 		switch (inputType) {
 			case 'string':

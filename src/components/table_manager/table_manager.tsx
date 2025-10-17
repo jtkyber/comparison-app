@@ -186,6 +186,29 @@ const TableManager = () => {
 		}
 	};
 
+	const updateEntryInDB = async () => {
+		if (editingIndex === null) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/updateEntry`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				entry: entries[editingIndex],
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refreshComparison();
+
+			setEditingIndex(null);
+		}
+	};
+
 	const deleteAttributesInDB = async () => {
 		if (editingIndex !== null) return;
 
@@ -330,9 +353,7 @@ const TableManager = () => {
 					) : (
 						<>
 							<Tooltip text='Cancel' key='cancel' delay={tooltipDelay}>
-								<div
-									onClick={() => (mode === 'attributes' ? handleCancelEdit() : null)}
-									className={`${styles.action_btn} ${styles.save_element_btn}`}>
+								<div onClick={handleCancelEdit} className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<CancelSVG />
 								</div>
 							</Tooltip>
@@ -345,7 +366,7 @@ const TableManager = () => {
 												: updateAttributeInDB()
 											: editingIndex === -1
 											? addEntryInDB()
-											: null
+											: updateEntryInDB()
 									}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<SaveSVG />
