@@ -102,7 +102,7 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 							<div className={styles.rating_input_section}>
 								<div className={styles.rating_input_wrapper}>
 									<RatingSlider
-										rating={entry.cells?.[attr.id]?.rating || 5}
+										rating={entry.cells?.[attr.id]?.rating ?? 5}
 										setRating={handleRatingChange(attr.id)}
 									/>
 								</div>
