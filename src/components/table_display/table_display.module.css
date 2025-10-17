@@ -2,5 +2,110 @@
 	grid-area: table_display;
 	width: 100%;
 	height: 100%;
+	display: flex;
+	justify-content: safe center;
+	align-items: safe center;
 	background-color: var(--color-grey0);
+	--cell-width: 7rem;
+	--cell-height: 4rem;
+	--cell-padding: 0.2rem;
+	--cell-border: 1px solid var(--color-grey5);
+	--highlight-color: var(--color-grey1);
+
+	overflow: auto;
+
+	.table {
+		display: flex;
+		flex-flow: column nowrap;
+		border-radius: 1rem;
+		overflow: hidden;
+		border: 2px solid var(--color-grey4);
+
+		.attribute_section {
+			display: flex;
+			flex-flow: row nowrap;
+
+			.attribute,
+			.corner_gap {
+				width: var(--cell-width);
+				height: var(--cell-height);
+				border-right: var(--cell-border);
+				padding: var(--cell-padding);
+
+				&:last-child {
+					border-right: none;
+				}
+
+				&.attribute {
+					&.highlighted {
+						backdrop-filter: brightness(80%);
+
+						.attribute_name {
+							color: var(--color-grey0);
+							filter: brightness(120%);
+						}
+					}
+
+					.attribute_name {
+						color: var(--color-grey5);
+					}
+				}
+			}
+		}
+
+		.entry_section {
+			display: flex;
+			flex-flow: column nowrap;
+
+			.entry {
+				display: flex;
+				flex-flow: row nowrap;
+
+				&.highlighted {
+					filter: brightness(120%);
+				}
+
+				.entry_name,
+				.entry_cell {
+					width: var(--cell-width);
+					height: var(--cell-height);
+					border-right: var(--cell-border);
+					border-top: var(--cell-border);
+
+					&:last-child {
+						border-right: none;
+					}
+
+					&.entry_name {
+						background-color: var(--color-grey2);
+						padding: var(--cell-padding);
+					}
+
+					&.entry_cell {
+						display: flex;
+						flex-flow: row nowrap;
+						background-color: var(--color-grey2);
+						padding: var(--cell-padding);
+
+						&.highlighted {
+							filter: brightness(120%);
+						}
+
+						.entry_prefix,
+						.entry_value,
+						.entry_suffix {
+							font-weight: 400;
+
+							&.entry_prefix {
+							}
+							&.entry_value {
+							}
+							&.entry_suffix {
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

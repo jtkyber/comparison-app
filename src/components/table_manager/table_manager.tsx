@@ -7,6 +7,7 @@ import {
 	toggleAttributeHidden,
 	toggleEntryHidden,
 } from '@/src/lib/features/comparison/comparisonSlice';
+import { setHighlightedAttribute, setHighlightedEntry } from '@/src/lib/features/comparison/displaySlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
@@ -69,6 +70,28 @@ const TableManager = () => {
 				break;
 			case 'entries_tab':
 				setMode('entries');
+				break;
+		}
+	};
+
+	const handleElementHover = (elementID: number): void => {
+		switch (mode) {
+			case 'attributes':
+				dispatch(setHighlightedAttribute(elementID));
+				break;
+			case 'entries':
+				dispatch(setHighlightedEntry(elementID));
+				break;
+		}
+	};
+
+	const handleElementLeave = (): void => {
+		switch (mode) {
+			case 'attributes':
+				dispatch(setHighlightedAttribute(0));
+				break;
+			case 'entries':
+				dispatch(setHighlightedEntry(0));
 				break;
 		}
 	};
@@ -362,7 +385,9 @@ const TableManager = () => {
 								key={el.id}
 								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null} ${
 									el.hidden ? styles.hidden : null
-								}`}>
+								}`}
+								onMouseOver={() => handleElementHover(el.id)}
+								onMouseLeave={handleElementLeave}>
 								<Tooltip
 									text={idsChecked.includes(el.id) ? 'Deselect' : 'Select'}
 									key={`select${el.id}`}
