@@ -17,23 +17,45 @@ const sliderColors: { [key: number]: string } = {
 
 const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value: number) => void }) => {
 	const [holdingOnSlider, setHoldingOnSlider] = useState<boolean>(false);
+	const [fineAdjust, setFineAdjust] = useState<boolean>(false);
 
 	const sliderRef = useRef<HTMLDivElement>(null);
 	const ratingRef = useRef<HTMLDivElement>(null);
 
 	const handle_mouse_up = () => setHoldingOnSlider(false);
 
+	const handle_keydown = (e: KeyboardEvent) => {
+		const key = e.key;
+		if (key === 'Control') setFineAdjust(true);
+	};
+
+	const handle_keyup = (e: KeyboardEvent) => {
+		const key = e.key;
+		if (key === 'Control') setFineAdjust(false);
+	};
+
 	useEffect(() => {
 		if (!sliderRef?.current) return;
 		const slider = sliderRef.current;
 
 		slider.style.setProperty('--slider-progress', `${rating * 10}%`);
-		slider.style.setProperty('--slider-color', `${sliderColors[rating * 10]}`);
+		slider.style.setProperty('--slider-color', `${sliderColors[Math.round(rating) * 10]}`);
+
+		document.addEventListener('keydown', handle_keydown);
+		document.addEventListener('keyup', handle_keyup);
+
+		return () => {
+			document.removeEventListener('keydown', handle_keydown);
+			document.removeEventListener('keyup', handle_keyup);
+		};
 	}, []);
 
 	useEffect(() => {
 		const handle_mouse_move = (e: MouseEvent) => {
 			if (!sliderRef?.current || !ratingRef?.current || !holdingOnSlider) return;
+
+			const roundValue: number = fineAdjust ? 1 : 10;
+
 			const slider = sliderRef.current;
 
 			const sliderLeftX: number = slider.getBoundingClientRect().left;
@@ -45,10 +67,13 @@ const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value
 
 			const percentAccrossClamped: number = Math.min(Math.max(percentAccross, 0), 100);
 
-			const percentAccrossRounded: number = Math.round(percentAccrossClamped / 10) * 10;
+			const percentAccrossRounded: number = Math.round(percentAccrossClamped / roundValue) * roundValue;
 
 			slider.style.setProperty('--slider-progress', `${percentAccrossRounded}%`);
-			slider.style.setProperty('--slider-color', `${sliderColors[percentAccrossRounded]}`);
+			slider.style.setProperty(
+				'--slider-color',
+				`${sliderColors[Math.round(percentAccrossRounded / 10) * 10]}`
+			);
 			setRating(percentAccrossRounded / 10);
 		};
 
@@ -59,7 +84,7 @@ const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value
 			document.removeEventListener('mousemove', handle_mouse_move);
 			document.removeEventListener('mouseup', handle_mouse_up);
 		};
-	}, [holdingOnSlider]);
+	}, [holdingOnSlider, fineAdjust]);
 
 	return (
 		<div className={styles.rating_slider_container}>

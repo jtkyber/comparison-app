@@ -4,14 +4,12 @@ import {
 	removeAttribute,
 	removeEntry,
 	setComparison,
-	setEntryRating,
-	setEntryValue,
 	toggleAttributeHidden,
 	toggleEntryHidden,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
-import { CellValueType, IEntry } from '@/src/types/entries.types';
+import { IEntry } from '@/src/types/entries.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
@@ -19,6 +17,7 @@ import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
 import SaveSVG from '../svg/action_center/save.svg';
 import EditSVG from '../svg/element/edit.svg';
+import HiddenSVG from '../svg/element/hidden.svg';
 import SelectSVG from '../svg/element/select.svg';
 import VisibleSVG from '../svg/element/visible.svg';
 import Tooltip from '../tooltip/tooltip';
@@ -364,18 +363,23 @@ const TableManager = () => {
 								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null} ${
 									el.hidden ? styles.hidden : null
 								}`}>
-								<div
-									onClick={() => handleElementSelect(el.id)}
-									className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
-									<SelectSVG />
-								</div>
-								<Tooltip text='Hide' key={`hide${el.id}`} delay={tooltipDelay}>
+								<Tooltip
+									text={idsChecked.includes(el.id) ? 'Deselect' : 'Select'}
+									key={`select${el.id}`}
+									delay={tooltipDelay}>
+									<div
+										onClick={() => handleElementSelect(el.id)}
+										className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
+										<SelectSVG />
+									</div>
+								</Tooltip>
+								<Tooltip text={el.hidden ? 'Show' : 'Hide'} key={`hide${el.id}`} delay={tooltipDelay}>
 									<div
 										onClick={() =>
 											mode === 'attributes' ? handleAttributeHideToggle(index) : handleEntryHideToggle(index)
 										}
 										className={styles.show_hide_btn}>
-										<VisibleSVG />
+										{el.hidden ? <HiddenSVG /> : <VisibleSVG />}
 									</div>
 								</Tooltip>
 								<Tooltip text='Edit' key={`edit${el.id}`} delay={tooltipDelay}>
