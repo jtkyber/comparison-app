@@ -77,5 +77,16 @@
 				align-self: center;
 			}
 		}
+
+		.rating_input_section {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+
+			.rating_input_wrapper {
+				width: 8rem;
+				padding-bottom: 1rem;
+			}
+		}
 	}
 }

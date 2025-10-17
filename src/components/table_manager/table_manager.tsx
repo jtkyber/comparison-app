@@ -232,6 +232,29 @@ const TableManager = () => {
 		}
 	};
 
+	const deleteEntriesInDB = async () => {
+		if (editingIndex !== null) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/removeEntries`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				entryIDs: idsChecked,
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refreshComparison();
+
+			setIdsChecked([]);
+		}
+	};
+
 	const handleCancelEdit = async () => {
 		if (editingIndex === null) return;
 
@@ -331,7 +354,7 @@ const TableManager = () => {
 						<>
 							<Tooltip text='Delete' key='delete' delay={tooltipDelay}>
 								<div
-									onClick={deleteAttributesInDB}
+									onClick={mode === 'attributes' ? deleteAttributesInDB : deleteEntriesInDB}
 									className={`${styles.action_btn} ${styles.delete_element_btn}`}>
 									<DeleteSVG />
 								</div>

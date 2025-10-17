@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import styles from './importance_slider.module.css';
+import React, { useEffect, useRef, useState } from 'react';
+import styles from './rating_slider.module.css';
 
 const sliderColors: { [key: number]: string } = {
 	0: '#ff0000',
@@ -15,17 +15,11 @@ const sliderColors: { [key: number]: string } = {
 	100: '#008000',
 };
 
-const ImportanceSlider = ({
-	importance,
-	setImportance,
-}: {
-	importance: number;
-	setImportance: (value: number) => void;
-}) => {
+const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value: number) => void }) => {
 	const [holdingOnSlider, setHoldingOnSlider] = useState<boolean>(false);
 
 	const sliderRef = useRef<HTMLDivElement>(null);
-	const importanceRatingRef = useRef<HTMLDivElement>(null);
+	const ratingRef = useRef<HTMLDivElement>(null);
 
 	const handle_mouse_up = () => setHoldingOnSlider(false);
 
@@ -33,13 +27,13 @@ const ImportanceSlider = ({
 		if (!sliderRef?.current) return;
 		const slider = sliderRef.current;
 
-		slider.style.setProperty('--slider-progress', `${importance * 10}%`);
-		slider.style.setProperty('--slider-color', `${sliderColors[importance * 10]}`);
+		slider.style.setProperty('--slider-progress', `${rating * 10}%`);
+		slider.style.setProperty('--slider-color', `${sliderColors[rating * 10]}`);
 	}, []);
 
 	useEffect(() => {
 		const handle_mouse_move = (e: MouseEvent) => {
-			if (!sliderRef?.current || !importanceRatingRef?.current || !holdingOnSlider) return;
+			if (!sliderRef?.current || !ratingRef?.current || !holdingOnSlider) return;
 			const slider = sliderRef.current;
 
 			const sliderLeftX: number = slider.getBoundingClientRect().left;
@@ -55,7 +49,7 @@ const ImportanceSlider = ({
 
 			slider.style.setProperty('--slider-progress', `${percentAccrossRounded}%`);
 			slider.style.setProperty('--slider-color', `${sliderColors[percentAccrossRounded]}`);
-			setImportance(percentAccrossRounded / 10);
+			setRating(percentAccrossRounded / 10);
 		};
 
 		document.addEventListener('mousemove', handle_mouse_move);
@@ -68,11 +62,11 @@ const ImportanceSlider = ({
 	}, [holdingOnSlider]);
 
 	return (
-		<div className={styles.importance_slider_container}>
-			<h4 ref={importanceRatingRef} className={styles.importance_rating}>
-				{importance}
+		<div className={styles.rating_slider_container}>
+			<h4 ref={ratingRef} className={styles.rating}>
+				{rating}
 			</h4>
-			<div ref={sliderRef} onMouseDown={() => setHoldingOnSlider(true)} className={styles.importance_slider}>
+			<div ref={sliderRef} onMouseDown={() => setHoldingOnSlider(true)} className={styles.rating_slider}>
 				<div className={styles.slider_fill}></div>
 				<div className={styles.slider_thumb}></div>
 			</div>
@@ -80,4 +74,4 @@ const ImportanceSlider = ({
 	);
 };
 
-export default ImportanceSlider;
+export default RatingSlider;

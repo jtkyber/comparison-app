@@ -1,9 +1,11 @@
-import { setEntryName, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
+import { setEntryName, setEntryRating, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import React, { ChangeEvent } from 'react';
 import SectionLabel from '../../inputs/section_label/section_label';
 import SpecialInput from '../../inputs/special_input/special_input';
 
+import RatingSlider from '../../inputs/rating_slider/rating_slider';
+import Tooltip from '../../tooltip/tooltip';
 import styles from './entry_edit.module.css';
 const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 	const attributes = useAppSelector(state => state.comparison.attributes);
@@ -20,6 +22,10 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 
 	const handleValueChange = (valueKey: number) => (value: string) => {
 		dispatch(setEntryValue({ index: entryIndex, valueKey: valueKey, value: value }));
+	};
+
+	const handleRatingChange = (valueKey: number) => (rating: number) => {
+		dispatch(setEntryRating({ index: entryIndex, valueKey: valueKey, rating: rating }));
 	};
 
 	const handleRadioValueChange = (valueKey: number) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +99,16 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 							) : null}
 							<h5 className={styles.suffix}>{attr.suffix}</h5>
 						</div>
+						{attr.type === 'text' && attr.selfRated ? (
+							<div className={styles.rating_input_section}>
+								<div className={styles.rating_input_wrapper}>
+									<RatingSlider
+										rating={entry.cells?.[attr.id]?.rating || 5}
+										setRating={handleRatingChange(attr.id)}
+									/>
+								</div>
+							</div>
+						) : null}
 					</div>
 				))}
 			</div>

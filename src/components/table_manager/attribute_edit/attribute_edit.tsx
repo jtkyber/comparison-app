@@ -1,5 +1,4 @@
 import Dropdown from '@/src/components/inputs/dropdown/dropdown';
-import ImportanceSlider from '@/src/components/inputs/importance_slider/importance_slider';
 import SpecialInput from '@/src/components/inputs/special_input/special_input';
 import Info from '@/src/components/svg/info.svg';
 import Tooltip from '@/src/components/tooltip/tooltip';
@@ -17,6 +16,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { AttributeType, attributeTypeList, attributeTypeListDisplayed } from '@/src/types/attributes.types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import RatingSlider from '../../inputs/rating_slider/rating_slider';
 import SectionLabel from '../../inputs/section_label/section_label';
 import styles from './attribute_edit.module.css';
 
@@ -394,7 +394,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 					</div>
 
 					<div className={styles.importance}>
-						<ImportanceSlider importance={attribute.importance ?? 10} setImportance={setImportance} />
+						<RatingSlider rating={attribute.importance ?? 10} setRating={setImportance} />
 					</div>
 				</div>
 			) : null}

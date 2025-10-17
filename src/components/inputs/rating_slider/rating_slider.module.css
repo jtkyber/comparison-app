@@ -1,14 +1,11 @@
-.importance_slider_container {
+.rating_slider_container {
 	width: 100%;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: center;
 	gap: 0.5rem;
 
-	/* .importance_rating {
-	} */
-
-	.importance_slider {
+	.rating_slider {
 		position: relative;
 		width: 100%;
 		height: 0.3rem;

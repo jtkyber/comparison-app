@@ -114,7 +114,8 @@ export const comparisonSlice = createSlice({
 					value: '',
 					rating: action.payload.rating,
 				};
-			} else state.entries[action.payload.index].cells[action.payload.valueKey].value = action.payload.rating;
+			} else
+				state.entries[action.payload.index].cells[action.payload.valueKey].rating = action.payload.rating;
 		},
 	},
 });
