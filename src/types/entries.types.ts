@@ -1,13 +1,18 @@
-export type CellType = number | boolean | string;
+export type CellValueType = number | boolean | string | null;
 export interface ICell {
 	attributeID: number;
-	value: CellType;
+	value: CellValueType;
+}
+
+export interface ICellValue {
+	value: CellValueType | null;
+	rating: number | null;
 }
 
 export interface IEntry {
 	id: number;
 	name: string;
-	values: {
-		[key: number]: CellType; // key = attributeID
+	cells: {
+		[key: number]: ICellValue; // key = attributeID
 	};
 }

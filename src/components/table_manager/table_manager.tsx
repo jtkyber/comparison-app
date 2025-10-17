@@ -2,11 +2,14 @@ import {
 	addAttribute,
 	addEntry,
 	removeAttribute,
+	removeEntry,
 	setComparison,
+	setEntryRating,
+	setEntryValue,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
-import { IEntry } from '@/src/types/entries.types';
+import { CellValueType, IEntry } from '@/src/types/entries.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { MouseEventHandler, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
@@ -36,7 +39,7 @@ const defaultAttribute: IAttribute = {
 const defaultEntry: IEntry = {
 	id: -1,
 	name: '',
-	values: {},
+	cells: {},
 };
 
 const TableManager = () => {
@@ -73,12 +76,7 @@ const TableManager = () => {
 				if (index !== undefined) setEditingIndex(index);
 				else {
 					setEditingIndex(-1);
-					dispatch(
-						addAttribute({
-							attribute: defaultAttribute,
-							value: '',
-						})
-					);
+					dispatch(addAttribute(defaultAttribute));
 				}
 				break;
 			case 'entries':
@@ -138,7 +136,30 @@ const TableManager = () => {
 
 		if (data) {
 			await refreshComparison();
+			setEditingIndex(null);
+		}
+	};
 
+	const addEntryInDB = async () => {
+		if (editingIndex === null) return;
+
+		const entry = entries[editingIndex >= 0 ? editingIndex : entries.length - 1];
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/addEntry`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				entry: entry,
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			await refreshComparison();
 			setEditingIndex(null);
 		}
 	};
@@ -189,13 +210,12 @@ const TableManager = () => {
 	};
 
 	const handleCancelEdit = async () => {
-		let index = editingIndex;
-
-		if (index === null) return;
-		if (index === -1) index = attributes.length - 1;
+		if (editingIndex === null) return;
 
 		if (editingIndex === -1) {
-			dispatch(removeAttribute(attributes[index].id));
+			mode === 'attributes'
+				? dispatch(removeAttribute(attributes[attributes.length - 1].id))
+				: dispatch(removeEntry(entries[entries.length - 1].id));
 		} else {
 			await refreshComparison();
 		}
@@ -311,14 +331,22 @@ const TableManager = () => {
 						<>
 							<Tooltip text='Cancel' key='cancel' delay={tooltipDelay}>
 								<div
-									onClick={() => handleCancelEdit()}
+									onClick={() => (mode === 'attributes' ? handleCancelEdit() : null)}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<CancelSVG />
 								</div>
 							</Tooltip>
 							<Tooltip text='Save' key='save' delay={tooltipDelay}>
 								<div
-									onClick={() => (editingIndex === -1 ? addAttributeInDB() : updateAttributeInDB())}
+									onClick={() =>
+										mode === 'attributes'
+											? editingIndex === -1
+												? addAttributeInDB()
+												: updateAttributeInDB()
+											: editingIndex === -1
+											? addEntryInDB()
+											: null
+									}
 									className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<SaveSVG />
 								</div>

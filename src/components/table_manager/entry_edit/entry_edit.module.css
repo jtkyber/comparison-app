@@ -27,4 +27,55 @@
 			}
 		}
 	}
+
+	.entry_attribute_section {
+		width: 100%;
+		display: flex;
+		flex-flow: column nowrap;
+
+		.input_section {
+			width: 100%;
+			display: grid;
+			grid-template-rows: 1fr;
+			grid-template-columns: 1fr 8rem 1fr;
+			padding: 1rem 0;
+			gap: 0.5rem;
+
+			.prefix {
+				justify-self: end;
+				align-self: center;
+			}
+
+			.value_input_wrapper {
+				background-color: var(--color-grey2);
+				color: var(--color-grey0);
+			}
+
+			.boolean_value_input_wrapper {
+				width: 100%;
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: center;
+				gap: 2rem;
+
+				.radio_input {
+					display: flex;
+					flex-flow: row nowrap;
+					align-items: center;
+
+					label {
+						padding: 0 0.5rem;
+					}
+
+					input {
+					}
+				}
+			}
+
+			.suffix {
+				justify-self: start;
+				align-self: center;
+			}
+		}
+	}
 }

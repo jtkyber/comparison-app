@@ -47,14 +47,18 @@ export async function POST(req: Request) {
 		const entryTemp: IEntry = {
 			id: entryFromDB.id,
 			name: entryFromDB.name,
-			values: {},
+			cells: {},
 		};
 
 		for (let j = 0; j < entryFromDB.values?.length; j++) {
 			const attrID: number = entryFromDB.attributeids[j];
-			const value: number = entryFromDB.values[j];
+			const value: string = entryFromDB.values[j];
+			const rating: number = entryFromDB.ratings[j];
 
-			entryTemp.values[attrID] = value;
+			entryTemp.cells[attrID] = {
+				value: value === 'true' ? true : value === 'false' ? false : value,
+				rating: rating,
+			};
 		}
 
 		entries.push(entryTemp);

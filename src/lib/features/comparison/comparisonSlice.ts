@@ -1,6 +1,6 @@
 import { AttributeType, IAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
-import { CellType, IEntry } from '@/src/types/entries.types';
+import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: IComparison = {
@@ -14,19 +14,23 @@ export const comparisonSlice = createSlice({
 	name: 'comparison',
 	initialState,
 	reducers: {
-		setComparison: (state, action: PayloadAction<IComparison>) => {
+		setComparison: (_state, action: PayloadAction<IComparison>) => {
 			return action.payload;
 		},
-		addAttribute: (state, action: PayloadAction<{ attribute: IAttribute; value: CellType }>) => {
-			const idExists: boolean = state.attributes.some(attr => attr.id === action.payload.attribute.id);
+		addAttribute: (state, action: PayloadAction<IAttribute>) => {
+			const idExists: boolean = state.attributes.some(attr => attr.id === action.payload.id);
 			if (!idExists) {
-				state.attributes.push(action.payload.attribute);
+				state.attributes.push(action.payload);
 
-				const newEntries = state.entries.map(entry => {
-					entry.values[action.payload.attribute.id] = action.payload.value;
-					return entry;
-				});
-				state.entries = newEntries;
+				for (let i = 0; i < state.entries.length; i++) {
+					state.entries[i].cells = {
+						...state.entries[i].cells,
+						[action.payload.id]: {
+							value: '',
+							rating: null,
+						},
+					};
+				}
 			}
 		},
 		removeAttribute: (state, action: PayloadAction<number>) => {
@@ -75,8 +79,42 @@ export const comparisonSlice = createSlice({
 			const idExists: boolean = state.entries.some(e => e.id === action.payload.id);
 			if (!idExists) state.entries.push(action.payload);
 		},
+		removeEntry: (state, action: PayloadAction<number>) => {
+			const idExists: boolean = state.entries.some(entry => entry.id === action.payload);
+			if (idExists) {
+				state.entries = state.entries.filter(entry => entry.id !== action.payload);
+			}
+		},
 		setEntryName: (state, action: PayloadAction<{ index: number; value: string }>) => {
 			state.entries[action.payload.index].name = action.payload.value;
+		},
+		setEntryValue: (
+			state,
+			action: PayloadAction<{ index: number; valueKey: number; value: CellValueType }>
+		) => {
+			const cellExists: boolean =
+				state.entries[action.payload.index].cells?.[action.payload.valueKey]?.value !== undefined;
+
+			if (!cellExists) {
+				state.entries[action.payload.index].cells[action.payload.valueKey] = {
+					value: action.payload.value,
+					rating: null,
+				};
+			} else state.entries[action.payload.index].cells[action.payload.valueKey].value = action.payload.value;
+		},
+		setEntryRating: (
+			state,
+			action: PayloadAction<{ index: number; valueKey: number; rating: number | null }>
+		) => {
+			const cellExists: boolean =
+				state.entries[action.payload.index].cells?.[action.payload.valueKey]?.value !== undefined;
+
+			if (!cellExists) {
+				state.entries[action.payload.index].cells[action.payload.valueKey] = {
+					value: '',
+					rating: action.payload.rating,
+				};
+			} else state.entries[action.payload.index].cells[action.payload.valueKey].value = action.payload.rating;
 		},
 	},
 });
@@ -95,6 +133,9 @@ export const {
 	setAttributeSelfRated,
 	setAttributeImportance,
 	addEntry,
+	removeEntry,
 	setEntryName,
+	setEntryValue,
+	setEntryRating,
 } = comparisonSlice.actions;
 export default comparisonSlice.reducer;
