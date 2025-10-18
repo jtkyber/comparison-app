@@ -40,7 +40,7 @@ const TableDisplay = () => {
 									{attributes
 										.filter(a => !a.hidden)
 										.map(attr => {
-											let value: CellValueType = entry.cells[attr.id].value;
+											let value: CellValueType = entry.cells[attr.id]?.value;
 											if (attr.type === 'yesNo') {
 												value = value ? 'Yes' : 'No';
 											}
@@ -53,7 +53,7 @@ const TableDisplay = () => {
 															? styles.highlighted
 															: null
 													}`}>
-													{value === undefined || value === null ? null : (
+													{value === undefined || value === null || value === '' ? null : (
 														<>
 															<h5 className={styles.entry_prefix}>{attr.prefix ?? ''}</h5>
 															<h5 className={styles.entry_value}>{value}</h5>
