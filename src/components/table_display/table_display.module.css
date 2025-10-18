@@ -6,17 +6,17 @@
 	justify-content: safe center;
 	align-items: safe center;
 	background-color: var(--color-grey1);
+	overflow: auto;
 	--cell-width: 7rem;
 	--cell-height: 4rem;
 	--cell-padding: 0.2rem;
 	--cell-border: 1px solid var(--color-grey5);
 	--highlight-color: var(--color-grey1);
 
-	overflow: auto;
-
 	.table {
 		display: flex;
 		flex-flow: column nowrap;
+		overflow: hidden;
 
 		.attribute_section {
 			display: flex;
@@ -29,17 +29,20 @@
 				padding: var(--cell-padding);
 				display: flex;
 				justify-content: center;
+				background-color: var(--color-grey1);
 
 				&.attribute {
+					border-radius: 0.5rem;
+
 					&.highlighted {
+						filter: brightness(110%);
+
 						.attribute_name {
-							color: var(--color-grey0);
-							/* filter: brightness(120%); */
 						}
 					}
 
 					.attribute_name {
-						color: var(--color-grey5);
+						color: var(--color-grey0);
 						text-align: center;
 					}
 				}
@@ -56,10 +59,9 @@
 				flex-flow: row nowrap;
 
 				&.highlighted {
-					filter: brightness(120%);
+					filter: brightness(110%);
 
 					.entry_name {
-						color: var(--color-grey0);
 					}
 				}
 
@@ -68,10 +70,14 @@
 					height: var(--cell-height);
 					display: flex;
 					align-items: center;
-					color: var(--color-grey5);
+					color: var(--color-grey0);
+					background-color: var(--color-grey1);
+					padding: var(--cell-padding);
+					border-radius: 0.5rem;
 
 					&.highlighted {
 						color: var(--color-grey0);
+						filter: brightness(110%);
 					}
 				}
 
@@ -85,38 +91,35 @@
 						width: var(--cell-width);
 						height: var(--cell-height);
 						border-right: var(--cell-border);
+						display: flex;
+						flex-flow: row nowrap;
+						background-color: var(--color-grey2);
+						padding: var(--cell-padding);
 
 						&:last-child {
 							border-right: none;
 						}
 
-						&.entry_cell {
-							display: flex;
-							flex-flow: row nowrap;
-							background-color: var(--color-grey2);
-							padding: var(--cell-padding);
-
-							&.highlighted {
-								filter: brightness(120%);
-
-								.entry_prefix,
-								.entry_value,
-								.entry_suffix {
-									filter: brightness(80%);
-								}
-							}
+						&.highlighted {
+							filter: brightness(120%);
 
 							.entry_prefix,
 							.entry_value,
 							.entry_suffix {
-								font-weight: 400;
+								filter: brightness(80%);
+							}
+						}
 
-								&.entry_prefix {
-								}
-								&.entry_value {
-								}
-								&.entry_suffix {
-								}
+						.entry_prefix,
+						.entry_value,
+						.entry_suffix {
+							font-weight: 400;
+
+							&.entry_prefix {
+							}
+							&.entry_value {
+							}
+							&.entry_suffix {
 							}
 						}
 					}
