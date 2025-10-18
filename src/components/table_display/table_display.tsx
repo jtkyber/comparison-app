@@ -29,36 +29,41 @@ const TableDisplay = () => {
 					{entries
 						.filter(e => !e.hidden)
 						.map(entry => (
-							<div
-								key={entry.id}
-								className={`${styles.entry} ${
-									display.highlightedEntry === entry.id ? styles.highlighted : null
-								}`}>
-								<h4 className={styles.entry_name}>{entry.name}</h4>
-								{attributes
-									.filter(a => !a.hidden)
-									.map(attr => {
-										let value: CellValueType = entry.cells[attr.id].value;
-										if (attr.type === 'yesNo') {
-											value = value ? 'Yes' : 'No';
-										}
+							<div key={entry.id} className={`${styles.entry} `}>
+								<h4
+									className={`${styles.entry_name} ${
+										display.highlightedEntry === entry.id ? styles.highlighted : null
+									}`}>
+									{entry.name}
+								</h4>
+								<div className={styles.entry_cell_section}>
+									{attributes
+										.filter(a => !a.hidden)
+										.map(attr => {
+											let value: CellValueType = entry.cells[attr.id].value;
+											if (attr.type === 'yesNo') {
+												value = value ? 'Yes' : 'No';
+											}
 
-										return (
-											<div
-												key={`${entry.id}-${attr.id}`}
-												className={`${styles.entry_cell} ${
-													display.highlightedAttribute === attr.id ? styles.highlighted : null
-												}`}>
-												{value === undefined || value === null ? null : (
-													<>
-														<h5 className={styles.entry_prefix}>{attr.prefix ?? ''}</h5>
-														<h5 className={styles.entry_value}>{value}</h5>
-														<h5 className={styles.entry_suffix}>{attr.suffix ?? ''}</h5>
-													</>
-												)}
-											</div>
-										);
-									})}
+											return (
+												<div
+													key={`${entry.id}-${attr.id}`}
+													className={`${styles.entry_cell} ${
+														display.highlightedAttribute === attr.id || display.highlightedEntry === entry.id
+															? styles.highlighted
+															: null
+													}`}>
+													{value === undefined || value === null ? null : (
+														<>
+															<h5 className={styles.entry_prefix}>{attr.prefix ?? ''}</h5>
+															<h5 className={styles.entry_value}>{value}</h5>
+															<h5 className={styles.entry_suffix}>{attr.suffix ?? ''}</h5>
+														</>
+													)}
+												</div>
+											);
+										})}
+								</div>
 							</div>
 						))}
 				</div>
