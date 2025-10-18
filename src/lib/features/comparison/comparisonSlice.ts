@@ -1,6 +1,7 @@
 import { AttributeType, IAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
+import { moveArrayItem } from '@/src/utils/arrays';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: IComparison = {
@@ -78,6 +79,10 @@ export const comparisonSlice = createSlice({
 		setAttributeImportance: (state, action: PayloadAction<{ index: number; value: number }>) => {
 			state.attributes[action.payload.index].importance = action.payload.value;
 		},
+		setNewAttributeIndex: (state, action: PayloadAction<{ to: number; from: number }>) => {
+			const { to, from } = action.payload;
+			state.attributes = moveArrayItem(state.attributes, to, from);
+		},
 		addEntry: (state, action: PayloadAction<IEntry>) => {
 			const idExists: boolean = state.entries.some(e => e.id === action.payload.id);
 			if (!idExists) state.entries.push(action.payload);
@@ -123,6 +128,10 @@ export const comparisonSlice = createSlice({
 		toggleEntryHidden: (state, action: PayloadAction<number>) => {
 			state.entries[action.payload].hidden = !state.entries[action.payload].hidden;
 		},
+		setNewEntryIndex: (state, action: PayloadAction<{ to: number; from: number }>) => {
+			const { to, from } = action.payload;
+			state.entries = moveArrayItem(state.entries, to, from);
+		},
 	},
 });
 
@@ -140,11 +149,13 @@ export const {
 	setAttributeBestIndex,
 	setAttributeSelfRated,
 	setAttributeImportance,
+	setNewAttributeIndex,
 	addEntry,
 	removeEntry,
 	setEntryName,
 	setEntryValue,
 	setEntryRating,
 	toggleEntryHidden,
+	setNewEntryIndex,
 } = comparisonSlice.actions;
 export default comparisonSlice.reducer;

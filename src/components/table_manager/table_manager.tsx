@@ -4,6 +4,8 @@ import {
 	removeAttribute,
 	removeEntry,
 	setComparison,
+	setNewAttributeIndex,
+	setNewEntryIndex,
 	toggleAttributeHidden,
 	toggleEntryHidden,
 } from '@/src/lib/features/comparison/comparisonSlice';
@@ -12,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
@@ -52,6 +54,11 @@ const TableManager = () => {
 	const [mode, setMode] = useState<TableManagerMode>('attributes');
 	const [editingIndex, setEditingIndex] = useState<number | null>(null);
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
+	const [draggingID, setDraggingID] = useState<number>(0);
+
+	const draggingRef = useRef<HTMLDivElement>(null);
+	const managerSectionRef = useRef<HTMLDivElement>(null);
+	const elementListRef = useRef<HTMLDivElement>(null);
 
 	const comparisonID = useAppSelector(state => state.comparison.id);
 	const attributes = useAppSelector(state => state.comparison.attributes);
@@ -327,6 +334,140 @@ const TableManager = () => {
 		setEditingIndex(null);
 	};
 
+	const moveAttributeInDB = async () => {
+		const indexOfMoved: number = attributes.findIndex(attr => attr.id == draggingID);
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/moveAttribute`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				attributeID: draggingID,
+				newAttrPos: indexOfMoved,
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			setDraggingID(0);
+			await refreshComparison();
+		}
+	};
+
+	const moveEntryInDB = async () => {
+		const indexOfMoved: number = entries.findIndex(entry => entry.id == draggingID);
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/moveEntry`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				comparisonID: comparisonID,
+				entryID: draggingID,
+				newEntryPos: indexOfMoved,
+			}),
+		});
+
+		const data = await res.json();
+
+		if (data) {
+			setDraggingID(0);
+			await refreshComparison();
+		}
+	};
+
+	const handleElementMouseDown = (e: MouseEvent<HTMLHeadingElement>, id: number): void => {
+		let target = e?.target as HTMLHeadingElement;
+		target = target.parentElement as HTMLDivElement;
+		const managerSectionEl = managerSectionRef?.current;
+
+		if (!(target && managerSectionEl)) return;
+
+		const offset: number =
+			managerSectionEl.getBoundingClientRect().top + target.getBoundingClientRect().height / 2;
+
+		const newTargetYPos = e.clientY - offset;
+
+		target.style.position = 'absolute';
+		target.style.top = `${newTargetYPos}px`;
+		target.style.zIndex = '1';
+		draggingRef.current = target;
+
+		setDraggingID(id);
+	};
+
+	const handleMouseUp = (): void => {
+		const target = draggingRef?.current;
+		if (!target) return;
+
+		target.style.position = '';
+		target.style.zIndex = '0';
+		draggingRef.current = null;
+
+		switch (mode) {
+			case 'attributes':
+				moveAttributeInDB();
+				break;
+			case 'entries':
+				moveEntryInDB();
+				break;
+		}
+	};
+
+	const handleMouseMove = (e: MouseEvent) => {
+		const target = draggingRef?.current;
+		const managerSectionEl = managerSectionRef?.current;
+		const elementList = elementListRef?.current;
+
+		if (!(draggingID && target && managerSectionEl && elementList)) return;
+		const index: number = parseInt(target.id);
+
+		const offset: number =
+			managerSectionEl.getBoundingClientRect().top + target.getBoundingClientRect().height / 2;
+
+		const newTargetYPos = e.clientY - offset;
+
+		target.style.top = `${newTargetYPos}px`;
+
+		// Determine el position in array based on visual position
+		const otherElements = Array.from(elementList.children).filter(el => el !== target);
+		let arrayPos: number = -1;
+		for (let i = 0; i < otherElements.length; i++) {
+			const element = otherElements[i];
+			const elementYPos: number =
+				element.getBoundingClientRect().top + element.getBoundingClientRect().height / 2;
+
+			if (e.clientY < elementYPos) {
+				arrayPos = i;
+				break;
+			}
+		}
+		if (arrayPos === -1) arrayPos = otherElements.length;
+
+		if (arrayPos !== index) {
+			switch (mode) {
+				case 'attributes':
+					dispatch(setNewAttributeIndex({ to: arrayPos, from: index }));
+					break;
+				case 'entries':
+					dispatch(setNewEntryIndex({ to: arrayPos, from: index }));
+					break;
+			}
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener('mouseup', handleMouseUp);
+
+		return () => {
+			document.removeEventListener('mouseup', handleMouseUp);
+		};
+	}, [draggingID, attributes, entries]);
+
 	return (
 		<div className={`${styles.table_manager_container} ${comparisonID === 0 ? styles.disabled : null}`}>
 			<div className={styles.manager_title_section}>
@@ -349,7 +490,7 @@ const TableManager = () => {
 				<div className={styles.tab_section_fill}></div>
 			</div>
 
-			<div className={styles.manager_section}>
+			<div ref={managerSectionRef} onMouseMove={handleMouseMove} className={styles.manager_section}>
 				{editingIndex !== null && mode === 'attributes' ? (
 					<div className={styles.element_editor_section}>
 						<div className={styles.element_editor_title_wrapper}>
@@ -379,15 +520,17 @@ const TableManager = () => {
 						)}
 					</div>
 				) : (
-					<div className={styles.element_list}>
+					<div ref={elementListRef} className={styles.element_list}>
 						{(mode === 'attributes' ? attributes : entries).map((el, index) => (
 							<div
 								key={el.id}
+								id={index.toString()}
 								className={`${styles.element} ${idsChecked.includes(el.id) ? styles.checked : null} ${
 									el.hidden ? styles.hidden : null
 								}`}
 								onMouseOver={() => handleElementHover(el.id)}
-								onMouseLeave={handleElementLeave}>
+								onMouseLeave={handleElementLeave}
+								style={{}}>
 								<Tooltip
 									text={idsChecked.includes(el.id) ? 'Deselect' : 'Select'}
 									key={`select${el.id}`}
@@ -412,7 +555,9 @@ const TableManager = () => {
 										<EditSVG />
 									</div>
 								</Tooltip>
-								<h5 className={styles.name}>{el.name}</h5>
+								<h5 onMouseDown={e => handleElementMouseDown(e, el.id)} className={styles.name}>
+									{el.name}
+								</h5>
 							</div>
 						))}
 					</div>
