@@ -7,15 +7,16 @@
 	align-items: safe center;
 	background-color: var(--color-grey1);
 	overflow: auto;
+	--rating-section-width: 4rem;
 	--cell-width: 7rem;
-	--cell-padding: 0.2rem;
+	--cell-padding: 0.5rem;
 	--cell-border: 1px solid var(--color-grey5);
+	--section-border-radius: 1rem;
 	--highlight-color: var(--color-grey1);
 
 	.table {
 		display: flex;
 		flex-flow: column nowrap;
-		overflow: hidden;
 
 		.attribute_section {
 			display: flex;
@@ -23,7 +24,7 @@
 
 			.attribute,
 			.corner_gap {
-				width: 100%;
+				width: var(--cell-width);
 				height: 3rem;
 				padding: var(--cell-padding);
 				display: flex;
@@ -31,8 +32,8 @@
 				background-color: var(--color-grey1);
 
 				&.attribute {
-					border-top-left-radius: 0.5rem;
-					border-top-right-radius: 0.5rem;
+					border-top-left-radius: var(--section-border-radius);
+					border-top-right-radius: var(--section-border-radius);
 
 					&.highlighted {
 						filter: brightness(110%);
@@ -46,6 +47,15 @@
 						text-align: center;
 					}
 				}
+			}
+
+			.final_rating_label {
+				width: var(--rating-section-width);
+				color: var(--color-grey0);
+				text-align: center;
+				display: flex;
+				align-items: center;
+				padding: var(--cell-padding);
 			}
 		}
 
@@ -61,14 +71,14 @@
 				flex-flow: row nowrap;
 
 				&.highlighted {
-					.entry_name {
+					.entry_name,
+					.final_rating {
 						color: var(--color-grey0);
 						filter: brightness(110%);
 					}
 
 					.entry_cell_section {
-						border-top-left-radius: 0;
-						border-bottom-left-radius: 0;
+						border-radius: 0;
 
 						.entry_cell {
 							filter: brightness(120%);
@@ -101,17 +111,16 @@
 					color: var(--color-grey0);
 					background-color: var(--color-grey1);
 					padding: var(--cell-padding);
-					border-top-left-radius: 0.5rem;
-					border-bottom-left-radius: 0.5rem;
+					border-top-left-radius: var(--section-border-radius);
+					border-bottom-left-radius: var(--section-border-radius);
 				}
 
 				.entry_cell_section {
 					display: flex;
 					flex-flow: row nowrap;
 					overflow: hidden;
-					border-radius: 0.5rem;
-					background-color: var(--color-grey5);
-					gap: 1px;
+					border-radius: 1rem;
+					background-color: var(--color-grey2);
 
 					.entry_cell {
 						width: var(--cell-width);
@@ -119,7 +128,8 @@
 						flex-flow: row nowrap;
 						justify-content: center;
 						align-items: center;
-						background-color: var(--color-grey2);
+						border-right: var(--cell-border);
+						background-color: inherit;
 						padding: var(--cell-padding);
 
 						&:last-child {
@@ -150,6 +160,18 @@
 							}
 						}
 					}
+				}
+
+				.final_rating {
+					width: var(--rating-section-width);
+					min-height: inherit;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					background-color: var(--color-grey1);
+					color: var(--color-grey0);
+					border-top-right-radius: var(--section-border-radius);
+					border-bottom-right-radius: var(--section-border-radius);
 				}
 			}
 		}

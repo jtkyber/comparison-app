@@ -41,6 +41,8 @@ export async function POST(req: Request) {
 
 	const table = data[0].data;
 
+	const attributes: IAttribute[] = table?.attributes.map((attr: IAttribute) => toCamelAttribute(attr));
+
 	const entries: IEntry[] = [];
 	for (let i = 0; i < table.entries?.length; i++) {
 		const entryFromDB = table.entries[i];
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
 
 		for (let j = 0; j < entryFromDB.values?.length; j++) {
 			const attrID: number = entryFromDB.attributeids[j];
-			const value: string = entryFromDB.values[j];
+			let value: string | number = entryFromDB.values[j];
 			const rating: number = entryFromDB.ratings[j];
 
 			entryTemp.cells[attrID] = {
@@ -65,7 +67,17 @@ export async function POST(req: Request) {
 		entries.push(entryTemp);
 	}
 
-	const attributes = table?.attributes.map((attr: IAttribute) => toCamelAttribute(attr));
+	for (const entry of entries) {
+		for (const attr of attributes) {
+			const key = attr.id;
+			const value = entry.cells[key].value;
+			const attributeType = attr.type;
+
+			if (attributeType === 'number' && typeof value === 'string') {
+				entry.cells[key].value = parseFloat(value) || 0;
+			}
+		}
+	}
 
 	const returnData: IComparison = {
 		id: comparisonData.id,
