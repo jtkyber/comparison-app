@@ -3,7 +3,7 @@ import { moveArrayItem } from '@/src/utils/arrays';
 import { NextResponse } from 'next/server';
 
 export async function PUT(req: Request) {
-	const { comparisonID, EntryID, newEntryPos } = await req.json();
+	const { comparisonID, entryID, newEntryPos } = await req.json();
 
 	const [comparison] = await sql`
         SELECT * FROM comparisons
@@ -11,7 +11,7 @@ export async function PUT(req: Request) {
     ;`;
 
 	const entries: number[] = comparison.entries;
-	const oldIndex: number = entries.indexOf(EntryID);
+	const oldIndex: number = entries.indexOf(entryID);
 	const newEntries: number[] = moveArrayItem(entries, newEntryPos, oldIndex);
 
 	const [updatedEntries] = await sql`

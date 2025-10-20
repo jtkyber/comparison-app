@@ -27,15 +27,15 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 		dispatch(setEntryRating({ index: entryIndex, valueKey: valueKey, rating: rating }));
 	};
 
-	const handleRadioValueChange = (valueKey: number) => (e: ChangeEvent<HTMLInputElement>) => {
+	const handleRadioValueChange = (attrID: number) => (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
 		dispatch(
 			setEntryValue({
 				index: entryIndex,
-				valueKey: valueKey,
-				value: target.id === 'yesValue',
+				valueKey: attrID,
+				value: target.id === attrID + 'yesValue',
 			})
 		);
 	};
@@ -73,10 +73,10 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 							) : attr.type === 'yesNo' ? (
 								<div className={styles.boolean_value_input_wrapper}>
 									<div className={styles.radio_input}>
-										<label htmlFor='yesValue'>Yes</label>
+										<label htmlFor={attr.id + 'yesValue'}>Yes</label>
 										<input
-											name='boolean_value_input'
-											id='yesValue'
+											name={attr.id + 'boolean_value_input'}
+											id={attr.id + 'yesValue'}
 											type='radio'
 											checked={
 												entry.cells?.[attr.id]?.value === true || entry.cells?.[attr.id]?.value === undefined
@@ -85,10 +85,10 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 										/>
 									</div>
 									<div className={styles.radio_input}>
-										<label htmlFor='noValue'>No</label>
+										<label htmlFor={attr.id + 'noValue'}>No</label>
 										<input
-											name='boolean_value_input'
-											id='noValue'
+											name={attr.id + 'boolean_value_input'}
+											id={attr.id + 'noValue'}
 											type='radio'
 											checked={entry.cells?.[attr.id]?.value === false}
 											onChange={handleRadioValueChange(attr.id)}

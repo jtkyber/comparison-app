@@ -154,7 +154,7 @@
 							&.entry_prefix {
 							}
 							&.entry_value {
-								word-break: break-all;
+								/* word-break: break-all; */
 							}
 							&.entry_suffix {
 							}

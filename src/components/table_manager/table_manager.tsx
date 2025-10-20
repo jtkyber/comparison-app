@@ -359,7 +359,6 @@ const TableManager = () => {
 
 	const moveEntryInDB = async () => {
 		const indexOfMoved: number = entries.findIndex(entry => entry.id == draggingID);
-
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/moveEntry`, {
 			method: 'PUT',
 			headers: {
