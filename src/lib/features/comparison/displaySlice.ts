@@ -29,25 +29,31 @@ export const displaySlice = createSlice({
 		setHighlightedEntry: (state, action: PayloadAction<number>) => {
 			state.highlightedEntry = action.payload;
 		},
-		setEntryCellRatings: (
+		setEntryCellRating: (
 			state,
-			action: PayloadAction<{ entryID: number; attributeID: number; value: number }>
+			action: PayloadAction<{ entryID: number; attributeID: number; rating: number }>
 		) => {
-			state.entryRatings[action.payload.entryID][action.payload.attributeID] = action.payload.value;
+			state.entryRatings = {
+				...state.entryRatings,
+				[action.payload.entryID]: {
+					...state.entryRatings[action.payload.entryID],
+					[action.payload.attributeID]: action.payload.rating,
+				},
+			};
 		},
 		setEntryFinalRating: (state, action: PayloadAction<{ entryID: number; rating: number }>) => {
 			state.entryRatings = {
 				...state.entryRatings,
 				[action.payload.entryID]: {
+					...state.entryRatings[action.payload.entryID],
 					rating: action.payload.rating,
 				},
 			};
-			state.entryRatings[action.payload.entryID].rating = action.payload.rating;
 		},
 	},
 });
 
-export const { setHighlightedAttribute, setHighlightedEntry, setEntryCellRatings, setEntryFinalRating } =
+export const { setHighlightedAttribute, setHighlightedEntry, setEntryCellRating, setEntryFinalRating } =
 	displaySlice.actions;
 
 export default displaySlice.reducer;

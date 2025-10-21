@@ -1,8 +1,9 @@
-import { setEntryRating } from '@/src/lib/features/comparison/comparisonSlice';
-import { setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
+import { setEntryCellRating, setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
-import { AttributeType, IAttribute } from '@/src/types/attributes.types';
+import { IAttribute } from '@/src/types/attributes.types';
 import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
+import { ratingToColor } from '@/src/utils/colors';
+import { useDebounceCallback } from '@react-hook/debounce';
 import React, { useEffect } from 'react';
 import styles from './table_display.module.css';
 
@@ -91,7 +92,7 @@ const TableDisplay = () => {
 		}
 	};
 
-	const calculateEntryRating = (entryID: number) => {
+	const calculateEntryRating = (entryID: number): number => {
 		const entry: IEntry | undefined = entries.find(e => e.id === entryID);
 		if (entry === undefined) return 0;
 
@@ -103,6 +104,14 @@ const TableDisplay = () => {
 			const cellRating = calculateCellRating(entry, attributes[i]);
 			if (cellRating === undefined) continue;
 
+			dispatch(
+				setEntryCellRating({
+					entryID: entryID,
+					attributeID: attributes[i].id,
+					rating: cellRating,
+				})
+			);
+
 			ratingNumerator += cellRating * importance;
 			ratingDenominator += importance;
 		}
@@ -111,6 +120,61 @@ const TableDisplay = () => {
 		const finalRatingRounded = Math.round(finalRating * 100) / 100;
 		return finalRatingRounded;
 	};
+
+	const determineCellColor = (entryID: number, attrID: number) => {
+		const rating: number = display.entryRatings?.[entryID]?.[attrID];
+		if (rating === undefined) return 'var(--color-grey0)';
+		return ratingToColor(rating);
+	};
+
+	const resizeCells = useDebounceCallback(
+		() => {
+			const maxColWidths: {
+				[key: string]: number;
+			} = {};
+
+			const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
+			const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
+
+			// get attribute name widths
+			for (let i = 0; i < attributeEls.length; i++) {
+				const attrEl = attributeEls[i] as HTMLDivElement;
+				const id = attrEl.id.split('-')[1];
+				const attrNameEl = attrEl.querySelector(`.${styles.attribute_name}`);
+				const width = attrNameEl?.getBoundingClientRect().width;
+				maxColWidths[id] = width ?? 0;
+			}
+
+			// look through all entry cell values and set largest width for each column
+			for (let i = 0; i < entryCellEls.length; i++) {
+				const entryCell = entryCellEls[i] as HTMLDivElement;
+				const id = entryCell.id;
+				const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`);
+				const width = entryCellValueEl?.getBoundingClientRect().width;
+				const attrID = id.split('-')[1];
+				if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
+			}
+
+			// set attribute name element widths
+			for (let i = 0; i < attributeEls.length; i++) {
+				const attrEl = attributeEls[i] as HTMLDivElement;
+				const id = attrEl.id.split('-')[1];
+				attrEl.style.width = `${maxColWidths[id]}px`;
+			}
+
+			// set entry cell element widths
+			for (let i = 0; i < entryCellEls.length; i++) {
+				const entryCell = entryCellEls[i] as HTMLDivElement;
+				const id = entryCell.id;
+				const attrID = id.split('-')[1];
+				entryCell.style.width = `${maxColWidths[attrID]}px`;
+			}
+		},
+		250,
+		false
+	);
+
+	useEffect(() => resizeCells(), [attributes, entries]);
 
 	useEffect(() => {
 		for (const entry of entries) {
@@ -135,6 +199,7 @@ const TableDisplay = () => {
 							.map(attr => (
 								<div
 									key={attr.id}
+									id={`attribute-${attr.id}`}
 									className={`${styles.attribute} ${
 										display.highlightedAttribute === attr.id ? styles.highlighted : null
 									}`}>
@@ -165,15 +230,15 @@ const TableDisplay = () => {
 												return (
 													<div
 														key={`${entry.id}-${attr.id}`}
+														id={`cell${entry.id}-${attr.id}`}
 														className={`${styles.entry_cell} ${
 															display.highlightedAttribute === attr.id ? styles.highlighted : null
-														}`}>
+														}`}
+														style={{ backgroundColor: determineCellColor(entry.id, attr.id) }}>
 														{value === undefined || value === null || value === '' ? null : (
-															<>
-																<h5 className={styles.entry_prefix}>{attr.prefix ?? ''}</h5>
-																<h5 className={styles.entry_value}>{value}</h5>
-																<h5 className={styles.entry_suffix}>{attr.suffix ?? ''}</h5>
-															</>
+															<h5 className={styles.entry_value}>{`${attr.prefix ?? ''}${value}${
+																attr.suffix ?? ''
+															}`}</h5>
 														)}
 													</div>
 												);

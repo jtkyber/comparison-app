@@ -3,8 +3,11 @@
 	width: 100%;
 	height: 100%;
 	display: flex;
-	justify-content: safe center;
-	align-items: safe center;
+	/* justify-content: safe center; */
+	/* align-items: safe center; */
+	justify-content: start;
+	align-items: start;
+	padding: 1rem;
 	background-color: var(--color-grey1);
 	overflow: auto;
 	--rating-section-width: 4rem;
@@ -13,10 +16,14 @@
 	--cell-border: 1px solid var(--color-grey5);
 	--section-border-radius: 1rem;
 	--highlight-color: var(--color-grey1);
+	--highlight-filter: brightness(120%);
+	--highlight-border-color: var(--color-grey0);
 
 	.table {
 		display: flex;
 		flex-flow: column nowrap;
+		/* transform-origin: 0 0;
+		transform: scale(0.6); */
 
 		.attribute_section {
 			display: flex;
@@ -25,8 +32,7 @@
 			.attribute,
 			.corner_gap {
 				width: var(--cell-width);
-				height: 3rem;
-				padding: var(--cell-padding);
+				min-height: 3rem;
 				display: flex;
 				justify-content: center;
 				background-color: var(--color-grey1);
@@ -37,13 +43,21 @@
 
 					&.highlighted {
 						filter: brightness(110%);
+						box-shadow: inset 2px 2px 0 var(--highlight-border-color),
+							inset -2px 0px 0 var(--highlight-border-color);
 
-						.attribute_name {
-						}
+						/* .attribute_name {
+						} */
 					}
 
 					.attribute_name {
 						color: var(--color-grey0);
+						width: min-content;
+						max-width: var(--cell-width);
+						font-weight: 600;
+						padding: var(--cell-padding);
+						inline-size: min-content;
+						overflow-wrap: break-word;
 						text-align: center;
 					}
 				}
@@ -69,37 +83,43 @@
 				min-height: 3rem;
 				display: flex;
 				flex-flow: row nowrap;
+				border-radius: var(--section-border-radius);
+
+				&:last-child {
+					.entry_cell_section {
+						.entry_cell.highlighted {
+							box-shadow: inset 2px 0px 0 var(--highlight-border-color),
+								inset -2px 0px 0 var(--highlight-border-color), inset 0px -2px 0 var(--highlight-border-color);
+						}
+					}
+				}
 
 				&.highlighted {
+					outline: 2px solid var(--highlight-border-color);
+
 					.entry_name,
 					.final_rating {
 						color: var(--color-grey0);
-						filter: brightness(110%);
+						filter: var(--highlight-filter);
 					}
 
 					.entry_cell_section {
 						border-radius: 0;
 
 						.entry_cell {
-							filter: brightness(120%);
-
-							.entry_prefix,
-							.entry_value,
-							.entry_suffix {
-								filter: brightness(80%);
-							}
+							filter: var(--highlight-filter);
 						}
 					}
 				}
 
-				&:first-child {
-					.entry_cell_section {
-						&:has(.entry_cell:first-child.highlighted) {
-							border-top-left-radius: 0;
-						}
-						&:has(.entry_cell:last-child.highlighted) {
-							border-top-right-radius: 0;
-						}
+				.entry_cell_section {
+					&:has(.entry_cell:first-child.highlighted) {
+						border-top-left-radius: 0;
+						border-bottom-left-radius: 0;
+					}
+					&:has(.entry_cell:last-child.highlighted) {
+						border-top-right-radius: 0;
+						border-bottom-right-radius: 0;
 					}
 				}
 
@@ -120,7 +140,7 @@
 					flex-flow: row nowrap;
 					overflow: hidden;
 					border-radius: 1rem;
-					background-color: var(--color-grey2);
+					background-color: var(--color-grey0);
 
 					.entry_cell {
 						width: var(--cell-width);
@@ -130,34 +150,26 @@
 						align-items: center;
 						border-right: var(--cell-border);
 						background-color: inherit;
-						padding: var(--cell-padding);
 
 						&:last-child {
 							border-right: none;
 						}
 
 						&.highlighted {
-							filter: brightness(120%);
-
-							.entry_prefix,
-							.entry_value,
-							.entry_suffix {
-								filter: brightness(80%);
-							}
+							filter: var(--highlight-filter);
+							box-shadow: inset 2px 0px 0 var(--highlight-border-color),
+								inset -2px 0px 0 var(--highlight-border-color);
 						}
 
-						.entry_prefix,
-						.entry_value,
-						.entry_suffix {
-							font-weight: 400;
-
-							&.entry_prefix {
-							}
-							&.entry_value {
-								/* word-break: break-all; */
-							}
-							&.entry_suffix {
-							}
+						.entry_value {
+							width: max-content;
+							max-width: var(--cell-width);
+							font-weight: 600;
+							color: var(--color-grey5);
+							padding: var(--cell-padding);
+							inline-size: max-content;
+							overflow-wrap: break-word;
+							text-align: center;
 						}
 					}
 				}
