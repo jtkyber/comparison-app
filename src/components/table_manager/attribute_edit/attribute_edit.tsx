@@ -14,7 +14,13 @@ import {
 	setAttributeType,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
-import { AttributeType, attributeTypeList, attributeTypeListDisplayed } from '@/src/types/attributes.types';
+import {
+	AttributeType,
+	attributeTypeList,
+	attributeTypeListDisplayed,
+	IAttribute,
+} from '@/src/types/attributes.types';
+import { IEntry } from '@/src/types/entries.types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import RatingSlider from '../../inputs/rating_slider/rating_slider';
 import SectionLabel from '../../inputs/section_label/section_label';
@@ -129,6 +135,13 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		if (!target) return;
 
 		dispatch(setAttributeSelfRated({ index: attributeIndex, value: target.checked }));
+	};
+
+	const handle_value_match_selection = (e: ChangeEvent<HTMLInputElement>) => {
+		const target = e?.target as HTMLInputElement;
+		if (!target) return;
+
+		console.log(target.checked);
 	};
 
 	const show_importance = (): boolean => {
@@ -366,7 +379,7 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 					<SectionLabel text='Text Settings' color='var(--color-grey4)' />
 
 					<div className={styles.section_info_wrapper}>
-						<Tooltip text='Enable this if you want to assign manual ratings for this attribute'>
+						<Tooltip text='* Self-rated: Enable this if you want to assign manual ratings for this attribute'>
 							<Info />
 						</Tooltip>
 					</div>
@@ -375,11 +388,22 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 						<label htmlFor='selfRated'>Self-rated</label>
 						<input
 							onChange={e => handle_self_rated_selection(e)}
+							name='selfRatedSelector'
 							type='checkbox'
 							id='selfRated'
 							checked={attribute.selfRated === true}
 						/>
 					</div>
+					{/* <div className={styles.value_matching_selector}>
+						<label htmlFor='valueMatch'>Value Matching</label>
+						<input
+							onChange={e => handle_value_match_selection(e)}
+							name='valueMatchSelector'
+							type='checkbox'
+							id='valueMatch'
+							checked={attribute.selfRated === true}
+						/>
+					</div> */}
 				</div>
 			) : null}
 

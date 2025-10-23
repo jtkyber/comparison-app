@@ -2,15 +2,12 @@ import { sql } from '@/src/lib/db';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: any }) {
-	const { ids } = await params;
-	const idsFormatted = ids.split(',').map(Number);
+	const { userid } = await params;
 
-	const query = `
+	const comparisons = await sql`
 		SELECT * FROM comparisons
-		WHERE id = ANY($1)
+		WHERE userid = ${userid}
     ;`;
-
-	const comparisons = await sql.query(query, [idsFormatted]);
 
 	return NextResponse.json(comparisons);
 }

@@ -30,6 +30,7 @@ import styles from './table_manager.module.css';
 
 const defaultAttribute: IAttribute = {
 	id: -1,
+	pos: -1,
 	name: '',
 	hidden: false,
 	prefix: '',
@@ -43,6 +44,7 @@ const defaultAttribute: IAttribute = {
 
 const defaultEntry: IEntry = {
 	id: -1,
+	pos: -1,
 	name: '',
 	hidden: false,
 	cells: {},
@@ -131,7 +133,7 @@ const TableManager = () => {
 	const handleAttributeHideToggle = async (index: number): Promise<void> => {
 		dispatch(toggleAttributeHidden(index));
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/toggleAttributeHidden`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/toggleAttributeHidden`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -147,7 +149,7 @@ const TableManager = () => {
 	const handleEntryHideToggle = async (index: number): Promise<void> => {
 		dispatch(toggleEntryHidden(index));
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/toggleEntryHidden`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/toggleEntryHidden`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -161,7 +163,7 @@ const TableManager = () => {
 	};
 
 	const refreshComparison = async () => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/table`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/table`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -186,7 +188,7 @@ const TableManager = () => {
 	const addAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/addAttribute`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/addAttribute`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -210,7 +212,7 @@ const TableManager = () => {
 
 		const entry = entries[editingIndex >= 0 ? editingIndex : entries.length - 1];
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/addEntry`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/addEntry`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -232,7 +234,7 @@ const TableManager = () => {
 	const updateAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/updateAttribute`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/updateAttribute`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -254,7 +256,7 @@ const TableManager = () => {
 	const updateEntryInDB = async () => {
 		if (editingIndex === null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/updateEntry`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/updateEntry`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -277,7 +279,7 @@ const TableManager = () => {
 	const deleteAttributesInDB = async () => {
 		if (editingIndex !== null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/removeAttributes`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/removeAttributes`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -300,7 +302,7 @@ const TableManager = () => {
 	const deleteEntriesInDB = async () => {
 		if (editingIndex !== null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/removeEntries`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/removeEntries`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -337,7 +339,7 @@ const TableManager = () => {
 	const moveAttributeInDB = async () => {
 		const indexOfMoved: number = attributes.findIndex(attr => attr.id == draggingID);
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/moveAttribute`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/moveAttribute`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -359,7 +361,7 @@ const TableManager = () => {
 
 	const moveEntryInDB = async () => {
 		const indexOfMoved: number = entries.findIndex(entry => entry.id == draggingID);
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/moveEntry`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/moveEntry`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -419,14 +421,13 @@ const TableManager = () => {
 
 	const handleMouseMove = (e: MouseEvent) => {
 		const target = draggingRef?.current;
-		const managerSectionEl = managerSectionRef?.current;
 		const elementList = elementListRef?.current;
 
-		if (!(draggingID && target && managerSectionEl && elementList)) return;
+		if (!(draggingID && target && elementList)) return;
 		const index: number = parseInt(target.id);
 
 		const offset: number =
-			managerSectionEl.getBoundingClientRect().top + target.getBoundingClientRect().height / 2;
+			elementList.getBoundingClientRect().top + target.getBoundingClientRect().height / 2;
 
 		const newTargetYPos = e.clientY - offset;
 

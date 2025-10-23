@@ -94,6 +94,7 @@ const TableDisplay = () => {
 
 	const calculateEntryRating = (entryID: number): number => {
 		const entry: IEntry | undefined = entries.find(e => e.id === entryID);
+
 		if (entry === undefined) return 0;
 
 		let ratingNumerator: number = 0;
@@ -121,6 +122,18 @@ const TableDisplay = () => {
 		return finalRatingRounded;
 	};
 
+	const calculateFinalRatings = () => {
+		for (const entry of entries) {
+			const rating = calculateEntryRating(entry.id);
+			dispatch(
+				setEntryFinalRating({
+					entryID: entry.id,
+					rating: rating,
+				})
+			);
+		}
+	};
+
 	const determineCellColor = (entryID: number, attrID: number) => {
 		const rating: number = display.entryRatings?.[entryID]?.[attrID];
 		if (rating === undefined) return 'var(--color-grey0)';
@@ -139,7 +152,7 @@ const TableDisplay = () => {
 			// get attribute name widths
 			for (let i = 0; i < attributeEls.length; i++) {
 				const attrEl = attributeEls[i] as HTMLDivElement;
-				const id = attrEl.id.split('-')[1];
+				const id = attrEl.id.split(':')[1];
 				const attrNameEl = attrEl.querySelector(`.${styles.attribute_name}`);
 				const width = attrNameEl?.getBoundingClientRect().width;
 				maxColWidths[id] = width ?? 0;
@@ -151,14 +164,14 @@ const TableDisplay = () => {
 				const id = entryCell.id;
 				const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`);
 				const width = entryCellValueEl?.getBoundingClientRect().width;
-				const attrID = id.split('-')[1];
+				const attrID = id.split(':')[2];
 				if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
 			}
 
 			// set attribute name element widths
 			for (let i = 0; i < attributeEls.length; i++) {
 				const attrEl = attributeEls[i] as HTMLDivElement;
-				const id = attrEl.id.split('-')[1];
+				const id = attrEl.id.split(':')[1];
 				attrEl.style.width = `${maxColWidths[id]}px`;
 			}
 
@@ -166,7 +179,7 @@ const TableDisplay = () => {
 			for (let i = 0; i < entryCellEls.length; i++) {
 				const entryCell = entryCellEls[i] as HTMLDivElement;
 				const id = entryCell.id;
-				const attrID = id.split('-')[1];
+				const attrID = id.split(':')[2];
 				entryCell.style.width = `${maxColWidths[attrID]}px`;
 			}
 		},
@@ -174,18 +187,9 @@ const TableDisplay = () => {
 		false
 	);
 
-	useEffect(() => resizeCells(), [attributes, entries]);
-
 	useEffect(() => {
-		for (const entry of entries) {
-			const rating = calculateEntryRating(entry.id);
-			dispatch(
-				setEntryFinalRating({
-					entryID: entry.id,
-					rating: rating,
-				})
-			);
-		}
+		resizeCells();
+		calculateFinalRatings();
 	}, [attributes, entries]);
 
 	return (
@@ -199,7 +203,7 @@ const TableDisplay = () => {
 							.map(attr => (
 								<div
 									key={attr.id}
-									id={`attribute-${attr.id}`}
+									id={`attribute:${attr.id}`}
 									className={`${styles.attribute} ${
 										display.highlightedAttribute === attr.id ? styles.highlighted : null
 									}`}>
@@ -230,7 +234,7 @@ const TableDisplay = () => {
 												return (
 													<div
 														key={`${entry.id}-${attr.id}`}
-														id={`cell${entry.id}-${attr.id}`}
+														id={`cell:${entry.id}:${attr.id}`}
 														className={`${styles.entry_cell} ${
 															display.highlightedAttribute === attr.id ? styles.highlighted : null
 														}`}
@@ -244,7 +248,11 @@ const TableDisplay = () => {
 												);
 											})}
 									</div>
-									<h4 className={styles.final_rating}>{display.entryRatings[entry.id]?.rating || 0}</h4>
+									<h4
+										style={{ backgroundColor: ratingToColor(display.entryRatings[entry.id]?.rating || 0) }}
+										className={styles.final_rating}>
+										{display.entryRatings[entry.id]?.rating || 0}
+									</h4>
 								</div>
 							))}
 					</div>

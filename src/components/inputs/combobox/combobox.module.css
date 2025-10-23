@@ -1,4 +1,5 @@
 .combobox_container {
+	height: inherit;
 	width: 100%;
 	position: relative;
 	display: flex;
@@ -7,7 +8,7 @@
 
 	.select_display {
 		width: 100%;
-		height: 2rem;
+		height: inherit;
 		display: flex;
 		flex: none;
 		justify-content: space-between;

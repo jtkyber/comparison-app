@@ -1,5 +1,5 @@
 import { sanitizeNumInputValue } from '@/src/utils/dom';
-import React, { ChangeEvent, CSSProperties, useEffect } from 'react';
+import React, { ChangeEvent, CSSProperties, useEffect, useRef } from 'react';
 import styles from './special_input.module.css';
 
 const SpecialInput = ({
@@ -45,6 +45,7 @@ const SpecialInput = ({
 		else fractionPart = '';
 
 		const finalValue: string = integerPart.concat(fractionPart);
+
 		return finalValue;
 	};
 
@@ -53,7 +54,7 @@ const SpecialInput = ({
 			<input
 				type='text'
 				inputMode='decimal'
-				value={formattedValue()}
+				value={value?.toString() || ''}
 				onChange={handle_input_change}
 				className={styles.special_input}
 				style={styling}

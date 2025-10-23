@@ -11,6 +11,7 @@ export interface ICellValue {
 
 export interface IEntry {
 	id: number;
+	pos: number;
 	name: string;
 	hidden: boolean;
 	cells: {

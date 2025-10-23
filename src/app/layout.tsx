@@ -8,14 +8,11 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/${[1, 3]}`);
-	const comparisons = await res.json();
-
 	return (
 		<html lang='en'>
 			<StoreProvider>
 				<body className='layout'>
-					<Nav comparisons={comparisons} />
+					<Nav />
 					{children}
 					<Footer />
 				</body>

@@ -8,7 +8,6 @@ export function moveCaretToEnd(target: HTMLElement, multiLine?: boolean) {
 	sel.addRange(range);
 	target.focus();
 	range.detach();
-
 	if (multiLine) target.scrollTop = target.scrollHeight;
 }
 

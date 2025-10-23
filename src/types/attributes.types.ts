@@ -9,6 +9,7 @@ export type AttributeType = (typeof attributeTypeList)[number];
 
 export const attributeInterfaceKeys = [
 	'id',
+	'pos',
 	'name',
 	'prefix',
 	'suffix',
@@ -21,6 +22,7 @@ export const attributeInterfaceKeys = [
 export interface IAttribute {
 	id: number;
 	name: string;
+	pos: number;
 	hidden: boolean;
 	prefix: string | null;
 	suffix: string | null;
@@ -29,4 +31,8 @@ export interface IAttribute {
 	bestIndex: 0 | 1 | 2 | null;
 	selfRated: boolean | null;
 	importance: number | null;
+}
+
+export function isAttribute(value: any): value is IAttribute {
+	return (value as IAttribute).type !== undefined;
 }

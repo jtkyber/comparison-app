@@ -1,5 +1,5 @@
 import { sql } from '@/src/lib/db';
-import { IAttribute } from '@/src/types/attributes.types';
+import { IAttribute, isAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { IEntry } from '@/src/types/entries.types';
 import { toCamelAttribute } from '@/src/utils/server';
@@ -13,41 +13,34 @@ export async function POST(req: Request) {
 		WHERE id = ${comparisonID}
     ;`;
 
-	const attributeIDs: number[] = comparisonData.attributes;
-	const entryIDs: number[] = comparisonData.entries;
+	const rawAttributes = await sql`
+		SELECT * FROM attributes
+		WHERE comparisonid = ${comparisonID}
+	;`;
 
-	const query = `
-		SELECT json_build_object(
-			'attributes', (
-				SELECT json_agg(row_to_json(t) ORDER BY t.pos)
-				FROM (
-				SELECT a.*, array_position($1::int[], a.id) AS pos
-				FROM attributes a
-				WHERE a.id = ANY($1)
-				) t
-			),
-			'entries', (
-				SELECT json_agg(row_to_json(t) ORDER BY t.pos)
-				FROM (
-				SELECT e.*, array_position($2::int[], e.id) AS pos
-				FROM entries e
-				WHERE e.id = ANY($2)
-				) t
-			)
-		) AS data;
-	`;
+	if (rawAttributes.length && !isAttribute(rawAttributes[0])) {
+		throw new Error('Could not retrieve attributes');
+	}
 
-	const data = await sql.query(query, [attributeIDs, entryIDs]);
+	const attributesCamel = rawAttributes.map(attr => toCamelAttribute(attr)) as any[];
+	attributesCamel.sort((a, b) => a.pos - b.pos);
 
-	const table = data[0].data;
+	const attributes: IAttribute[] = attributesCamel.map(a => ({
+		...a,
+		importance: parseFloat(a.importance),
+	}));
 
-	const attributes: IAttribute[] = table?.attributes.map((attr: IAttribute) => toCamelAttribute(attr));
+	const entries = await sql`
+		SELECT * FROM entries
+		WHERE comparisonid = ${comparisonID}
+	;`;
 
-	const entries: IEntry[] = [];
-	for (let i = 0; i < table.entries?.length; i++) {
-		const entryFromDB = table.entries[i];
+	const structuredEntries: IEntry[] = [];
+	for (let i = 0; i < entries?.length; i++) {
+		const entryFromDB = entries[i];
 		const entryTemp: IEntry = {
 			id: entryFromDB.id,
+			pos: entryFromDB.pos,
 			name: entryFromDB.name,
 			hidden: entryFromDB.hidden,
 			cells: {},
@@ -64,10 +57,10 @@ export async function POST(req: Request) {
 			};
 		}
 
-		entries.push(entryTemp);
+		structuredEntries.push(entryTemp);
 	}
 
-	for (const entry of entries) {
+	for (const entry of structuredEntries) {
 		for (const attr of attributes) {
 			const key = attr.id;
 			const value = entry.cells[key].value;
@@ -79,11 +72,13 @@ export async function POST(req: Request) {
 		}
 	}
 
+	structuredEntries.sort((a, b) => a.pos - b.pos);
+
 	const returnData: IComparison = {
 		id: comparisonData.id,
 		name: comparisonData.name,
 		attributes: attributes || [],
-		entries: entries,
+		entries: structuredEntries,
 	};
 
 	return NextResponse.json(returnData);

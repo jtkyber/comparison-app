@@ -1,3 +1,5 @@
+import { IAttribute } from '../types/attributes.types';
+
 export function moveArrayItem(arr: any[], to: number, from: number): any[] {
 	const len = arr.length;
 	if (len === 0) return [];
@@ -13,3 +15,14 @@ export function moveArrayItem(arr: any[], to: number, from: number): any[] {
 	copy.splice(toIdx, 0, item);
 	return copy;
 }
+
+// export function moveAttributeInArray(attributes: IAttribute[], to: number, id: number): void {
+// 	attributes.sort((a, b) => a.pos - b.pos);
+// 	const movedIndex = attributes.findIndex(a => a.id === id);
+// 	const movedAttribute = attributes.splice(movedIndex, 1)[0];
+// 	attributes.splice(to, 0, movedAttribute);
+
+// 	for (let i = 0; i < attributes.length; i++) attributes[i].pos = i;
+
+// 	const attrIdArray: number[] = attributes.map(a => a.id);
+// }
