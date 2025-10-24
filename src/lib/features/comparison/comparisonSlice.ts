@@ -18,6 +18,7 @@ export const comparisonSlice = createSlice({
 		setComparison: (_state, action: PayloadAction<IComparison>) => {
 			return action.payload;
 		},
+		// Attributes -----------------------------------------------------
 		addAttribute: (state, action: PayloadAction<IAttribute>) => {
 			const idExists: boolean = state.attributes.some(attr => attr.id === action.payload.id);
 			if (!idExists) {
@@ -83,6 +84,7 @@ export const comparisonSlice = createSlice({
 			const { to, from } = action.payload;
 			state.attributes = moveArrayItem(state.attributes, to, from);
 		},
+		// Entries ------------------------------------------------------
 		addEntry: (state, action: PayloadAction<IEntry>) => {
 			const idExists: boolean = state.entries.some(e => e.id === action.payload.id);
 			if (!idExists) state.entries.push(action.payload);
@@ -112,18 +114,17 @@ export const comparisonSlice = createSlice({
 		},
 		setEntryRating: (
 			state,
-			action: PayloadAction<{ index: number; valueKey: number; rating: number | null }>
+			action: PayloadAction<{ index: number; attrID: number; rating: number | null }>
 		) => {
 			const cellExists: boolean =
-				state.entries[action.payload.index].cells?.[action.payload.valueKey]?.value !== undefined;
+				state.entries[action.payload.index].cells?.[action.payload.attrID]?.value !== undefined;
 
 			if (!cellExists) {
-				state.entries[action.payload.index].cells[action.payload.valueKey] = {
+				state.entries[action.payload.index].cells[action.payload.attrID] = {
 					value: '',
 					rating: action.payload.rating,
 				};
-			} else
-				state.entries[action.payload.index].cells[action.payload.valueKey].rating = action.payload.rating;
+			} else state.entries[action.payload.index].cells[action.payload.attrID].rating = action.payload.rating;
 		},
 		toggleEntryHidden: (state, action: PayloadAction<number>) => {
 			state.entries[action.payload].hidden = !state.entries[action.payload].hidden;

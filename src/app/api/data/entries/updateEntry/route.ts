@@ -6,19 +6,12 @@ export async function PUT(req: Request) {
 	const { comparisonID, entry }: { comparisonID: number; entry: IEntry } = await req.json();
 	const { id, name, hidden, cells } = entry;
 
-	const [comparisonData] = await sql`
-        SELECT * FROM comparisons
-        WHERE id = ${comparisonID}
-    ;`;
-
-	const attributeIDs: number[] = comparisonData.attributes;
-
 	const attributes = await sql`
-        SELECT t.*
-        FROM unnest(${attributeIDs}::int[]) WITH ORDINALITY AS u(id, ord)
-        JOIN attributes t ON t.id = u.id
-        ORDER BY u.ord
-    ;`;
+		SELECT id, type FROM attributes
+		WHERE comparisonid = ${comparisonID}
+	;`;
+
+	const attributeIDs = attributes.map(a => a.id);
 
 	const values: Partial<string | null>[] = [];
 	const ratings: Partial<number | null>[] = [];
@@ -40,7 +33,7 @@ export async function PUT(req: Request) {
             ratings = ${ratings},
 			hidden = ${hidden}
         WHERE id = ${id}
-        RETURNING id
+        RETURNING *
     ;`;
 
 	return NextResponse.json(entries);

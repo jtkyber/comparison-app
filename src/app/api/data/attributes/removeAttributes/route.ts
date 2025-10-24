@@ -8,13 +8,6 @@ export async function DELETE(req: Request) {
 		throw new Error('Invalid body data');
 	}
 
-	const [comparisonData] = await sql`
-		SELECT * FROM comparisons
-		WHERE id = ${comparisonID}
-    ;`;
-
-	const entryIDs: number[] = comparisonData.entries;
-
 	const query = `
         WITH upd_entries AS (
             UPDATE entries
@@ -35,19 +28,7 @@ export async function DELETE(req: Request) {
                 ),
                 ARRAY[]::varchar(36)[]
             )
-            WHERE id = ANY($2::int[])
-            RETURNING id
-        ), upd_comparisons AS (
-            UPDATE comparisons
-            SET attributes = COALESCE(
-                (
-                    SELECT array_agg(elem)
-                    FROM unnest(COALESCE(attributes, ARRAY[]::integer[])) AS elem
-                    WHERE elem <> ALL ($1::int[])
-                ),
-                ARRAY[]::integer[]
-            )
-            WHERE id = $3::int
+            WHERE comparisonid = $2::integer
             RETURNING id
         ), del_attribute AS (
             DELETE FROM attributes
@@ -56,11 +37,10 @@ export async function DELETE(req: Request) {
         )
         SELECT
             (SELECT count(*) FROM upd_entries) AS entries_updated,
-            (SELECT count(*) FROM upd_comparisons) AS comparisons_updated,
             (SELECT count(*) FROM del_attribute) AS attributes_deleted
 	;`;
 
-	const comparisons = await sql.query(query, [attributeIDs, entryIDs, comparisonID]);
+	const comparisons = await sql.query(query, [attributeIDs, comparisonID]);
 
 	return NextResponse.json(comparisons);
 }

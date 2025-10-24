@@ -6,20 +6,12 @@ export async function POST(req: Request) {
 	const { comparisonID, entry }: { comparisonID: number; entry: IEntry } = await req.json();
 	const { name, hidden, cells } = entry;
 
-	const [comparisonData] = await sql`
-        SELECT * FROM comparisons
-        WHERE id = ${comparisonID}
-    ;`;
-
-	const attributeIDs: number[] = comparisonData.attributes;
-
 	const attributes = await sql`
-        SELECT t.*
-        FROM unnest(${attributeIDs}::int[]) WITH ORDINALITY AS u(id, ord)
-        JOIN attributes t ON t.id = u.id
-        ORDER BY u.ord
-    ;`;
+		SELECT id, type FROM attributes
+		WHERE comparisonid = ${comparisonID}
+	;`;
 
+	const attributeIDs = attributes.map(a => a.id);
 	let values: Partial<string | null>[] = [];
 	let ratings: Partial<number | null>[] = [];
 
@@ -33,23 +25,14 @@ export async function POST(req: Request) {
 	}
 
 	let [data] = await sql`
-	    INSERT INTO entries (name, attributeids, values, ratings, hidden)
-	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden})
-	    RETURNING id
-	;`;
+	    INSERT INTO entries (name, attributeids, values, ratings, hidden, comparisonid, pos)
+	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden}, ${comparisonID}, (SELECT MAX(pos) + 1 FROM entries WHERE comparisonid = ${comparisonID}))
+		RETURNING *
+		;`;
 
 	if (typeof data.id !== 'number') {
 		throw new Error('Unable to add new entry');
 	}
 
-	const newEntryID: number = data.id;
-
-	let comparisons = await sql`
-	    UPDATE comparisons
-	    SET entries = array_append(coalesce(entries, ARRAY[]::integer[]), ${newEntryID}::integer)
-	    WHERE id = ${comparisonID}::int
-	    RETURNING id
-	;`;
-
-	return NextResponse.json(comparisons);
+	return NextResponse.json(data);
 }

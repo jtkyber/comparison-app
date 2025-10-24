@@ -199,10 +199,11 @@ const TableManager = () => {
 			}),
 		});
 
-		const data = await res.json();
+		const data = (await res.json()) as IAttribute;
 
 		if (data) {
 			await refreshComparison();
+
 			setEditingIndex(null);
 		}
 	};
