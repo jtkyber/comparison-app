@@ -20,6 +20,7 @@
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.1s linear, visibility 0s linear 0.1s;
+	z-index: 1;
 
 	&.visible {
 		transition: opacity 0.2s linear;

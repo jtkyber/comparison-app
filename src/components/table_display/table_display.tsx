@@ -136,7 +136,13 @@ const TableDisplay = () => {
 
 	const determineCellColor = (entryID: number, attrID: number) => {
 		const rating: number = display.entryRatings?.[entryID]?.[attrID];
-		if (rating === undefined) return 'var(--color-grey0)';
+		const attrIndex: number = attributes.findIndex(a => a.id === attrID);
+		const type = attributes[attrIndex]?.type;
+		const selfRated = attributes[attrIndex]?.selfRated;
+
+		if (rating === undefined || type === 'link' || (type === 'text' && !selfRated)) {
+			return 'var(--color-grey0)';
+		}
 		return ratingToColor(rating);
 	};
 
