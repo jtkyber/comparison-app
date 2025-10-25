@@ -1,4 +1,4 @@
-import { AttributeType, IAttribute } from '@/src/types/attributes.types';
+import { AttributeType, IAttribute, IKeyRatingPair, TextRatingType } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
 import { moveArrayItem } from '@/src/utils/arrays';
@@ -74,8 +74,8 @@ export const comparisonSlice = createSlice({
 		setAttributeBestIndex: (state, action: PayloadAction<{ index: number; value: 0 | 1 | 2 }>) => {
 			state.attributes[action.payload.index].bestIndex = action.payload.value;
 		},
-		setAttributeSelfRated: (state, action: PayloadAction<{ index: number; value: boolean }>) => {
-			state.attributes[action.payload.index].selfRated = action.payload.value;
+		setAttributeTextRatingType: (state, action: PayloadAction<{ index: number; value: TextRatingType }>) => {
+			state.attributes[action.payload.index].textRatingType = action.payload.value;
 		},
 		setAttributeImportance: (state, action: PayloadAction<{ index: number; value: number }>) => {
 			state.attributes[action.payload.index].importance = action.payload.value;
@@ -83,6 +83,32 @@ export const comparisonSlice = createSlice({
 		setNewAttributeIndex: (state, action: PayloadAction<{ to: number; from: number }>) => {
 			const { to, from } = action.payload;
 			state.attributes = moveArrayItem(state.attributes, to, from);
+		},
+		setAttributeKeyRatingPairKey: (
+			state,
+			action: PayloadAction<{ attrIndex: number; pairID: number; key: string }>
+		) => {
+			const { attrIndex, pairID, key } = action.payload;
+
+			const keyRatingPairIndex: number = state.attributes[attrIndex].keyRatingPairs.findIndex(
+				pair => pair.id === pairID
+			);
+			if (keyRatingPairIndex === -1) return;
+
+			state.attributes[attrIndex].keyRatingPairs[keyRatingPairIndex].key = key;
+		},
+		setAttributeKeyRatingPairRating: (
+			state,
+			action: PayloadAction<{ attrIndex: number; pairID: number; rating: number }>
+		) => {
+			const { attrIndex, pairID, rating } = action.payload;
+
+			const keyRatingPairIndex: number = state.attributes[attrIndex].keyRatingPairs.findIndex(
+				pair => pair.id === pairID
+			);
+			if (keyRatingPairIndex === -1) return;
+
+			state.attributes[attrIndex].keyRatingPairs[keyRatingPairIndex].rating = rating;
 		},
 		// Entries ------------------------------------------------------
 		addEntry: (state, action: PayloadAction<IEntry>) => {
@@ -148,9 +174,11 @@ export const {
 	setAttributeRangeLength,
 	setAttributeRangeValue,
 	setAttributeBestIndex,
-	setAttributeSelfRated,
+	setAttributeTextRatingType,
 	setAttributeImportance,
 	setNewAttributeIndex,
+	setAttributeKeyRatingPairKey,
+	setAttributeKeyRatingPairRating,
 	addEntry,
 	removeEntry,
 	setEntryName,

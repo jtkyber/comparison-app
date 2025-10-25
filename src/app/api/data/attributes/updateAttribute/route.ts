@@ -1,8 +1,9 @@
 import { sql } from '@/src/lib/db';
+import { IAttribute } from '@/src/types/attributes.types';
 import { NextResponse } from 'next/server';
 
 export async function PUT(req: Request) {
-	const { id, hidden, name, prefix, suffix, type, range, bestIndex, selfRated, importance } =
+	const { id, hidden, name, prefix, suffix, type, range, bestIndex, textRatingType, importance }: IAttribute =
 		await req.json();
 
 	const [attributes] = await sql`
@@ -14,7 +15,7 @@ export async function PUT(req: Request) {
             type = ${type},
             range = ${range},
             bestindex = ${bestIndex},
-            selfrated = ${selfRated},
+            selfrated = LOWER(${textRatingType}),
             importance = ${importance}
         WHERE id = ${id}
         RETURNING id

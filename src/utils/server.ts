@@ -8,6 +8,7 @@ export function toCamelAttribute(o: Partial<IAttribute>): Partial<IAttribute> {
 		const newKey = attributeInterfaceKeys.find(k => k.toLowerCase() === key.toLowerCase());
 		if (newKey === undefined || newKey === key) continue;
 		object[newKey] = valueCopy;
+
 		delete object[key];
 	}
 

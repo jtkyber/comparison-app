@@ -153,17 +153,55 @@
 			}
 		}
 
-		&.self_rated_section {
+		&.rating_method_section {
 			padding: 1rem 0;
 
-			.self_rated_selector {
+			.rating_methods {
+				display: flex;
+				flex-flow: column nowrap;
+				align-items: end;
+				gap: 0.5rem;
+
+				.no_rating_selector,
+				.self_rated_selector,
+				.name_matching_selector {
+					display: flex;
+					flex-flow: row nowrap;
+
+					label {
+						padding-right: 0.5rem;
+					}
+					input {
+					}
+				}
+			}
+		}
+
+		&.name_rating_pairs {
+			padding-bottom: 1rem;
+			display: flex;
+			flex-flow: column nowrap;
+
+			.name_rating_pair {
 				display: flex;
 				flex-flow: row nowrap;
+				gap: 0.5rem;
+				align-items: center;
 
-				label {
-					padding-right: 0.5rem;
+				&:not(:last-child) {
+					padding-bottom: 1rem;
 				}
-				input {
+
+				.name_rating_pair_name {
+					background-color: var(--color-grey2);
+				}
+
+				.name_colon {
+				}
+
+				.name_rating_pair_rating {
+					width: 6.5rem;
+					background-color: var(--color-grey2);
 				}
 			}
 		}

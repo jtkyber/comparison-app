@@ -5,12 +5,14 @@ import Tooltip from '@/src/components/tooltip/tooltip';
 import {
 	setAttributeBestIndex,
 	setAttributeImportance,
+	setAttributeKeyRatingPairKey,
+	setAttributeKeyRatingPairRating,
 	setAttributeName,
 	setAttributePrefix,
 	setAttributeRangeLength,
 	setAttributeRangeValue,
-	setAttributeSelfRated,
 	setAttributeSuffix,
+	setAttributeTextRatingType,
 	setAttributeType,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
@@ -19,6 +21,7 @@ import {
 	attributeTypeList,
 	attributeTypeListDisplayed,
 	IAttribute,
+	TextRatingType,
 } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
@@ -130,18 +133,26 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		dispatch(setAttributeBestIndex({ index: attributeIndex, value: target.id === 'yesBest' ? 1 : 0 }));
 	};
 
-	const handle_self_rated_selection = (e: ChangeEvent<HTMLInputElement>) => {
+	const handle_text_rating_type_selection = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
-		dispatch(setAttributeSelfRated({ index: attributeIndex, value: target.checked }));
-	};
+		let value: TextRatingType;
+		switch (target.id) {
+			case 'noRating':
+				value = 'none';
+				break;
+			case 'selfRated':
+				value = 'selfrated';
+				break;
+			case 'keyRatingPairs':
+				value = 'keyratingpairs';
+				break;
+			default:
+				value = 'none';
+		}
 
-	const handle_value_match_selection = (e: ChangeEvent<HTMLInputElement>) => {
-		const target = e?.target as HTMLInputElement;
-		if (!target) return;
-
-		console.log(target.checked);
+		dispatch(setAttributeTextRatingType({ index: attributeIndex, value: value }));
 	};
 
 	const show_importance = (): boolean => {
@@ -149,7 +160,27 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		return (
 			attributeType === 'number' ||
 			attributeType === 'yesNo' ||
-			(attributeType === 'text' && attribute.selfRated === true)
+			(attributeType === 'text' &&
+				(attribute.textRatingType === 'selfrated' || attribute.textRatingType === 'keyratingpairs'))
+		);
+	};
+
+	const set_key_rating_pair_key = (id: number) => (key: string) => {
+		dispatch(
+			setAttributeKeyRatingPairKey({
+				attrIndex: attributeIndex,
+				pairID: id,
+				key: key,
+			})
+		);
+	};
+	const set_key_rating_pair_rating = (id: number) => (rating: number) => {
+		dispatch(
+			setAttributeKeyRatingPairRating({
+				attrIndex: attributeIndex,
+				pairID: id,
+				rating: rating,
+			})
 		);
 	};
 
@@ -375,36 +406,83 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 					</div>
 				</div>
 			) : attribute.type === 'text' ? (
-				<div className={`${styles.attribute_edit_section} ${styles.self_rated_section}`}>
-					<SectionLabel text='Text Settings' color='var(--color-grey4)' />
+				<>
+					<div className={`${styles.attribute_edit_section} ${styles.rating_method_section}`}>
+						<SectionLabel text='Text Rating Type' color='var(--color-grey4)' />
 
-					<div className={styles.section_info_wrapper}>
-						<Tooltip text='* Self-rated: Enable this if you want to assign manual ratings for this attribute'>
-							<Info />
-						</Tooltip>
-					</div>
+						<div className={styles.section_info_wrapper}>
+							<Tooltip
+								text={`* No Rating: This attribute will not be used to calculate an entry's final rating\n
+									* Self Rated: Assign a rating manually when editing an entry\n
+									* Name Matching: Predefine a set of name-rating pairs. Choose one of the names when editing an entry and it will use that rating`}>
+								<Info />
+							</Tooltip>
+						</div>
 
-					<div className={styles.self_rated_selector}>
-						<label htmlFor='selfRated'>Self-rated</label>
-						<input
-							onChange={e => handle_self_rated_selection(e)}
-							name='selfRatedSelector'
-							type='checkbox'
-							id='selfRated'
-							checked={attribute.selfRated === true}
-						/>
+						<div className={styles.rating_methods}>
+							<div className={styles.no_rating_selector}>
+								<label htmlFor='noRating'>No Rating</label>
+								<input
+									onChange={e => handle_text_rating_type_selection(e)}
+									name='noRatingSelector'
+									type='checkbox'
+									id='noRating'
+									checked={attribute.textRatingType === 'none'}
+								/>
+							</div>
+							<div className={styles.self_rated_selector}>
+								<label htmlFor='selfRated'>Self Rated</label>
+								<input
+									onChange={e => handle_text_rating_type_selection(e)}
+									name='selfRatedSelector'
+									type='checkbox'
+									id='selfRated'
+									checked={attribute.textRatingType === 'selfrated'}
+								/>
+							</div>
+							<div className={styles.name_matching_selector}>
+								<label htmlFor='keyRatingPairs'>Name Matching</label>
+								<input
+									onChange={e => handle_text_rating_type_selection(e)}
+									name='nameMatchSelector'
+									type='checkbox'
+									id='keyRatingPairs'
+									checked={attribute.textRatingType === 'keyratingpairs'}
+								/>
+							</div>
+						</div>
 					</div>
-					{/* <div className={styles.value_matching_selector}>
-						<label htmlFor='valueMatch'>Value Matching</label>
-						<input
-							onChange={e => handle_value_match_selection(e)}
-							name='valueMatchSelector'
-							type='checkbox'
-							id='valueMatch'
-							checked={attribute.selfRated === true}
-						/>
-					</div> */}
-				</div>
+					{attribute.textRatingType === 'keyratingpairs' ? (
+						<div className={`${styles.attribute_edit_section} ${styles.name_rating_pairs}`}>
+							<SectionLabel text='Name-Rating Pairs' color='var(--color-grey4)' />
+
+							<div className={styles.section_info_wrapper}>
+								<Tooltip text='Create a list of value options and the ratings that should be assigned to each'>
+									<Info />
+								</Tooltip>
+							</div>
+
+							{attribute?.keyRatingPairs?.map(pair => {
+								return (
+									<div key={pair.id} className={styles.name_rating_pair}>
+										<div className={styles.name_rating_pair_name}>
+											<SpecialInput
+												value={pair.key}
+												setValue={set_key_rating_pair_key(pair.id)}
+												label='Name'
+												inputType='string'
+											/>
+										</div>
+										<h3 className={styles.name_colon}>:</h3>
+										<div className={styles.name_rating_pair_rating}>
+											<RatingSlider rating={pair.rating} setRating={set_key_rating_pair_rating(pair.id)} />
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					) : null}
+				</>
 			) : null}
 
 			{show_importance() ? (

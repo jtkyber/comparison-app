@@ -73,7 +73,7 @@ const TableDisplay = () => {
 
 		if (value === null || value === undefined) return;
 
-		const { type, range, bestIndex, selfRated } = attribute;
+		const { type, range, bestIndex, textRatingType } = attribute;
 
 		switch (type) {
 			case 'number':
@@ -85,7 +85,7 @@ const TableDisplay = () => {
 				if (bestIndex === 0) return value === false ? 10 : 0;
 				else return value === true ? 10 : 0;
 			case 'text':
-				if (selfRated === true && rating !== null) return rating;
+				if (textRatingType === 'selfrated' && rating !== null) return rating;
 				return;
 			default:
 				return;
@@ -138,9 +138,13 @@ const TableDisplay = () => {
 		const rating: number = display.entryRatings?.[entryID]?.[attrID];
 		const attrIndex: number = attributes.findIndex(a => a.id === attrID);
 		const type = attributes[attrIndex]?.type;
-		const selfRated = attributes[attrIndex]?.selfRated;
+		const textRatingType = attributes[attrIndex]?.textRatingType;
 
-		if (rating === undefined || type === 'link' || (type === 'text' && !selfRated)) {
+		if (
+			rating === undefined ||
+			type === 'link' ||
+			(type === 'text' && (!textRatingType || textRatingType === 'none'))
+		) {
 			return 'var(--color-grey0)';
 		}
 		return ratingToColor(rating);

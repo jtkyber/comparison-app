@@ -16,9 +16,20 @@ export const attributeInterfaceKeys = [
 	'type',
 	'range',
 	'bestIndex',
+	'textRatingType',
 	'selfRated',
 	'importance',
+	'keyRatingPairs',
 ];
+
+export type TextRatingType = 'none' | 'selfrated' | 'keyratingpairs' | null;
+
+export interface IKeyRatingPair {
+	id: number;
+	key: string;
+	rating: number;
+}
+
 export interface IAttribute {
 	id: number;
 	name: string;
@@ -29,8 +40,9 @@ export interface IAttribute {
 	type: AttributeType;
 	range: [number, number] | [number, number, number];
 	bestIndex: 0 | 1 | 2 | null;
-	selfRated: boolean | null;
+	textRatingType: TextRatingType;
 	importance: number | null;
+	keyRatingPairs: IKeyRatingPair[];
 }
 
 export function isAttribute(value: any): value is IAttribute {

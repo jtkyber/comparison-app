@@ -1,5 +1,5 @@
 import { sql } from '@/src/lib/db';
-import { IAttribute, isAttribute } from '@/src/types/attributes.types';
+import { IAttribute, IKeyRatingPair, isAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { IEntry } from '@/src/types/entries.types';
 import { toCamelAttribute } from '@/src/utils/server';
@@ -18,6 +18,11 @@ export async function POST(req: Request) {
 		WHERE comparisonid = ${comparisonID}
 	;`;
 
+	const keyRatingPairsArray = await sql`
+		SELECT * FROM keyratingpairs
+		WHERE comparisonid = ${comparisonID}
+	;`;
+
 	if (rawAttributes.length && !isAttribute(rawAttributes[0])) {
 		throw new Error('Could not retrieve attributes');
 	}
@@ -25,10 +30,26 @@ export async function POST(req: Request) {
 	const attributesCamel = rawAttributes.map(attr => toCamelAttribute(attr)) as any[];
 	attributesCamel.sort((a, b) => a.pos - b.pos);
 
-	const attributes: IAttribute[] = attributesCamel.map(a => ({
+	const attributes: IAttribute[] = attributesCamel.map((a: IAttribute) => ({
 		...a,
-		importance: parseFloat(a.importance),
+		importance: parseFloat(a.importance as any),
 	}));
+
+	for (const attr of attributes) {
+		const keyRatingPairs: IKeyRatingPair[] = [];
+		const pairs = keyRatingPairsArray.filter(pair => pair.attributeid === attr.id);
+
+		for (let i = 0; i < pairs.length; i++) {
+			const { id, key, rating } = pairs[i];
+			keyRatingPairs[i] = {
+				id,
+				key,
+				rating: parseFloat(rating),
+			};
+		}
+
+		attr.keyRatingPairs = keyRatingPairs;
+	}
 
 	const entries = await sql`
 		SELECT * FROM entries
