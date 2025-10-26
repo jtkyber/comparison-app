@@ -105,12 +105,14 @@ const Nav = () => {
 	return (
 		<div className={styles.nav_container}>
 			<div className={styles.comparison_dropdown_wrapper}>
-				<Combobox
-					options={user.comparisons.map(c => c.id.toString())}
-					selected={selected}
-					setSelected={setSelected}
-					referenceTable={buildReferenceTable()}
-				/>
+				<div className={styles.comparison_dropdown}>
+					<Combobox
+						options={user.comparisons.map(c => c.id.toString())}
+						selected={selected}
+						setSelected={setSelected}
+						referenceTable={buildReferenceTable()}
+					/>
+				</div>
 				<button onClick={setAddComparison} className={styles.new_comparison_btn}>
 					+
 				</button>

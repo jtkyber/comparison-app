@@ -4,7 +4,8 @@
 	position: relative;
 	display: flex;
 	flex-flow: column nowrap;
-	border-radius: 0.5rem;
+	border-radius: inherit;
+	background-color: inherit;
 
 	.select_display {
 		width: 100%;
@@ -13,6 +14,7 @@
 		flex: none;
 		justify-content: space-between;
 		background-color: var(--color-grey2);
+		background-color: inherit;
 		border-radius: inherit;
 
 		&:has(.display_text[contenteditable='true']) {
@@ -54,19 +56,19 @@
 
 	.dropdown {
 		position: absolute;
-		top: 100%;
+		top: calc(100% + 2px);
 		width: 100%;
 		height: max-content;
 		max-height: 15rem;
 		border-radius: inherit;
 		box-shadow: var(--dropdown-shadow);
-		z-index: -1;
+		z-index: 1;
 		overflow-y: auto;
+		background-color: inherit;
 
 		.options {
 			width: 100%;
 			height: max-content;
-			background-color: var(--color-grey2);
 
 			.option {
 				width: 100%;
@@ -78,7 +80,7 @@
 				color: var(--color-grey0);
 
 				&:hover {
-					background-color: var(--color-grey3);
+					backdrop-filter: brightness(60%);
 				}
 			}
 		}

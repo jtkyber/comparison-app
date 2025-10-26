@@ -3,6 +3,8 @@ import SpecialInput from '@/src/components/inputs/special_input/special_input';
 import Info from '@/src/components/svg/info.svg';
 import Tooltip from '@/src/components/tooltip/tooltip';
 import {
+	addKeyRatingPair,
+	removeKeyRatingPair,
 	setAttributeBestIndex,
 	setAttributeImportance,
 	setAttributeKeyRatingPairKey,
@@ -20,13 +22,13 @@ import {
 	AttributeType,
 	attributeTypeList,
 	attributeTypeListDisplayed,
-	IAttribute,
 	TextRatingType,
 } from '@/src/types/attributes.types';
-import { IEntry } from '@/src/types/entries.types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import RatingSlider from '../../inputs/rating_slider/rating_slider';
 import SectionLabel from '../../inputs/section_label/section_label';
+import AddSVG from '../../svg/action_center/add.svg';
+import DeleteSVG from '../../svg/action_center/delete.svg';
 import styles from './attribute_edit.module.css';
 
 const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
@@ -184,6 +186,18 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 		);
 	};
 
+	const add_key_rating_pair = () => {
+		dispatch(addKeyRatingPair(attributeIndex));
+	};
+
+	const remove_key_rating_pair = (pairIndex: number) => {
+		dispatch(
+			removeKeyRatingPair({
+				attrIndex: attributeIndex,
+				pairIndex: pairIndex,
+			})
+		);
+	};
 	return (
 		<div className={styles.attribute_edit_container}>
 			<div className={`${styles.attribute_edit_section} ${styles.name_input_section}`}>
@@ -462,9 +476,12 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 								</Tooltip>
 							</div>
 
-							{attribute?.keyRatingPairs?.map(pair => {
+							{attribute?.keyRatingPairs?.map((pair, index) => {
 								return (
 									<div key={pair.id} className={styles.name_rating_pair}>
+										<div onClick={() => remove_key_rating_pair(index)} className={styles.delete_pair_btn}>
+											<DeleteSVG />
+										</div>
 										<div className={styles.name_rating_pair_name}>
 											<SpecialInput
 												value={pair.key}
@@ -480,6 +497,10 @@ const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
 									</div>
 								);
 							})}
+
+							<div onClick={add_key_rating_pair} className={styles.add_pair_btn}>
+								<AddSVG />
+							</div>
 						</div>
 					) : null}
 				</>

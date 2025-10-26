@@ -18,6 +18,13 @@
 		align-items: center;
 		gap: 0.5rem;
 
+		.comparison_dropdown {
+			border-radius: 0.5rem;
+			width: 18rem;
+			height: inherit;
+			background-color: var(--color-grey2);
+		}
+
 		.new_comparison_btn {
 			height: inherit;
 			aspect-ratio: 1/1;

@@ -1,6 +1,7 @@
 import { setEntryName, setEntryRating, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import React, { ChangeEvent, useEffect, useRef } from 'react';
+import Combobox from '../../inputs/combobox/combobox';
 import RatingSlider from '../../inputs/rating_slider/rating_slider';
 import SectionLabel from '../../inputs/section_label/section_label';
 import SpecialInput from '../../inputs/special_input/special_input';
@@ -19,8 +20,12 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 		dispatch(setEntryName({ index: entryIndex, value: target.value }));
 	};
 
-	const handleValueChange = (valueKey: number) => (value: string) => {
-		dispatch(setEntryValue({ index: entryIndex, valueKey: valueKey, value: value }));
+	const handleValueChange = (attrID: number) => (value: string) => {
+		dispatch(setEntryValue({ index: entryIndex, valueKey: attrID, value: value }));
+	};
+
+	const handleTextKeySelection = (attrID: number) => (value: string) => {
+		dispatch(setEntryValue({ index: entryIndex, valueKey: attrID, value: value }));
 	};
 
 	const handleRatingChange = (attrID: number) => (rating: number) => {
@@ -43,7 +48,11 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 	const setDefaultTextRatings = (): void => {
 		for (const attr of attributes) {
 			const rating = entry.cells[attr.id]?.rating;
-			if ((rating === null || rating === undefined) && attr.type == 'text' && attr.selfRated) {
+			if (
+				(rating === null || rating === undefined) &&
+				attr.type == 'text' &&
+				attr.textRatingType === 'selfrated'
+			) {
 				handleRatingChange(attr.id)(5);
 			}
 		}
@@ -87,6 +96,7 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 
 			<div className={styles.entry_attributes}>
 				{attributes.map(attr => {
+					const keyRatingPairKeys = attr.keyRatingPairs.map(pair => pair.key);
 					const rating = entry.cells?.[attr.id]?.rating;
 					return (
 						<div key={attr.id} className={styles.entry_attribute_section}>
@@ -94,13 +104,23 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 
 							<div className={styles.input_section}>
 								<h5 className={styles.prefix}>{attr.prefix}</h5>
-								{attr.type === 'text' || attr.type === 'number' || attr.type === 'link' ? (
+								{(attr.type === 'text' && attr.textRatingType !== 'keyratingpairs') ||
+								attr.type === 'number' ||
+								attr.type === 'link' ? (
 									<div className={styles.value_input_wrapper}>
 										<SpecialInput
 											value={entry.cells?.[attr.id]?.value?.toString() || ''}
 											setValue={handleValueChange(attr.id)}
 											label={`Enter ${attr.type}`}
 											inputType={attr.type === 'number' ? 'number' : 'string'}
+										/>
+									</div>
+								) : attr.type === 'text' && attr.textRatingType === 'keyratingpairs' ? (
+									<div className={styles.textNamePicker}>
+										<Combobox
+											options={keyRatingPairKeys}
+											selected={entry.cells[attr.id]?.value?.toString() || ''}
+											setSelected={handleValueChange(attr.id)}
 										/>
 									</div>
 								) : attr.type === 'yesNo' ? (
@@ -134,7 +154,10 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 								) : null}
 								<h5 className={styles.suffix}>{attr.suffix}</h5>
 							</div>
-							{attr.type === 'text' && attr.selfRated && rating !== null && rating !== undefined ? (
+							{attr.type === 'text' &&
+							attr.textRatingType === 'selfrated' &&
+							rating !== null &&
+							rating !== undefined ? (
 								<div className={styles.rating_input_section}>
 									<div className={styles.rating_input_wrapper}>
 										<RatingSlider rating={rating} setRating={handleRatingChange(attr.id)} />

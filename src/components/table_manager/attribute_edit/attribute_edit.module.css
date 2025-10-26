@@ -192,6 +192,22 @@
 					padding-bottom: 1rem;
 				}
 
+				.delete_pair_btn {
+					cursor: pointer;
+
+					&:hover {
+						opacity: 0.6;
+					}
+					svg {
+						width: 12px;
+						height: auto;
+
+						path {
+							fill: var(--color-grey0);
+						}
+					}
+				}
+
 				.name_rating_pair_name {
 					background-color: var(--color-grey2);
 				}
@@ -202,6 +218,23 @@
 				.name_rating_pair_rating {
 					width: 6.5rem;
 					background-color: var(--color-grey2);
+				}
+			}
+
+			.add_pair_btn {
+				cursor: pointer;
+
+				&:hover {
+					opacity: 0.6;
+				}
+
+				svg {
+					width: 18px;
+					height: auto;
+
+					path {
+						fill: var(--color-grey0);
+					}
 				}
 			}
 		}

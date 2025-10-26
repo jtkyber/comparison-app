@@ -30,6 +30,10 @@ export async function DELETE(req: Request) {
             )
             WHERE comparisonid = $2::integer
             RETURNING id
+        ), del_keyratingpairs AS (
+            DELETE FROM keyratingpairs
+            WHERE attributeid = ANY($1::int[])
+            RETURNING id
         ), del_attribute AS (
             DELETE FROM attributes
             WHERE id = ANY($1::int[])
@@ -37,6 +41,7 @@ export async function DELETE(req: Request) {
         )
         SELECT
             (SELECT count(*) FROM upd_entries) AS entries_updated,
+            (SELECT count(*) FROM del_keyratingpairs) AS keyratingpairs_deleted,
             (SELECT count(*) FROM del_attribute) AS attributes_deleted
 	;`;
 

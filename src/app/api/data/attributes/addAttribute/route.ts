@@ -4,11 +4,12 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const { comparisonID, attribute }: { comparisonID: number; attribute: IAttribute } = await req.json();
-	const { name, hidden, prefix, suffix, type, range, bestIndex, textRatingType, importance } = attribute;
+	const { name, hidden, prefix, suffix, type, range, bestIndex, textRatingType, keyRatingPairs, importance } =
+		attribute;
 
 	let [data] = await sql`
 	    INSERT INTO attributes (name, type, importance, range, bestindex, textratingtype, prefix, suffix, hidden, comparisonid, pos)
-	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, LOWER(${textRatingType})::text_rating_type, ${prefix}, ${suffix}, ${hidden}, ${comparisonID}, (SELECT MAX(pos) + 1 FROM attributes WHERE comparisonid = ${comparisonID}))
+	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, LOWER(${textRatingType})::text_rating_type, ${prefix}, ${suffix}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM attributes WHERE comparisonid = ${comparisonID}))
 		RETURNING id
 	;`;
 
@@ -17,6 +18,20 @@ export async function POST(req: Request) {
 	}
 
 	const newAttributeID: number = data.id;
+
+	const pairKeys = keyRatingPairs.map(p => p.key);
+	const pairRatings = keyRatingPairs.map(p => p.rating);
+
+	await sql`
+		INSERT INTO keyratingpairs (key, rating, attributeid, comparisonid)
+		SELECT 
+			t.key,
+			t.rating,
+			${newAttributeID}::int,
+			${comparisonID}::int
+		FROM UNNEST(${pairKeys}::text[], ${pairRatings}::numeric[]) AS t(key, rating)
+		RETURNING *
+	;`;
 
 	const entries = await sql`
 		UPDATE entries

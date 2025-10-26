@@ -73,7 +73,7 @@ const TableDisplay = () => {
 
 		if (value === null || value === undefined) return;
 
-		const { type, range, bestIndex, textRatingType } = attribute;
+		const { type, range, bestIndex, textRatingType, keyRatingPairs } = attribute;
 
 		switch (type) {
 			case 'number':
@@ -85,7 +85,10 @@ const TableDisplay = () => {
 				if (bestIndex === 0) return value === false ? 10 : 0;
 				else return value === true ? 10 : 0;
 			case 'text':
-				if (textRatingType === 'selfrated' && rating !== null) return rating;
+				if (textRatingType === 'selfrated') return rating ?? undefined;
+				else if (textRatingType === 'keyratingpairs') {
+					return keyRatingPairs.find(p => p.key === value)?.rating ?? undefined;
+				}
 				return;
 			default:
 				return;
@@ -237,9 +240,7 @@ const TableDisplay = () => {
 											.filter(a => !a.hidden)
 											.map(attr => {
 												let value: CellValueType = entry.cells[attr.id]?.value;
-												if (attr.type === 'yesNo') {
-													value = value ? 'Yes' : 'No';
-												}
+												if (attr.type === 'yesNo') value = value ? 'Yes' : 'No';
 
 												return (
 													<div

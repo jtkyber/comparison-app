@@ -11,7 +11,7 @@ const Combobox = ({
 	options: string[];
 	selected: string;
 	setSelected: Dispatch<SetStateAction<any>>;
-	referenceTable: { [key: string]: string };
+	referenceTable?: { [key: string]: string };
 }) => {
 	const [isDropped, setIsDropped] = useState<boolean>(false);
 	const [enteredText, setEnteredText] = useState<string>('');
@@ -41,6 +41,10 @@ const Combobox = ({
 		setIsDropped(false);
 	};
 
+	const getValue = (text: string): string => {
+		return referenceTable ? referenceTable[text] : text;
+	};
+
 	return (
 		<div className={styles.combobox_container}>
 			<div className={styles.select_display}>
@@ -51,7 +55,7 @@ const Combobox = ({
 					onClick={handleDisplayClick}
 					onInput={handleInputChange}
 					className={styles.display_text}>
-					{isDropped ? '' : referenceTable[selected]}
+					{isDropped ? '' : getValue(selected)}
 				</h4>
 				<h4 onClick={handleDisplayClick} className={styles.down_arrow}>
 					&#8964;
@@ -61,10 +65,10 @@ const Combobox = ({
 				<div className={styles.dropdown}>
 					<div className={styles.options}>
 						{options
-							?.filter(o => referenceTable[o].toLowerCase().includes(enteredText))
+							?.filter(o => getValue(o).toLowerCase().includes(enteredText))
 							.map(option => (
 								<h5 id={option} onClick={handleSelection} key={option} className={styles.option}>
-									{referenceTable[option]}
+									{getValue(option)}
 								</h5>
 							))}
 					</div>

@@ -110,6 +110,28 @@ export const comparisonSlice = createSlice({
 
 			state.attributes[attrIndex].keyRatingPairs[keyRatingPairIndex].rating = rating;
 		},
+		addKeyRatingPair: (state, action: PayloadAction<number>) => {
+			const attrIndex = action.payload;
+
+			const tempIDs = state.attributes[attrIndex].keyRatingPairs
+				.filter(pair => pair.id < 0)
+				.map(pair => pair.id);
+
+			const smallestTempID = Math.min(...tempIDs);
+
+			const newTempID = smallestTempID < 0 ? smallestTempID - 1 : -1;
+
+			state.attributes[attrIndex].keyRatingPairs.push({
+				id: newTempID,
+				key: '',
+				rating: 5,
+			});
+		},
+		removeKeyRatingPair: (state, action: PayloadAction<{ attrIndex: number; pairIndex: number }>) => {
+			const { attrIndex, pairIndex } = action.payload;
+
+			state.attributes[attrIndex].keyRatingPairs.splice(pairIndex, 1);
+		},
 		// Entries ------------------------------------------------------
 		addEntry: (state, action: PayloadAction<IEntry>) => {
 			const idExists: boolean = state.entries.some(e => e.id === action.payload.id);
@@ -164,6 +186,7 @@ export const comparisonSlice = createSlice({
 
 export const {
 	setComparison,
+	// Attributes
 	addAttribute,
 	removeAttribute,
 	setAttributeName,
@@ -179,6 +202,9 @@ export const {
 	setNewAttributeIndex,
 	setAttributeKeyRatingPairKey,
 	setAttributeKeyRatingPairRating,
+	addKeyRatingPair,
+	removeKeyRatingPair,
+	// Entries
 	addEntry,
 	removeEntry,
 	setEntryName,

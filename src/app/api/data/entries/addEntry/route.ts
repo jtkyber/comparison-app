@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
 	let [data] = await sql`
 	    INSERT INTO entries (name, attributeids, values, ratings, hidden, comparisonid, pos)
-	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden}, ${comparisonID}, (SELECT MAX(pos) + 1 FROM entries WHERE comparisonid = ${comparisonID}))
+	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM entries WHERE comparisonid = ${comparisonID}))
 		RETURNING *
 		;`;
 

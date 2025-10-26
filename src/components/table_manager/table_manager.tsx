@@ -38,7 +38,8 @@ const defaultAttribute: IAttribute = {
 	type: 'text',
 	range: [0, 100],
 	bestIndex: 1,
-	selfRated: true,
+	textRatingType: 'none',
+	keyRatingPairs: [],
 	importance: 10,
 };
 
@@ -241,7 +242,8 @@ const TableManager = () => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				...attributes[editingIndex],
+				comparisonID: comparisonID,
+				attribute: attributes[editingIndex],
 			}),
 		});
 
