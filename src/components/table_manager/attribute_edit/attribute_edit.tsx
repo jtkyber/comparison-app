@@ -32,9 +32,29 @@ import DeleteSVG from '../../svg/action_center/delete.svg';
 import styles from './attribute_edit.module.css';
 
 const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
+	const comparisonID = useAppSelector(state => state.comparison.id);
 	const attribute = useAppSelector(state => state.comparison.attributes[attributeIndex]);
 
 	const dispatch = useAppDispatch();
+
+	// const clearEntryValuesForAttribute = async () => {
+	// 	const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/clearEntryValuesForAttribute`, {
+	// 		method: 'PUT',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 		},
+	// 		body: JSON.stringify({
+	// 			comparisonID: comparisonID,
+	// 			attributeID: attribute.id,
+	// 		}),
+	// 	});
+
+	// 	const data = await res.json();
+
+	// 	if (data) {
+	// 		console.log(data);
+	// 	}
+	// };
 
 	const setPrefix = (value: string) => {
 		dispatch(setAttributePrefix({ index: attributeIndex, value: value }));

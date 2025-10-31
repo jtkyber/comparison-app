@@ -7,7 +7,7 @@ export interface IDisplay {
 		[key: number]: {
 			// key = entryID
 			rating: number;
-			[key: number]: number;
+			[key: number]: number | undefined;
 			//key = attributeID
 		};
 	};
@@ -31,7 +31,7 @@ export const displaySlice = createSlice({
 		},
 		setEntryCellRating: (
 			state,
-			action: PayloadAction<{ entryID: number; attributeID: number; rating: number }>
+			action: PayloadAction<{ entryID: number; attributeID: number; rating: number | undefined }>
 		) => {
 			state.entryRatings = {
 				...state.entryRatings,

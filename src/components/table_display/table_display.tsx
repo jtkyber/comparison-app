@@ -82,6 +82,7 @@ const TableDisplay = () => {
 				}
 				return;
 			case 'yesNo':
+				if (typeof value !== 'boolean') return undefined;
 				if (bestIndex === 0) return value === false ? 10 : 0;
 				else return value === true ? 10 : 0;
 			case 'text':
@@ -106,7 +107,6 @@ const TableDisplay = () => {
 			const importance = attributes[i].importance;
 			if (importance === null) continue;
 			const cellRating = calculateCellRating(entry, attributes[i]);
-			if (cellRating === undefined) continue;
 
 			dispatch(
 				setEntryCellRating({
@@ -116,8 +116,10 @@ const TableDisplay = () => {
 				})
 			);
 
-			ratingNumerator += cellRating * importance;
-			ratingDenominator += importance;
+			if (cellRating !== undefined) {
+				ratingNumerator += cellRating * importance;
+				ratingDenominator += importance;
+			}
 		}
 
 		const finalRating = ratingNumerator / ratingDenominator;
@@ -138,7 +140,7 @@ const TableDisplay = () => {
 	};
 
 	const determineCellColor = (entryID: number, attrID: number) => {
-		const rating: number = display.entryRatings?.[entryID]?.[attrID];
+		const rating: number | undefined = display.entryRatings?.[entryID]?.[attrID];
 		const attrIndex: number = attributes.findIndex(a => a.id === attrID);
 		const type = attributes[attrIndex]?.type;
 		const textRatingType = attributes[attrIndex]?.textRatingType;
