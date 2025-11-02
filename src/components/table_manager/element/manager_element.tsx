@@ -29,8 +29,6 @@ const ManagerElement = ({
 	handleEditElement: (index?: number) => void;
 	handleElementMouseDown: (e: MouseEvent<HTMLHeadingElement>, id: number) => void;
 }) => {
-	const tooltipDelay: number = 800;
-
 	const dispatch = useAppDispatch();
 
 	const attributes = useAppSelector(state => state.comparison.attributes);
@@ -103,14 +101,14 @@ const ManagerElement = ({
 			<Tooltip
 				text={idsChecked.includes(el.id) ? 'Deselect' : 'Select'}
 				key={`select${el.id}`}
-				delay={tooltipDelay}>
+				delay='default'>
 				<div
 					onClick={() => handleElementSelect(el.id)}
 					className={`${styles.select_btn} ${idsChecked.includes(el.id) ? styles.checked : null}`}>
 					<SelectSVG />
 				</div>
 			</Tooltip>
-			<Tooltip text={el.hidden ? 'Show' : 'Hide'} key={`hide${el.id}`} delay={tooltipDelay}>
+			<Tooltip text={el.hidden ? 'Show' : 'Hide'} key={`hide${el.id}`} delay='default'>
 				<div
 					onClick={() =>
 						mode === 'attributes' ? handleAttributeHideToggle(index) : handleEntryHideToggle(index)
@@ -119,7 +117,7 @@ const ManagerElement = ({
 					{el.hidden ? <HiddenSVG /> : <VisibleSVG />}
 				</div>
 			</Tooltip>
-			<Tooltip text='Edit' key={`edit${el.id}`} delay={tooltipDelay}>
+			<Tooltip text='Edit' key={`edit${el.id}`} delay='default'>
 				<div onClick={() => handleEditElement(index)} className={styles.edit_btn}>
 					<EditSVG />
 				</div>

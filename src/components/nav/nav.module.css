@@ -30,6 +30,7 @@
 			aspect-ratio: 1/1;
 			border-radius: 0.5rem;
 			cursor: pointer;
+			background-color: var(--color-grey2);
 		}
 	}
 

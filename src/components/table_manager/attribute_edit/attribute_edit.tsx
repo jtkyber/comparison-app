@@ -32,8 +32,10 @@ import DeleteSVG from '../../svg/action_center/delete.svg';
 import styles from './attribute_edit.module.css';
 
 const AttributeEdit = () => {
-	const attributeIndex = useAppSelector(state => state.manager.editingIndex) as number;
-	const attribute = useAppSelector(state => state.comparison.attributes[attributeIndex]);
+	const editingIndex = useAppSelector(state => state.manager.editingIndex) as number;
+	const attributes = useAppSelector(state => state.comparison.attributes);
+	const attributeIndex = editingIndex !== null && editingIndex >= 0 ? editingIndex : attributes.length - 1;
+	const attribute = attributes[attributeIndex];
 
 	const dispatch = useAppDispatch();
 

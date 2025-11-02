@@ -48,7 +48,7 @@ const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value
 			document.removeEventListener('keydown', handle_keydown);
 			document.removeEventListener('keyup', handle_keyup);
 		};
-	}, []);
+	}, [rating]);
 
 	useEffect(() => {
 		const handle_mouse_move = (e: MouseEvent) => {

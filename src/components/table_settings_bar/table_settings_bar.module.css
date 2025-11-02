@@ -1,0 +1,31 @@
+.table_settings_bar_container {
+	grid-area: table_settings;
+	width: 2.5rem;
+	height: 100%;
+	background-color: var(--color-grey3);
+	padding: 1rem 0;
+
+	.display_settings {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+
+		.shrink_btn {
+			padding: 0.3rem 0.5rem;
+			cursor: pointer;
+
+			&:hover {
+				opacity: 0.6;
+			}
+
+			&.active {
+				opacity: 0.6;
+			}
+
+			svg {
+				width: 16px;
+				height: auto;
+			}
+		}
+	}
+}

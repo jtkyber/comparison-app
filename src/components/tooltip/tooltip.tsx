@@ -1,7 +1,15 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './tooltip.module.css';
 
-const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: string; delay?: number }) => {
+const Tooltip = ({
+	children,
+	text,
+	delay = 0,
+}: {
+	children: ReactNode;
+	text: string;
+	delay?: number | 'default';
+}) => {
 	const childRef = useRef<HTMLDivElement>(null);
 
 	let timeoutID: NodeJS.Timeout;
@@ -11,6 +19,7 @@ const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: str
 	const [yPos, setYPos] = useState<number>(0);
 
 	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [onRightSide, setOnRightSide] = useState<boolean>(false);
 
 	useEffect(() => {
 		const childEl: HTMLElement | null = childRef?.current;
@@ -28,17 +37,26 @@ const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: str
 	function handleMouseEnter() {
 		mouseOver = true;
 
-		timeoutID = setTimeout(() => {
-			const childEl: HTMLElement | null = childRef?.current;
-			if (!childEl || !mouseOver) return;
+		timeoutID = setTimeout(
+			() => {
+				const childEl: HTMLElement | null = childRef?.current;
+				if (!childEl || !mouseOver) return;
 
-			const x: number = childEl.getBoundingClientRect().right;
-			const y: number = childEl.getBoundingClientRect().top;
+				let x: number = childEl.getBoundingClientRect().right;
+				const y: number = childEl.getBoundingClientRect().top;
+				const width: number = childEl.getBoundingClientRect().width;
 
-			setXPos(x);
-			setYPos(y);
-			setIsVisible(true);
-		}, delay);
+				if (x - width > window.innerWidth / 2) {
+					x = childEl.getBoundingClientRect().left;
+					setOnRightSide(true);
+				}
+
+				setXPos(x);
+				setYPos(y);
+				setIsVisible(true);
+			},
+			typeof delay === 'number' ? delay : window.tooltipDelay
+		);
 	}
 
 	function handleMouseLeave() {
@@ -57,7 +75,9 @@ const Tooltip = ({ children, text, delay = 0 }: { children: ReactNode; text: str
 
 			<h5
 				style={{ left: `${xPos}px`, top: `${yPos}px` }}
-				className={`${styles.tooltip} ${isVisible ? styles.visible : null}`}>
+				className={`${styles.tooltip} ${isVisible ? styles.visible : null} ${
+					onRightSide ? styles.onRight : null
+				}`}>
 				{text}
 			</h5>
 		</>

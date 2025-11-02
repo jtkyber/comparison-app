@@ -46,8 +46,6 @@ const defaultEntry: IEntry = {
 };
 
 const TableManager = () => {
-	const tooltipDelay: number = 800;
-
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
 	const [draggingID, setDraggingID] = useState<number>(0);
 
@@ -485,7 +483,7 @@ const TableManager = () => {
 				<div className={styles.actions_left}>
 					{editingIndex === null && idsChecked.length ? (
 						<>
-							<Tooltip text='Delete' key='delete' delay={tooltipDelay}>
+							<Tooltip text='Delete' key='delete' delay='default'>
 								<div
 									onClick={mode === 'attributes' ? deleteAttributesInDB : deleteEntriesInDB}
 									className={`${styles.action_btn} ${styles.delete_element_btn}`}>
@@ -498,7 +496,7 @@ const TableManager = () => {
 				<div className={styles.actions_right}>
 					{editingIndex === null ? (
 						<>
-							<Tooltip text='Add' key='add' delay={tooltipDelay}>
+							<Tooltip text='Add' key='add' delay='default'>
 								<div
 									onClick={() => handleEditElement()}
 									className={`${styles.action_btn} ${styles.add_element_btn}`}>
@@ -508,12 +506,12 @@ const TableManager = () => {
 						</>
 					) : (
 						<>
-							<Tooltip text='Cancel' key='cancel' delay={tooltipDelay}>
+							<Tooltip text='Cancel' key='cancel' delay='default'>
 								<div onClick={handleCancelEdit} className={`${styles.action_btn} ${styles.save_element_btn}`}>
 									<CancelSVG />
 								</div>
 							</Tooltip>
-							<Tooltip text='Save' key='save' delay={tooltipDelay}>
+							<Tooltip text='Save' key='save' delay='default'>
 								<div
 									onClick={() =>
 										mode === 'attributes'

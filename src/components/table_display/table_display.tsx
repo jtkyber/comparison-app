@@ -12,6 +12,7 @@ const TableDisplay = () => {
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
 	const display = useAppSelector(state => state.display);
+	const settings = useAppSelector(state => state.settings);
 
 	const dispatch = useAppDispatch();
 
@@ -163,57 +164,84 @@ const TableDisplay = () => {
 		dispatch(setEntryAttributeID(attrID));
 	};
 
-	const resizeCells = useDebounceCallback(
-		() => {
-			const maxColWidths: {
-				[key: string]: number;
-			} = {};
+	const resizeCells = () => {
+		const maxColWidths: {
+			[key: string]: number;
+		} = {};
 
-			const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
-			const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
+		const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
+		const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
 
-			// get attribute name widths
-			for (let i = 0; i < attributeEls.length; i++) {
-				const attrEl = attributeEls[i] as HTMLDivElement;
-				const id = attrEl.id.split(':')[1];
-				const attrNameEl = attrEl.querySelector(`.${styles.attribute_name}`);
-				const width = attrNameEl?.getBoundingClientRect().width;
-				maxColWidths[id] = width ?? 0;
-			}
+		// get attribute name widths
+		for (let i = 0; i < attributeEls.length; i++) {
+			const attrEl = attributeEls[i] as HTMLDivElement;
+			const id = attrEl.id.split(':')[1];
+			const attrNameEl = attrEl.querySelector(`.${styles.attribute_name}`);
+			const width = attrNameEl?.getBoundingClientRect().width;
+			maxColWidths[id] = width ?? 0;
+		}
 
-			// look through all entry cell values and set largest width for each column
-			for (let i = 0; i < entryCellEls.length; i++) {
-				const entryCell = entryCellEls[i] as HTMLDivElement;
-				const id = entryCell.id;
-				const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`);
-				const width = entryCellValueEl?.getBoundingClientRect().width;
-				const attrID = id.split(':')[2];
-				if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
-			}
+		// look through all entry cell values and set largest width for each column
+		for (let i = 0; i < entryCellEls.length; i++) {
+			const entryCell = entryCellEls[i] as HTMLDivElement;
+			const id = entryCell.id;
+			const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`) as HTMLHeadingElement;
+			entryCellValueEl.style.setProperty('width', 'min-content');
+			const width = entryCellValueEl?.getBoundingClientRect().width;
+			const attrID = id.split(':')[2];
+			if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
+			entryCellValueEl.style.setProperty('width', 'max-content');
+		}
 
-			// set attribute name element widths
-			for (let i = 0; i < attributeEls.length; i++) {
-				const attrEl = attributeEls[i] as HTMLDivElement;
-				const id = attrEl.id.split(':')[1];
-				attrEl.style.width = `${maxColWidths[id]}px`;
-			}
+		// set attribute name element widths
+		for (let i = 0; i < attributeEls.length; i++) {
+			const attrEl = attributeEls[i] as HTMLDivElement;
+			const id = attrEl.id.split(':')[1];
+			attrEl.style.width = `${maxColWidths[id]}px`;
+		}
 
-			// set entry cell element widths
-			for (let i = 0; i < entryCellEls.length; i++) {
-				const entryCell = entryCellEls[i] as HTMLDivElement;
-				const id = entryCell.id;
-				const attrID = id.split(':')[2];
-				entryCell.style.width = `${maxColWidths[attrID]}px`;
-			}
-		},
-		250,
-		false
-	);
+		// set entry cell element widths
+		for (let i = 0; i < entryCellEls.length; i++) {
+			const entryCell = entryCellEls[i] as HTMLDivElement;
+			const id = entryCell.id;
+			const attrID = id.split(':')[2];
+			entryCell.style.width = `${maxColWidths[attrID]}px`;
+		}
+	};
+
+	const resizeCellsDebounce = useDebounceCallback(resizeCells, 250, false);
+
+	const revertToDefaultCellSizes = () => {
+		const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
+		const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
+
+		// set attribute name element widths
+		for (let i = 0; i < attributeEls.length; i++) {
+			const attrEl = attributeEls[i] as HTMLDivElement;
+			attrEl.style.setProperty('width', 'var(--cell-width)');
+		}
+
+		// set entry cell element widths
+		for (let i = 0; i < entryCellEls.length; i++) {
+			const entryCell = entryCellEls[i] as HTMLDivElement;
+			entryCell.style.setProperty('width', 'var(--cell-width)');
+		}
+	};
 
 	useEffect(() => {
-		resizeCells();
+		if (settings.autoResize) resizeCells();
+		calculateFinalRatings();
+	}, []);
+
+	useEffect(() => {
+		if (settings.autoResize) resizeCellsDebounce();
 		calculateFinalRatings();
 	}, [attributes, entries]);
+
+	useEffect(() => {
+		if (settings.autoResize) resizeCells();
+		else revertToDefaultCellSizes();
+	}, [settings.autoResize]);
 
 	return (
 		<div className={styles.table_display_container}>

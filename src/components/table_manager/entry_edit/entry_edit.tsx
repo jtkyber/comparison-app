@@ -1,5 +1,5 @@
 import { setEntryName, setEntryRating, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
-import { IManager } from '@/src/lib/features/comparison/managerSlice';
+import { IManager, setEntryAttributeID } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import React, { ChangeEvent, useEffect, useRef } from 'react';
 import Combobox from '../../inputs/combobox/combobox';
@@ -9,11 +9,11 @@ import SpecialInput from '../../inputs/special_input/special_input';
 import styles from './entry_edit.module.css';
 
 const EntryEdit = () => {
-	const { editingIndex: entryIndex, entryAttributeID } = useAppSelector(
-		state => state.manager
-	) as Partial<IManager> & { editingIndex: number };
+	const { editingIndex, entryAttributeID } = useAppSelector(state => state.manager);
 	const attributes = useAppSelector(state => state.comparison.attributes);
-	const entry = useAppSelector(state => state.comparison.entries[entryIndex]);
+	const entries = useAppSelector(state => state.comparison.entries);
+	const entryIndex = editingIndex !== null && editingIndex >= 0 ? editingIndex : entries.length - 1;
+	const entry = entries[entryIndex];
 
 	const dispatch = useAppDispatch();
 
@@ -78,6 +78,10 @@ const EntryEdit = () => {
 	useEffect(() => {
 		setDefaultTextRatings();
 		setDefaultRadioValues();
+
+		return () => {
+			dispatch(setEntryAttributeID(null));
+		};
 	}, []);
 
 	useEffect(() => {

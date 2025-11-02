@@ -1,6 +1,6 @@
 'use client';
 import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
-import { setUser } from '@/src/lib/features/userSlice';
+import { setUser } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IComparisonItem } from '@/src/types/comparisons.types';
 import { useEffect, useState } from 'react';
@@ -131,12 +131,12 @@ const Nav = () => {
 							/>
 						</div>
 						<div className={styles.comparison_modal_btn_section}>
-							<Tooltip text='Cancel' key='cancel' delay={800}>
+							<Tooltip text='Cancel' key='cancel' delay='default'>
 								<button onClick={cancelAddComparison} className={styles.cancel_add_comparison_btn}>
 									X
 								</button>
 							</Tooltip>
-							<Tooltip text='Add' key='add' delay={800}>
+							<Tooltip text='Add' key='add' delay='default'>
 								<button onClick={handleAddComparison} className={styles.add_comparison_btn}>
 									&#10003;
 								</button>
