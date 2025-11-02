@@ -6,23 +6,16 @@ import {
 	setComparison,
 	setNewAttributeIndex,
 	setNewEntryIndex,
-	toggleAttributeHidden,
-	toggleEntryHidden,
 } from '@/src/lib/features/comparison/comparisonSlice';
-import { setHighlightedAttribute, setHighlightedEntry } from '@/src/lib/features/comparison/displaySlice';
+import { setEditingIndex, setMode } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
-import { TableManagerMode } from '@/src/types/table_manager.types';
 import React, { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
 import SaveSVG from '../svg/action_center/save.svg';
-import EditSVG from '../svg/element/edit.svg';
-import HiddenSVG from '../svg/element/hidden.svg';
-import SelectSVG from '../svg/element/select.svg';
-import VisibleSVG from '../svg/element/visible.svg';
 import Tooltip from '../tooltip/tooltip';
 import AttributeEdit from './attribute_edit/attribute_edit';
 import ManagerElement from './element/manager_element';
@@ -55,8 +48,6 @@ const defaultEntry: IEntry = {
 const TableManager = () => {
 	const tooltipDelay: number = 800;
 
-	const [mode, setMode] = useState<TableManagerMode>('attributes');
-	const [editingIndex, setEditingIndex] = useState<number | null>(null);
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
 	const [draggingID, setDraggingID] = useState<number>(0);
 
@@ -67,6 +58,7 @@ const TableManager = () => {
 	const comparisonID = useAppSelector(state => state.comparison.id);
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
+	const { mode, editingIndex } = useAppSelector(state => state.manager);
 
 	const dispatch = useAppDispatch();
 
@@ -77,10 +69,10 @@ const TableManager = () => {
 
 		switch (id) {
 			case 'attributes_tab':
-				setMode('attributes');
+				dispatch(setMode('attributes'));
 				break;
 			case 'entries_tab':
-				setMode('entries');
+				dispatch(setMode('entries'));
 				break;
 		}
 	};
@@ -88,16 +80,16 @@ const TableManager = () => {
 	const handleEditElement = (index?: number): void => {
 		switch (mode) {
 			case 'attributes':
-				if (index !== undefined) setEditingIndex(index);
+				if (index !== undefined) dispatch(setEditingIndex(index));
 				else {
-					setEditingIndex(-1);
+					dispatch(setEditingIndex(-1));
 					dispatch(addAttribute(defaultAttribute));
 				}
 				break;
 			case 'entries':
-				if (index !== undefined) setEditingIndex(index);
+				if (index !== undefined) dispatch(setEditingIndex(index));
 				else {
-					setEditingIndex(-1);
+					dispatch(setEditingIndex(-1));
 					dispatch(addEntry(defaultEntry));
 				}
 				break;
@@ -152,7 +144,7 @@ const TableManager = () => {
 		if (data) {
 			await refreshComparison();
 
-			setEditingIndex(null);
+			dispatch(setEditingIndex(null));
 		}
 	};
 
@@ -176,7 +168,7 @@ const TableManager = () => {
 
 		if (data) {
 			await refreshComparison();
-			setEditingIndex(null);
+			dispatch(setEditingIndex(null));
 		}
 	};
 
@@ -199,7 +191,7 @@ const TableManager = () => {
 		if (data) {
 			await refreshComparison();
 
-			setEditingIndex(null);
+			dispatch(setEditingIndex(null));
 		}
 	};
 
@@ -222,7 +214,7 @@ const TableManager = () => {
 		if (data) {
 			await refreshComparison();
 
-			setEditingIndex(null);
+			dispatch(setEditingIndex(null));
 		}
 	};
 
@@ -283,7 +275,7 @@ const TableManager = () => {
 			await refreshComparison();
 		}
 
-		setEditingIndex(null);
+		dispatch(setEditingIndex(null));
 	};
 
 	const moveAttributeInDB = async (id: number) => {
@@ -420,7 +412,7 @@ const TableManager = () => {
 	}, [draggingID, attributes, entries]);
 
 	useEffect(() => {
-		setEditingIndex(null);
+		dispatch(setEditingIndex(null));
 		setIdsChecked([]);
 	}, [comparisonID]);
 
@@ -455,11 +447,7 @@ const TableManager = () => {
 								{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
 							</h4>
 						</div>
-						{editingIndex >= 0 ? (
-							<AttributeEdit attributeIndex={editingIndex} />
-						) : (
-							<AttributeEdit attributeIndex={attributes.length - 1} />
-						)}
+						{editingIndex >= 0 ? <AttributeEdit /> : <AttributeEdit />}
 					</div>
 				) : editingIndex !== null && mode === 'entries' ? (
 					<div className={styles.element_editor_section}>
@@ -469,11 +457,7 @@ const TableManager = () => {
 								{editingIndex >= 0 ? 'Edit Entry' : 'Add New Entry'}
 							</h4>
 						</div>
-						{editingIndex >= 0 ? (
-							<EntryEdit entryIndex={editingIndex} />
-						) : (
-							<EntryEdit entryIndex={entries.length - 1} />
-						)}
+						{editingIndex >= 0 ? <EntryEdit /> : <EntryEdit />}
 					</div>
 				) : (
 					<div ref={elementListRef} className={styles.element_list}>

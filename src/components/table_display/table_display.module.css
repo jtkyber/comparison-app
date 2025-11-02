@@ -87,6 +87,7 @@
 				display: flex;
 				flex-flow: row nowrap;
 				border-radius: var(--section-border-radius);
+				cursor: pointer;
 
 				&:last-child {
 					.entry_cell_section {
@@ -146,6 +147,12 @@
 						align-items: center;
 						border-right: var(--cell-border);
 						background-color: inherit;
+
+						&:hover {
+							box-shadow: inset 2px 2px 0 var(--highlight-border-color),
+								inset -2px -2px 0 var(--highlight-border-color);
+							filter: var(--highlight-filter);
+						}
 
 						&:last-child {
 							border-right: none;

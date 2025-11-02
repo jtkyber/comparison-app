@@ -1,4 +1,5 @@
 import { setEntryCellRating, setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
+import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
@@ -155,6 +156,13 @@ const TableDisplay = () => {
 		return ratingToColor(rating);
 	};
 
+	const handleCellClick = (entryID: number, attrID: number) => {
+		const entryIndex: number = entries.findIndex(entry => entry.id === entryID);
+		dispatch(setMode('entries'));
+		dispatch(setEditingIndex(entryIndex));
+		dispatch(setEntryAttributeID(attrID));
+	};
+
 	const resizeCells = useDebounceCallback(
 		() => {
 			const maxColWidths: {
@@ -251,7 +259,8 @@ const TableDisplay = () => {
 														className={`${styles.entry_cell} ${
 															display.highlightedAttribute === attr.id ? styles.highlighted : null
 														}`}
-														style={{ backgroundColor: determineCellColor(entry.id, attr.id) }}>
+														style={{ backgroundColor: determineCellColor(entry.id, attr.id) }}
+														onClick={() => handleCellClick(entry.id, attr.id)}>
 														{value === undefined || value === null || value === '' ? null : (
 															<h5 className={styles.entry_value}>{`${attr.prefix ?? ''}${value}${
 																attr.suffix ?? ''

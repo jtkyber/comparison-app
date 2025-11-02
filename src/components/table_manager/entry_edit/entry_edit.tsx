@@ -1,4 +1,5 @@
 import { setEntryName, setEntryRating, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
+import { IManager } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import React, { ChangeEvent, useEffect, useRef } from 'react';
 import Combobox from '../../inputs/combobox/combobox';
@@ -7,7 +8,10 @@ import SectionLabel from '../../inputs/section_label/section_label';
 import SpecialInput from '../../inputs/special_input/special_input';
 import styles from './entry_edit.module.css';
 
-const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
+const EntryEdit = () => {
+	const { editingIndex: entryIndex, entryAttributeID } = useAppSelector(
+		state => state.manager
+	) as Partial<IManager> & { editingIndex: number };
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entry = useAppSelector(state => state.comparison.entries[entryIndex]);
 
@@ -21,10 +25,6 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 	};
 
 	const handleValueChange = (attrID: number) => (value: string) => {
-		dispatch(setEntryValue({ index: entryIndex, valueKey: attrID, value: value }));
-	};
-
-	const handleTextKeySelection = (attrID: number) => (value: string) => {
 		dispatch(setEntryValue({ index: entryIndex, valueKey: attrID, value: value }));
 	};
 
@@ -80,6 +80,16 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 		setDefaultRadioValues();
 	}, []);
 
+	useEffect(() => {
+		const el = document.getElementById('attr-' + entryAttributeID);
+		setTimeout(() => {
+			if (el)
+				el.scrollIntoView({
+					behavior: 'smooth',
+				});
+		}, 100);
+	}, [entryIndex, entryAttributeID]);
+
 	return (
 		<div className={styles.entry_edit_container}>
 			<div className={styles.name_input_section}>
@@ -99,7 +109,7 @@ const EntryEdit = ({ entryIndex }: { entryIndex: number }) => {
 					const keyRatingPairKeys = attr.keyRatingPairs.map(pair => pair.key);
 					const rating = entry.cells?.[attr.id]?.rating;
 					return (
-						<div key={attr.id} className={styles.entry_attribute_section}>
+						<div key={attr.id} id={'attr-' + attr.id} className={styles.entry_attribute_section}>
 							<SectionLabel text={attr.name} color='var(--color-grey0)' />
 
 							<div className={styles.input_section}>

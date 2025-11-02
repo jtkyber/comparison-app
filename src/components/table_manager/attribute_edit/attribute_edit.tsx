@@ -31,8 +31,8 @@ import AddSVG from '../../svg/action_center/add.svg';
 import DeleteSVG from '../../svg/action_center/delete.svg';
 import styles from './attribute_edit.module.css';
 
-const AttributeEdit = ({ attributeIndex }: { attributeIndex: number }) => {
-	const comparisonID = useAppSelector(state => state.comparison.id);
+const AttributeEdit = () => {
+	const attributeIndex = useAppSelector(state => state.manager.editingIndex) as number;
 	const attribute = useAppSelector(state => state.comparison.attributes[attributeIndex]);
 
 	const dispatch = useAppDispatch();
