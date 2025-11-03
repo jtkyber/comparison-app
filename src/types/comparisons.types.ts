@@ -4,8 +4,6 @@ import { IEntry } from './entries.types';
 export interface IComparisonItem {
 	id: number;
 	name: string;
-	attributes: number[];
-	entries: number[];
 }
 
 export interface IComparison {

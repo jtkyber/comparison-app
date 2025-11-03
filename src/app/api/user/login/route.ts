@@ -1,4 +1,5 @@
 import { sql } from '@/src/lib/db';
+import { underscoreToCamelObject } from '@/src/utils/server';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
 
@@ -16,11 +17,21 @@ export async function POST(req: Request) {
 
 	const comparisons = await sql`
 		SELECT * FROM comparisons
-		WHERE id IN (${user.comparisons.toString()})
+		WHERE userid = ${user.id}
 	;`;
 
+	const [settings] = await sql`
+		SELECT * FROM settings
+		WHERE userid = ${user.id}
+	;`;
+
+	delete user.hash;
+
 	return NextResponse.json({
-		username: user.username,
-		comparisons: comparisons,
+		user: {
+			...user,
+			comparisons: comparisons,
+		},
+		settings: underscoreToCamelObject(settings),
 	});
 }

@@ -14,3 +14,18 @@ export function toCamelAttribute(o: Partial<IAttribute>): Partial<IAttribute> {
 
 	return object;
 }
+
+export function underscoreToCamelObject(o: object): object {
+	const object: any = { ...o };
+
+	for (const key in object) {
+		const valueCopy = object[key];
+		const newKey = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+		if (newKey === undefined || newKey === key) continue;
+		object[newKey] = valueCopy;
+
+		delete object[key];
+	}
+
+	return object;
+}

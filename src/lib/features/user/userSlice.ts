@@ -1,11 +1,6 @@
 import { IComparisonItem } from '@/src/types/comparisons.types';
+import { IUser } from '@/src/types/user.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface IUser {
-	id: number;
-	username: string;
-	comparisons: IComparisonItem[];
-}
 
 const initialState: IUser = {
 	id: 0,

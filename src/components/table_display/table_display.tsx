@@ -185,10 +185,11 @@ const TableDisplay = () => {
 		for (let i = 0; i < entryCellEls.length; i++) {
 			const entryCell = entryCellEls[i] as HTMLDivElement;
 			const id = entryCell.id;
+			const attrID = id.split(':')[2];
 			const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`) as HTMLHeadingElement;
+			if (!entryCellValueEl) continue;
 			entryCellValueEl.style.setProperty('width', 'min-content');
 			const width = entryCellValueEl?.getBoundingClientRect().width;
-			const attrID = id.split(':')[2];
 			if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
 			entryCellValueEl.style.setProperty('width', 'max-content');
 		}

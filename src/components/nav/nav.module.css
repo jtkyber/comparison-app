@@ -31,6 +31,10 @@
 			border-radius: 0.5rem;
 			cursor: pointer;
 			background-color: var(--color-grey2);
+
+			&:hover {
+				opacity: 0.6;
+			}
 		}
 	}
 

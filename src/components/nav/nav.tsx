@@ -1,8 +1,10 @@
 'use client';
 import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
-import { setUser } from '@/src/lib/features/user/userSlice';
+import { ISettings, setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
+import { setUser, setUserComparisons } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IComparisonItem } from '@/src/types/comparisons.types';
+import { IUser } from '@/src/types/user.types';
 import { useEffect, useState } from 'react';
 import Combobox from '../inputs/combobox/combobox';
 import SpecialInput from '../inputs/special_input/special_input';
@@ -11,15 +13,14 @@ import styles from './nav.module.css';
 
 const Nav = () => {
 	const user = useAppSelector(state => state.user);
-	const [selected, setSelected] = useState<string>('');
+	const { selectedComparison } = useAppSelector(state => state.settings);
 	const [addingNew, setAddingNew] = useState<boolean>(false);
 	const [newComparisonName, setNewComparisonName] = useState<string>('');
 
 	const dispatch = useAppDispatch();
 
 	const setComparisonTable = async () => {
-		const comparison: IComparisonItem | undefined = user.comparisons.find(c => c.id.toString() === selected);
-		if (!comparison) return;
+		if (selectedComparison <= 0) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/table`, {
 			method: 'POST',
@@ -27,7 +28,7 @@ const Nav = () => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				comparisonID: comparison.id,
+				comparisonID: selectedComparison,
 			}),
 		});
 
@@ -43,19 +44,28 @@ const Nav = () => {
 		);
 	};
 
-	const getAndSetUser = async () => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/${4}`);
-		const comparisons: IComparisonItem[] = await res.json();
+	const getAndSetUserData = async () => {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				username: 'bob',
+				password: 'testing123',
+			}),
+		});
+		const userData = await res.json();
 
-		dispatch(
-			setUser({
-				id: 4,
-				username: 'jtkyber',
-				comparisons: comparisons,
-			})
-		);
+		if (userData.user && userData.settings) {
+			const { user, settings }: { user: IUser; settings: ISettings } = userData;
+			if (user.comparisons.length && settings.selectedComparison === 0) {
+				settings.selectedComparison = user.comparisons[0].id;
+			}
 
-		setSelected(comparisons.find(c => c.id === 1)?.id.toString() || '');
+			dispatch(setUser(user));
+			dispatch(setSettings(settings));
+		}
 	};
 
 	const buildReferenceTable = (): { [key: string]: string } => {
@@ -79,15 +89,41 @@ const Nav = () => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				userID: 4,
+				userID: user.id,
 				name: newComparisonName,
 			}),
 		});
 		const data = await res.json();
 
 		if (data) {
-			await setComparisonTable();
+			const comparisons: IComparisonItem[] = data;
+			dispatch(setUserComparisons(comparisons));
+
+			if (data.length === 1) dispatch(setSelectedComparison(data[0].id));
+			else await setComparisonTable();
 			setAddingNew(false);
+		}
+	};
+
+	const handleChangeComparison = async (idString: string) => {
+		const id = parseInt(idString);
+
+		dispatch(setSelectedComparison(id));
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/setSelectedComparison`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				userID: 4,
+				comparisonID: id,
+			}),
+		});
+		const data = await res.json();
+
+		if (!data) {
+			console.log('Could not update selected comparisonID');
 		}
 	};
 
@@ -96,10 +132,10 @@ const Nav = () => {
 
 	useEffect(() => {
 		setComparisonTable();
-	}, [selected]);
+	}, [selectedComparison]);
 
 	useEffect(() => {
-		getAndSetUser();
+		getAndSetUserData();
 	}, []);
 
 	return (
@@ -108,8 +144,8 @@ const Nav = () => {
 				<div className={styles.comparison_dropdown}>
 					<Combobox
 						options={user.comparisons.map(c => c.id.toString())}
-						selected={selected}
-						setSelected={setSelected}
+						selected={selectedComparison.toString()}
+						setSelected={handleChangeComparison}
 						referenceTable={buildReferenceTable()}
 					/>
 				</div>

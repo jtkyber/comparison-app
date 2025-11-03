@@ -4,27 +4,25 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
 	const { userID, name } = await req.json();
 
-	const [data] = await sql`
+	const data = await sql`
         INSERT into comparisons (name, userid)
         VALUES (${name}, ${userID})
-        RETURNING ID
+        RETURNING id
     ;`;
 
-	const comparisonID = data.id;
-	if (!comparisonID) {
-		throw new Error('Unable to add comparison to database');
+	if (data.length === 1) {
+		await sql`
+			UPDATE settings
+			SET selected_comparison = ${data[0].id}
+			WHERE userid = ${userID}
+		;`;
+
+		console.log('setting first selected comparison');
 	}
 
-	const [user] = await sql`
-        UPDATE users
-        SET comparisons = array_append(coalesce(comparisons, ARRAY[]::integer[]), ${comparisonID}::integer)
-        WHERE id = ${userID}::integer
-        RETURNING comparisons
-    ;`;
-
-	const newComparisonList = user.comparisons;
-	if (!newComparisonList) {
-		throw new Error('Unable to add comparison to user account');
+	const comparisonID = data[0].id;
+	if (!comparisonID) {
+		throw new Error('Unable to add comparison to database');
 	}
 
 	const comparisons = await sql`
