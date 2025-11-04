@@ -51,7 +51,7 @@ const Nav = () => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				username: 'bob',
+				username: 'jtkyber',
 				password: 'testing123',
 			}),
 		});
@@ -116,7 +116,7 @@ const Nav = () => {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				userID: 4,
+				userID: user.id,
 				comparisonID: id,
 			}),
 		});
