@@ -20,7 +20,7 @@ export async function PUT(req: Request) {
 
 	const existingPairs = await sql`
 		SELECT id FROM keyratingpairs
-		WHERE attributeid = ${id}
+		WHERE attribute_id = ${id}
 	;`;
 	const existingPairIDs = existingPairs.map(pair => pair.id);
 
@@ -41,13 +41,13 @@ export async function PUT(req: Request) {
                 suffix = ${suffix},
                 type = ${type},
                 range = ${range},
-                bestindex = ${bestIndex},
-                textratingtype = LOWER(${textRatingType})::text_rating_type,
+                best_index = ${bestIndex},
+                text_rating_type = LOWER(${textRatingType})::text_rating_type,
                 importance = ${importance}
             WHERE id = ${id}
             RETURNING id
         ), upd_keyratingpairs AS (
-			INSERT INTO keyratingpairs (id, key, rating, attributeid, comparisonid)
+			INSERT INTO keyratingpairs (id, key, rating, attribute_id, comparison_id)
 			SELECT 
 				COALESCE(t.id, nextval(pg_get_serial_sequence('keyratingpairs', 'id'))),
 				t.key,

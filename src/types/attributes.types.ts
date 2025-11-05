@@ -22,7 +22,7 @@ export const attributeInterfaceKeys = [
 	'keyRatingPairs',
 ];
 
-export type TextRatingType = 'none' | 'selfrated' | 'keyratingpairs' | null;
+export type TextRating = 'none' | 'selfrated' | 'keyratingpairs' | null;
 
 export interface IKeyRatingPair {
 	id: number;
@@ -40,7 +40,7 @@ export interface IAttribute {
 	type: AttributeType;
 	range: [number, number] | [number, number, number];
 	bestIndex: 0 | 1 | 2 | null;
-	textRatingType: TextRatingType;
+	textRatingType: TextRating;
 	importance: number | null;
 	keyRatingPairs: IKeyRatingPair[];
 }

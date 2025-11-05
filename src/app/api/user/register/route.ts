@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 		)
 		INSERT INTO settings (userid)
 		SELECT id FROM user_table
-		RETURNING userid
+		RETURNING user_id
     ;`;
 
 	return NextResponse.json(data.userid);

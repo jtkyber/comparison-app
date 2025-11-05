@@ -14,7 +14,7 @@ export async function PUT(req: Request) {
 
 	const attributes = (await sql`
         SELECT id, pos FROM attributes
-        WHERE comparisonid = ${comparisonID}
+        WHERE comparison_id = ${comparisonID}
     ;`) as { id: number; pos: number }[];
 
 	attributes.sort((a, b) => a.pos - b.pos);

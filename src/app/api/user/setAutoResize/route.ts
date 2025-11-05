@@ -7,7 +7,7 @@ export async function PUT(req: Request) {
 	const [settings] = await sql`
         UPDATE settings
         SET auto_resize = ${autoResize}
-        WHERE userid = ${userID}
+        WHERE user_id = ${userID}
         RETURNING id
     ;`;
 

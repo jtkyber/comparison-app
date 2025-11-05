@@ -1,4 +1,5 @@
 import { sql } from '@/src/lib/db';
+import { DBAttribute, DBCell, DBEntry } from '@/src/types/db.types';
 import { IEntry } from '@/src/types/entries.types';
 import { NextResponse } from 'next/server';
 
@@ -6,12 +7,12 @@ export async function POST(req: Request) {
 	const { comparisonID, entry }: { comparisonID: number; entry: IEntry } = await req.json();
 	const { name, hidden, cells } = entry;
 
-	const attributes = await sql`
+	const attributes = (await sql`
 		SELECT id, type FROM attributes
-		WHERE comparisonid = ${comparisonID}
-	;`;
+		WHERE comparison_id = ${comparisonID}
+	;`) as DBAttribute[];
 
-	const attributeIDs = attributes.map(a => a.id);
+	const attrIDs = attributes.map(a => a.id);
 	let values: Partial<string | null>[] = [];
 	let ratings: Partial<number | null>[] = [];
 
@@ -24,15 +25,24 @@ export async function POST(req: Request) {
 		ratings.push(cells?.[attr.id]?.rating || null);
 	}
 
-	let [data] = await sql`
-	    INSERT INTO entries (name, attributeids, values, ratings, hidden, comparisonid, pos)
-	    VALUES (${name}, ${attributeIDs}, ${values}, ${ratings}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM entries WHERE comparisonid = ${comparisonID}))
+	let [entryDB] = (await sql`
+	    INSERT INTO entries (name, hidden, comparison_id, pos)
+	    VALUES (${name}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM entries WHERE comparison_id = ${comparisonID}))
 		RETURNING *
-		;`;
+	;`) as DBEntry[];
 
-	if (typeof data.id !== 'number') {
+	if (typeof entryDB.id !== 'number') {
 		throw new Error('Unable to add new entry');
 	}
 
-	return NextResponse.json(data);
+	let cellsDB = (await sql`
+		INSERT INTO cells (entry_id, attribute_id, comparison_id, value, rating)
+		SELECT ${entryDB.id}, a, ${comparisonID}, v, r
+		FROM unnest(${attrIDs}::int[], ${values}::varchar(36)[], ${ratings}::numeric[]) AS t(a, v, r)
+		RETURNING *
+	;`) as DBCell[];
+
+	console.log(cellsDB);
+
+	return NextResponse.json(entryDB);
 }

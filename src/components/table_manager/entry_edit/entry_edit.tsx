@@ -12,6 +12,7 @@ const EntryEdit = () => {
 	const { editingIndex, entryAttributeID } = useAppSelector(state => state.manager);
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
+
 	const entryIndex = editingIndex !== null && editingIndex >= 0 ? editingIndex : entries.length - 1;
 	const entry = entries[entryIndex];
 
@@ -86,12 +87,19 @@ const EntryEdit = () => {
 
 	useEffect(() => {
 		const el = document.getElementById('attr-' + entryAttributeID);
-		setTimeout(() => {
-			if (el)
-				el.scrollIntoView({
-					behavior: 'smooth',
-				});
-		}, 100);
+
+		if (el) {
+			el.scrollIntoView({
+				behavior: 'smooth',
+			});
+
+			setTimeout(() => {
+				el?.classList.add(styles.highlighted);
+				setTimeout(() => {
+					el?.classList.remove(styles.highlighted);
+				}, 1000);
+			}, 500);
+		}
 	}, [entryIndex, entryAttributeID]);
 
 	return (

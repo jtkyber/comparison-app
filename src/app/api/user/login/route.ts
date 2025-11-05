@@ -1,4 +1,5 @@
 import { sql } from '@/src/lib/db';
+import { DBUser } from '@/src/types/db.types';
 import { underscoreToCamelObject } from '@/src/utils/server';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
@@ -6,10 +7,10 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
 	const { username, password } = await req.json();
 
-	const [user] = await sql`
+	const [user] = (await sql`
         SELECT * FROM users
         WHERE username = ${username}
-    ;`;
+    ;`) as DBUser[];
 
 	if (!user?.hash) throw new Error('No matching username');
 	const match = await bcrypt.compare(password, user.hash);
@@ -17,12 +18,12 @@ export async function POST(req: Request) {
 
 	const comparisons = await sql`
 		SELECT * FROM comparisons
-		WHERE userid = ${user.id}
+		WHERE user_id = ${user.id}
 	;`;
 
 	const [settings] = await sql`
 		SELECT * FROM settings
-		WHERE userid = ${user.id}
+		WHERE user_id = ${user.id}
 	;`;
 
 	delete user.hash;

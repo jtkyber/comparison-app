@@ -1,33 +1,37 @@
 import { sql } from '@/src/lib/db';
 import { IAttribute, IKeyRatingPair, isAttribute } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
-import { IEntry } from '@/src/types/entries.types';
-import { toCamelAttribute } from '@/src/utils/server';
+import { DBAttribute, DBCell, DBComparison, DBEntry, DBKeyRatingPair } from '@/src/types/db.types';
+import { ICellValue, IEntry } from '@/src/types/entries.types';
+import { toCamelAttribute, underscoreToCamelObject } from '@/src/utils/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const { comparisonID } = await req.json();
 
-	const [comparisonData] = await sql`
-		SELECT * FROM comparisons
-		WHERE id = ${comparisonID}
-    ;`;
+	const query = `
+	SELECT
+		(SELECT row_to_json(c) FROM comparisons c WHERE c.id = $1) AS comparison,
 
-	const rawAttributes = await sql`
-		SELECT * FROM attributes
-		WHERE comparisonid = ${comparisonID}
+		COALESCE((SELECT json_agg(a ORDER BY a.pos) FROM attributes a WHERE a.comparison_id = $1), '[]'::json) AS attributes,
+		COALESCE((SELECT json_agg(e ORDER BY e.pos) FROM entries e WHERE e.comparison_id = $1), '[]'::json) AS entries,
+		COALESCE((SELECT json_agg(c ORDER BY c.id) FROM cells c WHERE c.comparison_id = $1), '[]'::json) AS cells,
+		COALESCE((SELECT json_agg(k ORDER BY k.id) FROM keyratingpairs k WHERE k.comparison_id = $1), '[]'::json) AS keyratingpairs
 	;`;
 
-	const keyRatingPairsArray = await sql`
-		SELECT * FROM keyratingpairs
-		WHERE comparisonid = ${comparisonID}
-	;`;
+	const [data] = await sql.query(query, [comparisonID]);
 
-	if (rawAttributes.length && !isAttribute(rawAttributes[0])) {
+	const comparisonDB: DBComparison = data.comparison;
+	const attributesDB: DBAttribute[] = data.attributes;
+	const entriesDB: DBEntry[] = data.entries;
+	const cellsDB: DBCell[] = data.cells;
+	const keyRatingPairsArrayDB: DBKeyRatingPair[] = data.keyratingpairs;
+
+	if (attributesDB.length && !isAttribute(attributesDB[0])) {
 		throw new Error('Could not retrieve attributes');
 	}
 
-	const attributesCamel = rawAttributes.map(attr => toCamelAttribute(attr)) as any[];
+	const attributesCamel = attributesDB.map(a => underscoreToCamelObject(a)) as any[];
 	attributesCamel.sort((a, b) => a.pos - b.pos);
 
 	const attributes: IAttribute[] = attributesCamel.map((a: IAttribute) => ({
@@ -37,51 +41,53 @@ export async function POST(req: Request) {
 
 	for (const attr of attributes) {
 		const keyRatingPairs: IKeyRatingPair[] = [];
-		const pairs = keyRatingPairsArray.filter(pair => pair.attributeid === attr.id);
+		const pairs = keyRatingPairsArrayDB.filter(pair => pair.attribute_id === attr.id);
 
 		for (let i = 0; i < pairs.length; i++) {
 			const { id, key, rating } = pairs[i];
 			keyRatingPairs[i] = {
 				id,
 				key,
-				rating: parseFloat(rating),
+				rating: rating,
 			};
 		}
 
 		attr.keyRatingPairs = keyRatingPairs;
 	}
 
-	const entries = await sql`
-		SELECT * FROM entries
-		WHERE comparisonid = ${comparisonID}
-	;`;
+	const cellsByEntry: {
+		[key: number]: {
+			[key: number]: ICellValue;
+		};
+	} = {};
 
-	const structuredEntries: IEntry[] = [];
-	for (let i = 0; i < entries?.length; i++) {
-		const entryFromDB = entries[i];
+	for (let i = 0; i < cellsDB.length; i++) {
+		const { value, rating, entry_id, attribute_id }: DBCell = cellsDB[i];
+		cellsByEntry[entry_id] = {
+			...cellsByEntry[entry_id],
+			[attribute_id]: {
+				value: value === 'true' ? true : value === 'false' ? false : value,
+				rating: rating,
+			},
+		};
+	}
+
+	const entries: IEntry[] = [];
+	for (let i = 0; i < entriesDB?.length; i++) {
+		const entryFromDB = entriesDB[i];
 		const entryTemp: IEntry = {
 			id: entryFromDB.id,
 			pos: entryFromDB.pos,
 			name: entryFromDB.name,
 			hidden: entryFromDB.hidden,
-			cells: {},
+			cells: cellsByEntry[entryFromDB.id],
 		};
 
-		for (let j = 0; j < entryFromDB.values?.length; j++) {
-			const attrID: number = entryFromDB.attributeids[j];
-			let value: string | number = entryFromDB.values[j];
-			const rating: number = entryFromDB.ratings[j];
-
-			entryTemp.cells[attrID] = {
-				value: value === 'true' ? true : value === 'false' ? false : value,
-				rating: rating,
-			};
-		}
-
-		structuredEntries.push(entryTemp);
+		entries.push(entryTemp);
 	}
 
-	for (const entry of structuredEntries) {
+	// Cell value string to float conversion (delete possibly)
+	for (const entry of entries) {
 		for (const attr of attributes) {
 			const key = attr.id;
 			const value = entry.cells[key].value;
@@ -93,13 +99,11 @@ export async function POST(req: Request) {
 		}
 	}
 
-	structuredEntries.sort((a, b) => a.pos - b.pos);
-
 	const returnData: IComparison = {
-		id: comparisonData.id,
-		name: comparisonData.name,
+		id: comparisonDB.id,
+		name: comparisonDB.name,
 		attributes: attributes || [],
-		entries: structuredEntries,
+		entries: entries,
 	};
 
 	return NextResponse.json(returnData);

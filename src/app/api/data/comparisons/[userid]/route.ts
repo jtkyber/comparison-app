@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: any }) {
 
 	const comparisons = await sql`
 		SELECT * FROM comparisons
-		WHERE userid = ${userid}
+		WHERE user_id = ${userid}
     ;`;
 
 	return NextResponse.json(comparisons);

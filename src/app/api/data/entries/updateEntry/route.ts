@@ -8,10 +8,10 @@ export async function PUT(req: Request) {
 
 	const attributes = await sql`
 		SELECT id, type FROM attributes
-		WHERE comparisonid = ${comparisonID}
+		WHERE comparison_id = ${comparisonID}
 	;`;
 
-	const attributeIDs = attributes.map(a => a.id);
+	const attrIDs = attributes.map(a => a.id);
 
 	const values: Partial<string | null>[] = [];
 	const ratings: Partial<number | null>[] = [];
@@ -25,16 +25,30 @@ export async function PUT(req: Request) {
 		ratings.push(cells?.[attr.id]?.rating || null);
 	}
 
-	const [entries] = await sql`
-        UPDATE entries
-        SET name = ${name},
-            attributeids = ${attributeIDs},
-            values = ${values},
-            ratings = ${ratings},
-			hidden = ${hidden}
-        WHERE id = ${id}
-        RETURNING *
-    ;`;
+	const query = `
+	WITH upd_entry AS (
+		UPDATE entries
+		SET name = $3,
+			hidden = $4
+		WHERE id = $1
+		RETURNING id
+	), u AS (
+		SELECT a, v, r
+		FROM unnest($2::int[], $5::varchar(36)[], $6::numeric[]) AS t(a, v, r)
+	), upd_cells AS (
+		UPDATE cells
+		SET value  = u.v,
+			rating = u.r
+		FROM u
+		WHERE cells.attribute_id = u.a AND cells.entry_id = $1  
+		RETURNING cells.id
+	)
+	SELECT
+		(SELECT count(*) FROM upd_entry) AS entries_updated,
+		(SELECT count(*) FROM upd_cells)  AS cells_updated;
+    `;
+
+	const entries = await sql.query(query, [id, attrIDs, name, hidden, values, ratings]);
 
 	return NextResponse.json(entries);
 }

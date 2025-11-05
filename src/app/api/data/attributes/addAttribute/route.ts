@@ -1,5 +1,6 @@
 import { sql } from '@/src/lib/db';
 import { IAttribute } from '@/src/types/attributes.types';
+import { DBAttribute } from '@/src/types/db.types';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -7,23 +8,23 @@ export async function POST(req: Request) {
 	const { name, hidden, prefix, suffix, type, range, bestIndex, textRatingType, keyRatingPairs, importance } =
 		attribute;
 
-	let [data] = await sql`
-	    INSERT INTO attributes (name, type, importance, range, bestindex, textratingtype, prefix, suffix, hidden, comparisonid, pos)
-	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, LOWER(${textRatingType})::text_rating_type, ${prefix}, ${suffix}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM attributes WHERE comparisonid = ${comparisonID}))
+	let [attributeIDObj] = await sql`
+	    INSERT INTO attributes (name, type, importance, range, best_index, text_rating_type, prefix, suffix, hidden, comparison_id, pos)
+	    VALUES (${name}, ${type}, ${importance}, ${range}, ${bestIndex}, LOWER(${textRatingType})::text_rating_type, ${prefix}, ${suffix}, ${hidden}, ${comparisonID}, (SELECT COALESCE(MAX(pos), 0) + 1 FROM attributes WHERE comparison_id = ${comparisonID}))
 		RETURNING id
 	;`;
 
-	if (typeof data.id !== 'number') {
+	if (typeof attributeIDObj.id !== 'number') {
 		throw new Error('Unable to add new attribute');
 	}
 
-	const newAttributeID: number = data.id;
+	const newAttributeID: number = attributeIDObj.id;
 
 	const pairKeys = keyRatingPairs.map(p => p.key);
 	const pairRatings = keyRatingPairs.map(p => p.rating);
 
 	await sql`
-		INSERT INTO keyratingpairs (key, rating, attributeid, comparisonid)
+		INSERT INTO keyratingpairs (key, rating, attribute_id, comparison_id)
 		SELECT 
 			t.key,
 			t.rating,
@@ -33,18 +34,13 @@ export async function POST(req: Request) {
 		RETURNING *
 	;`;
 
-	const entries = await sql`
-		UPDATE entries
-		SET
-			attributeids = array_append(coalesce(attributeids, ARRAY[]::integer[]), ${newAttributeID}::integer),
-			"values" = array_append(coalesce("values", ARRAY[]::varchar(36)[]), ''::varchar(36))
-		WHERE comparisonid = ${comparisonID}
-		RETURNING id
-		;`;
+	const cells = await sql`
+		INSERT INTO cells (entry_id, attribute_id, comparison_id)
+		SELECT e.id, ${newAttributeID}, ${comparisonID}
+		FROM entries e
+		WHERE e.comparison_id = ${comparisonID}
+		RETURNING *
+	;`;
 
-	if (!entries) {
-		throw new Error('Unable to add attribute to entries');
-	}
-
-	return NextResponse.json(entries);
+	return NextResponse.json(cells);
 }

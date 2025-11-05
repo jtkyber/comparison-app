@@ -1,3 +1,14 @@
+@keyframes brightnessFade {
+	0% {
+		filter: brightness(120%);
+		backdrop-filter: brightness(120%);
+	}
+	100% {
+		filter: brightness(100%);
+		backdrop-filter: brightness(100%);
+	}
+}
+
 .entry_edit_container {
 	width: 100%;
 	height: max-content;
@@ -32,6 +43,10 @@
 		width: 100%;
 		display: flex;
 		flex-flow: column nowrap;
+
+		&.highlighted {
+			animation: brightnessFade 1s ease-in forwards;
+		}
 
 		.input_section {
 			width: 100%;

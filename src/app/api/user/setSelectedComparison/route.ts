@@ -7,7 +7,7 @@ export async function PUT(req: Request) {
 	const [settings] = await sql`
         UPDATE settings
         SET selected_comparison = ${comparisonID}
-        WHERE userid = ${userID}
+        WHERE user_id = ${userID}
         RETURNING id
     ;`;
 

@@ -8,11 +8,14 @@ export async function DELETE(req: Request) {
 		throw new Error('Invalid body data');
 	}
 
-	const comparisons = await sql`
-        DELETE FROM entries
-        WHERE id = ANY(${entryIDs})
-        RETURNING *
-    ;`;
+	const data = await sql`
+		BEGIN;
 
-	return NextResponse.json(comparisons);
+		DELETE FROM entries WHERE id = ANY(${entryIDs});
+		DELETE FROM cells WHERE entry_id = ANY(${entryIDs});
+
+		COMMIT;
+	`;
+
+	return NextResponse.json(data);
 }

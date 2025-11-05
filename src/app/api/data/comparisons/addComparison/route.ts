@@ -5,7 +5,7 @@ export async function POST(req: Request) {
 	const { userID, name } = await req.json();
 
 	const data = await sql`
-        INSERT into comparisons (name, userid)
+        INSERT into comparisons (name, user_id)
         VALUES (${name}, ${userID})
         RETURNING id
     ;`;
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 		await sql`
 			UPDATE settings
 			SET selected_comparison = ${data[0].id}
-			WHERE userid = ${userID}
+			WHERE user_id = ${userID}
 		;`;
 
 		console.log('setting first selected comparison');
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
 	const comparisons = await sql`
 		SELECT * FROM comparisons
-		WHERE userid = ${userID}
+		WHERE user_id = ${userID}
 	;`;
 
 	return NextResponse.json(comparisons);
