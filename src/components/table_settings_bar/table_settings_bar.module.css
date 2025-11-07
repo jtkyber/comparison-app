@@ -8,9 +8,11 @@
 	.display_settings {
 		width: 100%;
 		display: flex;
-		justify-content: center;
+		flex-flow: column nowrap;
+		align-items: center;
 
-		.shrink_btn {
+		.shrink_btn,
+		.color_cells_btn {
 			padding: 0.3rem 0.5rem;
 			cursor: pointer;
 

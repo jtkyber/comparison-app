@@ -230,19 +230,19 @@ const TableDisplay = () => {
 	};
 
 	useEffect(() => {
-		if (settings.autoResize) resizeCells();
+		if (settings.fitColMin) resizeCells();
 		calculateFinalRatings();
 	}, []);
 
 	useEffect(() => {
-		if (settings.autoResize) resizeCellsDebounce();
+		if (settings.fitColMin) resizeCellsDebounce();
 		calculateFinalRatings();
 	}, [attributes, entries]);
 
 	useEffect(() => {
-		if (settings.autoResize) resizeCells();
+		if (settings.fitColMin) resizeCells();
 		else revertToDefaultCellSizes();
-	}, [settings.autoResize]);
+	}, [settings.fitColMin]);
 
 	return (
 		<div className={styles.table_display_container}>

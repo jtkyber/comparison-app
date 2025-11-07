@@ -1,13 +1,10 @@
+import { ISettings } from '@/src/types/settings.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface ISettings {
-	autoResize: boolean;
-	selectedComparison: number;
-}
-
 const initialState: ISettings = {
-	autoResize: false,
+	fitColMin: false,
 	selectedComparison: 0,
+	colorCellsByRating: true,
 };
 
 export const settingsSlice = createSlice({
@@ -17,15 +14,19 @@ export const settingsSlice = createSlice({
 		setSettings: (state, action: PayloadAction<ISettings>) => {
 			return action.payload;
 		},
-		toggleAutoResize: state => {
-			state.autoResize = !state.autoResize;
+		toggleFitColMin: state => {
+			state.fitColMin = !state.fitColMin;
 		},
 		setSelectedComparison: (state, action: PayloadAction<number>) => {
 			state.selectedComparison = action.payload;
 		},
+		toggleColorCellsByRating: state => {
+			state.colorCellsByRating = !state.colorCellsByRating;
+		},
 	},
 });
 
-export const { setSettings, toggleAutoResize, setSelectedComparison } = settingsSlice.actions;
+export const { setSettings, toggleFitColMin, setSelectedComparison, toggleColorCellsByRating } =
+	settingsSlice.actions;
 
 export default settingsSlice.reducer;

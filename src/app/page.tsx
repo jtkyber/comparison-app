@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import TableDisplay from '../components/table_display/table_display';
+import TableDisplay2 from '../components/table_display2/table_display2';
 import TableManager from '../components/table_manager/table_manager';
 import TableSettings from '../components/table_settings_bar/table_settings_bar';
 import styles from './page.module.css';
@@ -19,7 +20,8 @@ export default function Home() {
 	return (
 		<div className={styles.page}>
 			<TableManager />
-			<TableDisplay />
+			{/* <TableDisplay /> */}
+			<TableDisplay2 />
 			<TableSettings />
 		</div>
 	);
