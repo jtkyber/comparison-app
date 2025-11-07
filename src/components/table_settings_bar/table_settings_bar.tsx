@@ -1,6 +1,7 @@
 import { toggleColorCellsByRating, toggleFitColMin } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import React, { useEffect } from 'react';
+import ColorCellsSVG from '../svg/settings_bar/color_cells';
 import ShrinkSVG from '../svg/settings_bar/shrink';
 import Tooltip from '../tooltip/tooltip';
 import styles from './table_settings_bar.module.css';
@@ -76,7 +77,7 @@ const TableSettings = () => {
 					<button
 						onClick={handleColorCellsByRatingBtn}
 						className={`${styles.color_cells_btn} ${colorCellsByRating ? styles.active : null}`}>
-						<ShrinkSVG />
+						<ColorCellsSVG />
 					</button>
 				</Tooltip>
 			</div>

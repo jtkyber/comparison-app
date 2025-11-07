@@ -1,18 +1,18 @@
+import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
+import styles from './table_display.module.css';
+
 import { setEntryCellRating, setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/features/comparison/managerSlice';
-import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
-import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
+import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { ratingToColor } from '@/src/utils/colors';
-import { useDebounceCallback } from '@react-hook/debounce';
 import React, { useEffect } from 'react';
-import styles from './table_display.module.css';
 
 const TableDisplay = () => {
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
 	const display = useAppSelector(state => state.display);
-	const settings = useAppSelector(state => state.settings);
+	const { fitColMin, colorCellsByRating } = useAppSelector(state => state.settings);
 
 	const dispatch = useAppDispatch();
 
@@ -164,151 +164,88 @@ const TableDisplay = () => {
 		dispatch(setEntryAttributeID(attrID));
 	};
 
-	const resizeCells = () => {
-		const maxColWidths: {
-			[key: string]: number;
-		} = {};
-
-		const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
-		const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
-
-		// get attribute name widths
-		for (let i = 0; i < attributeEls.length; i++) {
-			const attrEl = attributeEls[i] as HTMLDivElement;
-			const id = attrEl.id.split(':')[1];
-			const attrNameEl = attrEl.querySelector(`.${styles.attribute_name}`);
-			const width = attrNameEl?.getBoundingClientRect().width;
-			maxColWidths[id] = width ?? 0;
-		}
-
-		// look through all entry cell values and set largest width for each column
-		for (let i = 0; i < entryCellEls.length; i++) {
-			const entryCell = entryCellEls[i] as HTMLDivElement;
-			const id = entryCell.id;
-			const attrID = id.split(':')[2];
-			const entryCellValueEl = entryCell.querySelector(`.${styles.entry_value}`) as HTMLHeadingElement;
-			if (!entryCellValueEl) continue;
-			entryCellValueEl.style.setProperty('width', 'min-content');
-			const width = entryCellValueEl?.getBoundingClientRect().width;
-			if (width && width > maxColWidths[attrID]) maxColWidths[attrID] = width;
-			entryCellValueEl.style.setProperty('width', 'max-content');
-		}
-
-		// set attribute name element widths
-		for (let i = 0; i < attributeEls.length; i++) {
-			const attrEl = attributeEls[i] as HTMLDivElement;
-			const id = attrEl.id.split(':')[1];
-			attrEl.style.width = `${maxColWidths[id]}px`;
-		}
-
-		// set entry cell element widths
-		for (let i = 0; i < entryCellEls.length; i++) {
-			const entryCell = entryCellEls[i] as HTMLDivElement;
-			const id = entryCell.id;
-			const attrID = id.split(':')[2];
-			entryCell.style.width = `${maxColWidths[attrID]}px`;
-		}
-	};
-
-	const resizeCellsDebounce = useDebounceCallback(resizeCells, 250, false);
-
-	const revertToDefaultCellSizes = () => {
-		const attributeEls = document.querySelectorAll(`.${styles.attribute}`);
-		const entryCellEls = document.querySelectorAll(`.${styles.entry_cell}`);
-
-		// set attribute name element widths
-		for (let i = 0; i < attributeEls.length; i++) {
-			const attrEl = attributeEls[i] as HTMLDivElement;
-			attrEl.style.setProperty('width', 'var(--cell-width)');
-		}
-
-		// set entry cell element widths
-		for (let i = 0; i < entryCellEls.length; i++) {
-			const entryCell = entryCellEls[i] as HTMLDivElement;
-			entryCell.style.setProperty('width', 'var(--cell-width)');
-		}
-	};
-
 	useEffect(() => {
-		if (settings.fitColMin) resizeCells();
 		calculateFinalRatings();
 	}, []);
 
 	useEffect(() => {
-		if (settings.fitColMin) resizeCellsDebounce();
 		calculateFinalRatings();
 	}, [attributes, entries]);
 
-	useEffect(() => {
-		if (settings.fitColMin) resizeCells();
-		else revertToDefaultCellSizes();
-	}, [settings.fitColMin]);
-
 	return (
 		<div className={styles.table_display_container}>
-			{attributes.length || entries.length ? (
-				<div className={styles.table}>
-					<div className={styles.attribute_section}>
-						<div className={styles.corner_gap}></div>
+			<table
+				className={`${styles.table} ${fitColMin ? styles.fit_cell_min : null} ${
+					colorCellsByRating ? styles.colored : null
+				}`}>
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
 						{attributes
-							.filter(a => !a.hidden)
+							.filter(attr => !attr.hidden)
 							.map(attr => (
-								<div
-									key={attr.id}
-									id={`attribute:${attr.id}`}
-									className={`${styles.attribute} ${
+								<th
+									className={`${styles.attribute_name} ${
 										display.highlightedAttribute === attr.id ? styles.highlighted : null
-									}`}>
-									<h4 className={styles.attribute_name}>{attr.name}</h4>
-								</div>
+									}`}
+									key={attr.id}>
+									{attr?.name}
+								</th>
 							))}
-						<h4 className={styles.final_rating_label}>Final Rating</h4>
-					</div>
-					<div className={styles.entry_section}>
-						{entries
-							.filter(e => !e.hidden)
-							.map(entry => (
-								<div
-									key={entry.id}
-									className={`${styles.entry} ${
-										display.highlightedEntry === entry.id ? styles.highlighted : null
-									}`}>
-									<h4 className={styles.entry_name}>{entry.name}</h4>
-									<div className={styles.entry_cell_section}>
-										{attributes
-											.filter(a => !a.hidden)
-											.map(attr => {
-												let value: CellValueType = entry.cells[attr.id]?.value;
-												if (attr.type === 'yesNo') value = value ? 'Yes' : 'No';
+						<th>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					{entries
+						.filter(entry => !entry.hidden)
+						.map(entry => {
+							const { id: entryID, name: entryName } = entry || {};
 
-												return (
-													<div
-														key={`${entry.id}-${attr.id}`}
-														id={`cell:${entry.id}:${attr.id}`}
-														className={`${styles.entry_cell} ${
-															display.highlightedAttribute === attr.id ? styles.highlighted : null
-														}`}
-														style={{ backgroundColor: determineCellColor(entry.id, attr.id) }}
-														onClick={() => handleCellClick(entry.id, attr.id)}>
-														{value === undefined || value === null || value === '' ? null : (
-															<h5 className={styles.entry_value}>{`${attr.prefix ?? ''}${value}${
-																attr.suffix ?? ''
-															}`}</h5>
-														)}
-													</div>
-												);
-											})}
-									</div>
-									<h4
-										style={{ backgroundColor: ratingToColor(display.entryRatings[entry.id]?.rating || 0) }}
-										className={styles.final_rating}>
-										{display.entryRatings[entry.id]?.rating || 0}
-									</h4>
-								</div>
-							))}
-					</div>
-				</div>
-			) : null}
+							return (
+								<tr
+									className={`${styles.table_row} ${
+										display.highlightedEntry === entryID ? styles.highlighted : null
+									}`}
+									key={entryID}>
+									<th>{entryName}</th>
+									{attributes
+										.filter(attr => !attr.hidden)
+										.map(attr => {
+											const { value } = entry.cells[attr.id] || {};
+											const { id: attrID, prefix, suffix } = attr || {};
+
+											return (
+												<td
+													className={`${styles.cell} ${
+														display.highlightedAttribute === attrID ? styles.highlighted : null
+													}`}
+													style={{
+														backgroundColor: colorCellsByRating
+															? determineCellColor(entryID, attrID)
+															: 'transparent',
+													}}
+													key={`${entryID}_${attrID}`}
+													onClick={() => handleCellClick(entryID, attrID)}>
+													{prefix}
+													{value}
+													{suffix}
+												</td>
+											);
+										})}
+									<td
+										style={{
+											backgroundColor: colorCellsByRating
+												? ratingToColor(display.entryRatings[entry.id]?.rating)
+												: 'transparent',
+										}}
+										className={styles.rating_cell}>
+										{display.entryRatings[entry.id]?.rating || ''}
+									</td>
+								</tr>
+							);
+						})}
+				</tbody>
+			</table>
 		</div>
 	);
 };

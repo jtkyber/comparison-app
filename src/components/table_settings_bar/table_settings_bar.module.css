@@ -20,12 +20,28 @@
 				opacity: 0.6;
 			}
 
-			&.active {
+			&.shrink_btn.active {
 				opacity: 0.6;
 			}
 
+			&.color_cells_btn {
+				svg {
+					* {
+						stroke: none;
+					}
+				}
+			}
+
+			&.color_cells_btn:not(&.active) {
+				svg * {
+					fill: var(--color-grey0);
+					stroke: black;
+					stroke-width: 2px;
+				}
+			}
+
 			svg {
-				width: 16px;
+				width: 100%;
 				height: auto;
 			}
 		}
