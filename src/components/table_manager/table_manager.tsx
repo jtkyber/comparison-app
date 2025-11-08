@@ -11,6 +11,8 @@ import { setEditingIndex, setMode } from '@/src/lib/features/comparison/managerS
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
+import { attributeValidationDefault, IAttributeValidation } from '@/src/types/validation.types';
+import { validateAttribute } from '@/src/validation/table_manager.val';
 import React, { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
@@ -48,6 +50,9 @@ const defaultEntry: IEntry = {
 const TableManager = () => {
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
 	const [draggingID, setDraggingID] = useState<number>(0);
+	const [attributeValidation, setAttributeValidation] = useState<IAttributeValidation>({
+		...attributeValidationDefault,
+	});
 
 	const draggingRef = useRef<HTMLDivElement>(null);
 	const managerSectionRef = useRef<HTMLDivElement>(null);
@@ -126,6 +131,13 @@ const TableManager = () => {
 	const addAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
+		const attr = attributes[editingIndex >= 0 ? editingIndex : attributes.length - 1];
+		const val = validateAttribute(attr, true);
+		if (!val.isValid) {
+			setAttributeValidation(val.valObj);
+			return;
+		}
+
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/addAttribute`, {
 			method: 'POST',
 			headers: {
@@ -133,7 +145,7 @@ const TableManager = () => {
 			},
 			body: JSON.stringify({
 				comparisonID: comparisonID,
-				attribute: attributes[editingIndex >= 0 ? editingIndex : attributes.length - 1],
+				attribute: attr,
 			}),
 		});
 
@@ -173,6 +185,14 @@ const TableManager = () => {
 	const updateAttributeInDB = async () => {
 		if (editingIndex === null) return;
 
+		const attr = attributes[editingIndex];
+		const val = validateAttribute(attr, true);
+
+		if (!val.isValid) {
+			setAttributeValidation(val.valObj);
+			return;
+		}
+
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/updateAttribute`, {
 			method: 'PUT',
 			headers: {
@@ -180,7 +200,7 @@ const TableManager = () => {
 			},
 			body: JSON.stringify({
 				comparisonID: comparisonID,
-				attribute: attributes[editingIndex],
+				attribute: attr,
 			}),
 		});
 
@@ -445,7 +465,7 @@ const TableManager = () => {
 								{editingIndex >= 0 ? 'Edit Attribute' : 'Add New Attribute'}
 							</h4>
 						</div>
-						{editingIndex >= 0 ? <AttributeEdit /> : <AttributeEdit />}
+						<AttributeEdit validation={attributeValidation} setValidation={setAttributeValidation} />
 					</div>
 				) : editingIndex !== null && mode === 'entries' ? (
 					<div className={styles.element_editor_section}>

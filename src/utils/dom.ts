@@ -12,13 +12,16 @@ export function moveCaretToEnd(target: HTMLElement, multiLine?: boolean) {
 }
 
 export function sanitizeNumInputValue(value: string): string {
-	if (!value) return '';
+	if (!value) return '0';
 
 	let s = value.trim();
 
 	// preserve single leading minus and remove any other '-'
 	let neg = '';
-	if (s.startsWith('-')) {
+	if (s === '0-') {
+		s = '';
+		neg = '-';
+	} else if (s.startsWith('-')) {
 		neg = '-';
 		s = s.slice(1);
 	}

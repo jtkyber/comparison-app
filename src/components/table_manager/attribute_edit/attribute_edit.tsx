@@ -22,41 +22,36 @@ import {
 	AttributeType,
 	attributeTypeList,
 	attributeTypeListDisplayed,
-	TextRatingType,
+	TextRating,
 } from '@/src/types/attributes.types';
+import {
+	attributeValidationDefault,
+	AttributeValidationKey,
+	IAttributeValidation,
+} from '@/src/types/validation.types';
+import { validateAttribute } from '@/src/validation/table_manager.val';
+import { useDebounceCallback } from '@react-hook/debounce';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import ErrorComponent from '../../error/error';
 import RatingSlider from '../../inputs/rating_slider/rating_slider';
 import SectionLabel from '../../inputs/section_label/section_label';
 import AddSVG from '../../svg/action_center/add.svg';
 import DeleteSVG from '../../svg/action_center/delete.svg';
 import styles from './attribute_edit.module.css';
 
-const AttributeEdit = () => {
+const AttributeEdit = ({
+	validation,
+	setValidation,
+}: {
+	validation: IAttributeValidation;
+	setValidation: React.Dispatch<React.SetStateAction<IAttributeValidation>>;
+}) => {
 	const editingIndex = useAppSelector(state => state.manager.editingIndex) as number;
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const attributeIndex = editingIndex !== null && editingIndex >= 0 ? editingIndex : attributes.length - 1;
 	const attribute = attributes[attributeIndex];
 
 	const dispatch = useAppDispatch();
-
-	// const clearEntryValuesForAttribute = async () => {
-	// 	const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/clearEntryValuesForAttribute`, {
-	// 		method: 'PUT',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 		body: JSON.stringify({
-	// 			comparisonID: comparisonID,
-	// 			attributeID: attribute.id,
-	// 		}),
-	// 	});
-
-	// 	const data = await res.json();
-
-	// 	if (data) {
-	// 		console.log(data);
-	// 	}
-	// };
 
 	const setPrefix = (value: string) => {
 		dispatch(setAttributePrefix({ index: attributeIndex, value: value }));
@@ -79,22 +74,6 @@ const AttributeEdit = () => {
 	};
 
 	const [rangeErrorIndex, setRangeErrorIndex] = useState<number>(-1);
-
-	useEffect(() => {
-		const checkRanges = () => {
-			if (attribute.type !== 'number') return;
-			setRangeErrorIndex(-1);
-
-			if (attribute.range[0] >= attribute.range[1]) setRangeErrorIndex(0);
-
-			if (attribute.range.length === 3) {
-				if (attribute.range[1] >= attribute.range[2]) setRangeErrorIndex(1);
-				if (attribute.range[0] >= attribute.range[2]) setRangeErrorIndex(2);
-			}
-		};
-
-		checkRanges();
-	}, [attribute.type, attribute.range]);
 
 	const handle_name_change = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e?.target as HTMLInputElement;
@@ -161,7 +140,7 @@ const AttributeEdit = () => {
 		const target = e?.target as HTMLInputElement;
 		if (!target) return;
 
-		let value: TextRatingType;
+		let value: TextRating;
 		switch (target.id) {
 			case 'noRating':
 				value = 'none';
@@ -220,9 +199,39 @@ const AttributeEdit = () => {
 			})
 		);
 	};
+
+	const validate = useDebounceCallback(() => {
+		const val = validateAttribute(attribute);
+		setValidation(val.valObj);
+	}, 500);
+
+	useEffect(() => {
+		const checkRanges = () => {
+			if (attribute.type !== 'number') return;
+			setRangeErrorIndex(-1);
+
+			if (attribute.range[0] >= attribute.range[1]) setRangeErrorIndex(0);
+
+			if (attribute.range.length === 3) {
+				if (attribute.range[1] >= attribute.range[2]) setRangeErrorIndex(1);
+				if (attribute.range[0] >= attribute.range[2]) setRangeErrorIndex(2);
+			}
+		};
+
+		checkRanges();
+	}, [attribute.type, attribute.range]);
+
+	useEffect(() => {
+		validate();
+	}, [attribute]);
+
 	return (
 		<div className={styles.attribute_edit_container}>
 			<div className={`${styles.attribute_edit_section} ${styles.name_input_section}`}>
+				<ErrorComponent msg={validation.name} />
+				<ErrorComponent msg={validation.prefix} />
+				<ErrorComponent msg={validation.suffix} />
+
 				<input
 					onChange={handle_name_change}
 					id='name_input'
@@ -260,6 +269,8 @@ const AttributeEdit = () => {
 			{attribute.type === 'number' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.range_setup_section}`}>
 					<SectionLabel text='Range Setup' color='var(--color-grey4)' />
+
+					<ErrorComponent msg={validation.rangeValues} />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip
@@ -491,6 +502,8 @@ const AttributeEdit = () => {
 					{attribute.textRatingType === 'keyratingpairs' ? (
 						<div className={`${styles.attribute_edit_section} ${styles.name_rating_pairs}`}>
 							<SectionLabel text='Name-Rating Pairs' color='var(--color-grey4)' />
+
+							<ErrorComponent msg={validation.pairName} />
 
 							<div className={styles.section_info_wrapper}>
 								<Tooltip text='Create a list of value options and the ratings that should be assigned to each'>

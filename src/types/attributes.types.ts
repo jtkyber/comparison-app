@@ -7,21 +7,6 @@ export const attributeTypeListDisplayed = {
 };
 export type AttributeType = (typeof attributeTypeList)[number];
 
-export const attributeInterfaceKeys = [
-	'id',
-	'pos',
-	'name',
-	'prefix',
-	'suffix',
-	'type',
-	'range',
-	'bestIndex',
-	'textRatingType',
-	'selfRated',
-	'importance',
-	'keyRatingPairs',
-];
-
 export type TextRating = 'none' | 'selfrated' | 'keyratingpairs' | null;
 
 export interface IKeyRatingPair {
