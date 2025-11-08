@@ -34,7 +34,7 @@ export async function PUT(req: Request) {
 		RETURNING id
 	), u AS (
 		SELECT a, v, r
-		FROM unnest($2::int[], $5::varchar(36)[], $6::numeric[]) AS t(a, v, r)
+		FROM unnest($2::int[], $5::text[], $6::numeric[]) AS t(a, v, r)
 	), upd_cells AS (
 		UPDATE cells
 		SET value  = u.v,

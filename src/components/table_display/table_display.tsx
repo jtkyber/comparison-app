@@ -6,13 +6,15 @@ import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/feature
 import { IAttribute } from '@/src/types/attributes.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { ratingToColor } from '@/src/utils/colors';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const TableDisplay = () => {
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
 	const display = useAppSelector(state => state.display);
 	const { fitColMin, colorCellsByRating } = useAppSelector(state => state.settings);
+
+	const [ctrlDown, setCtrlDown] = useState<boolean>(false);
 
 	const dispatch = useAppDispatch();
 
@@ -166,6 +168,23 @@ const TableDisplay = () => {
 
 	useEffect(() => {
 		calculateFinalRatings();
+
+		const handleCtrlDown = (e: KeyboardEvent) => {
+			if (e.key !== 'Control') return;
+			setCtrlDown(true);
+		};
+		const handleCtrlUp = (e: KeyboardEvent) => {
+			if (e.key !== 'Control') return;
+			setCtrlDown(false);
+		};
+
+		document.addEventListener('keydown', handleCtrlDown);
+		document.addEventListener('keyup', handleCtrlUp);
+
+		return () => {
+			document.removeEventListener('keydown', handleCtrlDown);
+			document.removeEventListener('keyup', handleCtrlUp);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -212,7 +231,7 @@ const TableDisplay = () => {
 										.filter(attr => !attr.hidden)
 										.map(attr => {
 											const { value } = entry.cells[attr.id] || {};
-											const { id: attrID, prefix, suffix } = attr || {};
+											const { id: attrID, prefix, suffix, type } = attr || {};
 
 											return (
 												<td
@@ -227,7 +246,23 @@ const TableDisplay = () => {
 													key={`${entryID}_${attrID}`}
 													onClick={() => handleCellClick(entryID, attrID)}>
 													{prefix}
-													{value}
+													{type === 'link' ? (
+														<a
+															className={`${styles.link} ${ctrlDown ? styles.clickable : null}`}
+															href={value as string}
+															target='_blank'
+															rel='noopener noreferrer'>
+															Link
+														</a>
+													) : type === 'yesNo' ? (
+														value === true ? (
+															'Yes'
+														) : (
+															'No'
+														)
+													) : (
+														value
+													)}
 													{suffix}
 												</td>
 											);

@@ -11,8 +11,12 @@ import { setEditingIndex, setMode } from '@/src/lib/features/comparison/managerS
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
-import { attributeValidationDefault, IAttributeValidation } from '@/src/types/validation.types';
-import { validateAttribute } from '@/src/validation/table_manager.val';
+import {
+	attributeValidationDefault,
+	IAttributeValidation,
+	IEntryValidation,
+} from '@/src/types/validation.types';
+import { validateAttribute, validateEntry } from '@/src/validation/table_manager.val';
 import React, { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
@@ -52,6 +56,10 @@ const TableManager = () => {
 	const [draggingID, setDraggingID] = useState<number>(0);
 	const [attributeValidation, setAttributeValidation] = useState<IAttributeValidation>({
 		...attributeValidationDefault,
+	});
+	const [entryValidation, setEntryValidation] = useState<IEntryValidation>({
+		name: null,
+		cells: {},
 	});
 
 	const draggingRef = useRef<HTMLDivElement>(null);
@@ -162,6 +170,11 @@ const TableManager = () => {
 		if (editingIndex === null) return;
 
 		const entry = entries[editingIndex >= 0 ? editingIndex : entries.length - 1];
+		const val = validateEntry(entry, attributes, true);
+		if (!val.isValid) {
+			setEntryValidation(val.valObj);
+			return;
+		}
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/addEntry`, {
 			method: 'POST',
@@ -216,6 +229,14 @@ const TableManager = () => {
 	const updateEntryInDB = async () => {
 		if (editingIndex === null) return;
 
+		const entry = entries[editingIndex];
+
+		const val = validateEntry(entry, attributes, true);
+		if (!val.isValid) {
+			setEntryValidation(val.valObj);
+			return;
+		}
+
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/updateEntry`, {
 			method: 'PUT',
 			headers: {
@@ -223,7 +244,7 @@ const TableManager = () => {
 			},
 			body: JSON.stringify({
 				comparisonID: comparisonID,
-				entry: entries[editingIndex],
+				entry: entry,
 			}),
 		});
 
@@ -475,7 +496,7 @@ const TableManager = () => {
 								{editingIndex >= 0 ? 'Edit Entry' : 'Add New Entry'}
 							</h4>
 						</div>
-						{editingIndex >= 0 ? <EntryEdit /> : <EntryEdit />}
+						<EntryEdit validation={entryValidation} setValidation={setEntryValidation} />
 					</div>
 				) : (
 					<div ref={elementListRef} className={styles.element_list}>

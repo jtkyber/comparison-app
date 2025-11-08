@@ -3,7 +3,7 @@ import { IAttribute, IKeyRatingPair, isAttribute } from '@/src/types/attributes.
 import { IComparison } from '@/src/types/comparisons.types';
 import { DBAttribute, DBCell, DBComparison, DBEntry, DBKeyRatingPair } from '@/src/types/db.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
-import { toCamelAttribute, underscoreToCamelObject } from '@/src/utils/server';
+import { underscoreToCamelObject } from '@/src/utils/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {

@@ -15,3 +15,10 @@ export const attributeValidationDefault: IAttributeValidation = {
 	rangeValues: null,
 	pairName: null,
 };
+
+export interface IEntryValidation {
+	name: string | null;
+	cells: {
+		[key: number]: string | null;
+	};
+}

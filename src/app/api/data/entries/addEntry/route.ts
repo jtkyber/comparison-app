@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 	let cellsDB = (await sql`
 		INSERT INTO cells (entry_id, attribute_id, comparison_id, value, rating)
 		SELECT ${entryDB.id}, a, ${comparisonID}, v, r
-		FROM unnest(${attrIDs}::int[], ${values}::varchar(36)[], ${ratings}::numeric[]) AS t(a, v, r)
+		FROM unnest(${attrIDs}::int[], ${values}::text[], ${ratings}::numeric[]) AS t(a, v, r)
 		RETURNING *
 	;`) as DBCell[];
 

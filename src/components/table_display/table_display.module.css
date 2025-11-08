@@ -87,6 +87,15 @@
 					&.highlighted {
 						filter: var(--highlight-filter);
 					}
+
+					.link {
+						color: blue;
+						pointer-events: none;
+
+						&.clickable {
+							pointer-events: all;
+						}
+					}
 				}
 			}
 		}

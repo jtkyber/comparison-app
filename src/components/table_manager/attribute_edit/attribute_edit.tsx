@@ -24,11 +24,7 @@ import {
 	attributeTypeListDisplayed,
 	TextRating,
 } from '@/src/types/attributes.types';
-import {
-	attributeValidationDefault,
-	AttributeValidationKey,
-	IAttributeValidation,
-} from '@/src/types/validation.types';
+import { IAttributeValidation } from '@/src/types/validation.types';
 import { validateAttribute } from '@/src/validation/table_manager.val';
 import { useDebounceCallback } from '@react-hook/debounce';
 import React, { ChangeEvent, useEffect, useState } from 'react';
