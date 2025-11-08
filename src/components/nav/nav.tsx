@@ -1,9 +1,10 @@
 'use client';
 import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
-import { ISettings, setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
+import { setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
 import { setUser, setUserComparisons } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IComparisonItem } from '@/src/types/comparisons.types';
+import { ISettings } from '@/src/types/settings.types';
 import { IUser } from '@/src/types/user.types';
 import { useEffect, useState } from 'react';
 import Combobox from '../inputs/combobox/combobox';
@@ -110,7 +111,7 @@ const Nav = () => {
 
 		dispatch(setSelectedComparison(id));
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/setSelectedComparison`, {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setSelectedComparison`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
