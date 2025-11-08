@@ -57,4 +57,5 @@ export type DBSettings = {
 	auto_resize: boolean;
 	user_id: number;
 	selected_comparison: number;
+	table_zoom: number;
 };

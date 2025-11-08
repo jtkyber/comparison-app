@@ -3,46 +3,52 @@
 	width: 2.5rem;
 	height: 100%;
 	background-color: var(--color-grey3);
-	padding: 1rem 0;
+	padding: 0.5rem 0;
 
 	.display_settings {
 		width: 100%;
 		display: flex;
 		flex-flow: column nowrap;
 		align-items: center;
+		gap: 1px;
+		background-color: var(--color-grey5);
 
-		.shrink_btn,
-		.color_cells_btn {
-			padding: 0.3rem 0.5rem;
-			cursor: pointer;
+		.setting_section {
+			background-color: var(--color-grey3);
 
-			&:hover {
-				opacity: 0.6;
-			}
+			.shrink_btn,
+			.color_cells_btn {
+				padding: 0.5rem 0.5rem;
+				cursor: pointer;
 
-			&.shrink_btn.active {
-				opacity: 0.6;
-			}
+				&:hover {
+					opacity: 0.6;
+				}
 
-			&.color_cells_btn {
-				svg {
-					* {
-						stroke: none;
+				&.shrink_btn.active {
+					opacity: 0.6;
+				}
+
+				&.color_cells_btn {
+					svg {
+						* {
+							stroke: none;
+						}
 					}
 				}
-			}
 
-			&.color_cells_btn:not(&.active) {
-				svg * {
-					fill: var(--color-grey0);
-					stroke: black;
-					stroke-width: 2px;
+				&.color_cells_btn:not(&.active) {
+					svg * {
+						fill: var(--color-grey0);
+						stroke: black;
+						stroke-width: 2px;
+					}
 				}
-			}
 
-			svg {
-				width: 100%;
-				height: auto;
+				svg {
+					width: 100%;
+					height: auto;
+				}
 			}
 		}
 	}

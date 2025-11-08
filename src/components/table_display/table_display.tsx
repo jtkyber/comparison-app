@@ -1,20 +1,24 @@
-import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
-import styles from './table_display.module.css';
-
 import { setEntryCellRating, setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/features/comparison/managerSlice';
+import { updateTableZoom } from '@/src/lib/features/user/settingsSlice';
+import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { ratingToColor } from '@/src/utils/colors';
-import React, { useEffect, useState } from 'react';
+import { useDebounceCallback } from '@react-hook/debounce';
+import React, { useEffect, useRef, useState } from 'react';
+import styles from './table_display.module.css';
 
 const TableDisplay = () => {
+	const userID = useAppSelector(state => state.user.id);
 	const attributes = useAppSelector(state => state.comparison.attributes);
 	const entries = useAppSelector(state => state.comparison.entries);
 	const display = useAppSelector(state => state.display);
-	const { fitColMin, colorCellsByRating } = useAppSelector(state => state.settings);
+	const { fitColMin, colorCellsByRating, tableZoom } = useAppSelector(state => state.settings);
 
 	const [ctrlDown, setCtrlDown] = useState<boolean>(false);
+
+	const displayRef = useRef<HTMLDivElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -166,7 +170,41 @@ const TableDisplay = () => {
 		dispatch(setEntryAttributeID(attrID));
 	};
 
+	const updateTableZoomInDB = async () => {
+		if (!userID) return;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setTableZoom`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				userID: userID,
+				tableZoom: tableZoom,
+			}),
+		});
+		const data = await res.json();
+
+		if (!data) {
+			console.log('Could not update tableZoom in DB');
+		}
+	};
+
+	const updateTableZoomInDBDebounce = useDebounceCallback(updateTableZoomInDB, 1000);
+
 	useEffect(() => {
+		const displayEl = displayRef?.current as HTMLDivElement;
+		if (!displayEl || !tableZoom) return;
+
+		updateTableZoomInDBDebounce();
+
+		displayEl.style.setProperty('--table-font-size', `calc(var(--table-font-size-default) * ${tableZoom}`);
+	}, [tableZoom]);
+
+	useEffect(() => {
+		const displayEl = displayRef?.current as HTMLDivElement;
+		if (!displayEl) return;
+
 		calculateFinalRatings();
 
 		const handleCtrlDown = (e: KeyboardEvent) => {
@@ -177,13 +215,21 @@ const TableDisplay = () => {
 			if (e.key !== 'Control') return;
 			setCtrlDown(false);
 		};
+		const handleScrollZoom = (e: WheelEvent) => {
+			if (!e.ctrlKey) return;
+			e.preventDefault();
+			const zoomInc = e.deltaY * 0.0005;
+			dispatch(updateTableZoom(zoomInc));
+		};
 
 		document.addEventListener('keydown', handleCtrlDown);
 		document.addEventListener('keyup', handleCtrlUp);
+		displayEl.addEventListener('wheel', handleScrollZoom, true);
 
 		return () => {
 			document.removeEventListener('keydown', handleCtrlDown);
 			document.removeEventListener('keyup', handleCtrlUp);
+			displayEl.removeEventListener('wheel', handleScrollZoom, true);
 		};
 	}, []);
 
@@ -192,7 +238,7 @@ const TableDisplay = () => {
 	}, [attributes, entries]);
 
 	return (
-		<div className={styles.table_display_container}>
+		<div ref={displayRef} className={styles.table_display_container}>
 			{attributes.length || entries.length ? (
 				<>
 					<table

@@ -65,21 +65,27 @@ const TableSettings = () => {
 	return (
 		<div className={styles.table_settings_bar_container}>
 			<div className={styles.display_settings}>
-				<Tooltip text='Shrink columns to smallest possible size' delay={'default'}>
-					<button
-						onClick={handleAutoResizeBtn}
-						className={`${styles.shrink_btn} ${fitColMin ? styles.active : null}`}>
-						<ShrinkSVG />
-					</button>
-				</Tooltip>
+				<div className={styles.setting_section}>
+					<Tooltip text='Shrink columns to smallest possible size' delay={'default'}>
+						<button
+							onClick={handleAutoResizeBtn}
+							className={`${styles.shrink_btn} ${fitColMin ? styles.active : null}`}>
+							<ShrinkSVG />
+						</button>
+					</Tooltip>
+				</div>
 
-				<Tooltip text='Color cells based on their rating' delay={'default'}>
-					<button
-						onClick={handleColorCellsByRatingBtn}
-						className={`${styles.color_cells_btn} ${colorCellsByRating ? styles.active : null}`}>
-						<ColorCellsSVG />
-					</button>
-				</Tooltip>
+				<div className={styles.setting_section}>
+					<Tooltip text='Color cells based on their rating' delay={'default'}>
+						<button
+							onClick={handleColorCellsByRatingBtn}
+							className={`${styles.color_cells_btn} ${colorCellsByRating ? styles.active : null}`}>
+							<ColorCellsSVG />
+						</button>
+					</Tooltip>
+				</div>
+
+				<div className={styles.container}></div>
 			</div>
 		</div>
 	);

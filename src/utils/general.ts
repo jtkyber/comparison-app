@@ -12,3 +12,7 @@ export function isValidURL(text: string): boolean {
 export function isNothing(value: CellValueType) {
 	return value === '' || value === undefined || value === null;
 }
+
+export function isNumeric(str: string): boolean {
+	return !isNaN(Number(str));
+}

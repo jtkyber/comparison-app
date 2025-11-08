@@ -1,5 +1,7 @@
 import { sql } from '@/src/lib/db';
 import { DBUser } from '@/src/types/db.types';
+import { ISettings } from '@/src/types/settings.types';
+import { isNumeric } from '@/src/utils/general';
 import { underscoreToCamelObject } from '@/src/utils/server';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
@@ -27,6 +29,11 @@ export async function POST(req: Request) {
 	;`;
 
 	delete user.hash;
+
+	for (const key in settings) {
+		const value = settings[key];
+		if (typeof value === 'string' && isNumeric(value)) settings[key] = parseFloat(value);
+	}
 
 	return NextResponse.json({
 		user: {

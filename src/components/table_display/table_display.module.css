@@ -1,5 +1,7 @@
 .table_display_container {
 	--highlight-filter: brightness(150%);
+	--table-font-size-default: 0.9rem;
+	--table-font-size: var(--table-font-size-default);
 	background-color: var(--color-grey5);
 	overflow: auto;
 	padding: 0.5rem;
@@ -11,6 +13,7 @@
 			th,
 			td {
 				width: 1.5rem;
+				white-space: wrap;
 			}
 		}
 
@@ -34,7 +37,13 @@
 		th,
 		td {
 			min-width: 1.5rem;
+			white-space: nowrap;
 			padding: 0.1rem 0.2rem;
+			font-size: var(--table-font-size);
+
+			a {
+				font-size: var(--table-font-size);
+			}
 		}
 
 		tr {
