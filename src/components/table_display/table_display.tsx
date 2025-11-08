@@ -154,7 +154,7 @@ const TableDisplay = () => {
 			type === 'link' ||
 			(type === 'text' && (!textRatingType || textRatingType === 'none'))
 		) {
-			return 'var(--color-grey0)';
+			return 'inherit';
 		}
 		return ratingToColor(rating);
 	};

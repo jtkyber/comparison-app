@@ -16,7 +16,6 @@
 
 		&.colored {
 			tbody td {
-				border: 1px solid var(--color-grey5);
 				color: black;
 			}
 
@@ -89,7 +88,7 @@
 					}
 
 					.link {
-						color: blue;
+						color: #00ff00;
 						pointer-events: none;
 
 						&.clickable {
