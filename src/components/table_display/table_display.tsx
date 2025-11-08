@@ -172,7 +172,7 @@ const TableDisplay = () => {
 		calculateFinalRatings();
 	}, [attributes, entries]);
 
-	return (
+	return attributes.length || entries.length ? (
 		<div className={styles.table_display_container}>
 			<table
 				className={`${styles.table} ${fitColMin ? styles.fit_cell_min : null} ${
@@ -247,7 +247,7 @@ const TableDisplay = () => {
 				</tbody>
 			</table>
 		</div>
-	);
+	) : null;
 };
 
 export default TableDisplay;
