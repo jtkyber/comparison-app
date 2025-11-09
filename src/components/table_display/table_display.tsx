@@ -1,4 +1,9 @@
-import { setEntryCellRating, setEntryFinalRating } from '@/src/lib/features/comparison/displaySlice';
+'use client';
+import {
+	setDownloading,
+	setEntryCellRating,
+	setEntryFinalRating,
+} from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/features/comparison/managerSlice';
 import { updateTableZoom } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
@@ -6,17 +11,14 @@ import { IAttribute } from '@/src/types/attributes.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { ratingToColor } from '@/src/utils/colors';
 import { useDebounceCallback } from '@react-hook/debounce';
+import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './table_display.module.css';
 
-const TableDisplay = () => {
+const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entries: IEntry[] }) => {
 	const userID = useAppSelector(state => state.user.id);
-	const attributes = useAppSelector(state => state.comparison.attributes);
-	const { entries, name: comparisonName } = useAppSelector(state => state.comparison);
 	const display = useAppSelector(state => state.display);
-	const { fitColMin, colorCellsByRating, tableZoom, selectedComparison } = useAppSelector(
-		state => state.settings
-	);
+	const { fitColMin, colorCellsByRating, tableZoom } = useAppSelector(state => state.settings);
 
 	const [ctrlDown, setCtrlDown] = useState<boolean>(false);
 
@@ -24,6 +26,8 @@ const TableDisplay = () => {
 	const tableRef = useRef<HTMLTableElement>(null);
 
 	const dispatch = useAppDispatch();
+
+	const onHomePath = usePathname() === '/';
 
 	const getRatingFromRange = (
 		value: number,
@@ -167,6 +171,8 @@ const TableDisplay = () => {
 	};
 
 	const handleCellClick = (entryID: number, attrID: number) => {
+		if (!onHomePath) return;
+
 		const entryIndex: number = entries.findIndex(entry => entry.id === entryID);
 		dispatch(setMode('entries'));
 		dispatch(setEditingIndex(entryIndex));
@@ -174,7 +180,7 @@ const TableDisplay = () => {
 	};
 
 	const updateTableZoomInDB = async () => {
-		if (!userID) return;
+		if (!userID || !onHomePath) return;
 
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setTableZoom`, {
 			method: 'PUT',
@@ -210,6 +216,8 @@ const TableDisplay = () => {
 			jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
 		} as const;
 		html2pdf().set(opt).from(tableEl).save();
+
+		dispatch(setDownloading(false));
 	};
 
 	useEffect(() => {
@@ -254,7 +262,6 @@ const TableDisplay = () => {
 	}, []);
 
 	useEffect(() => {
-		saveTableAsPDF();
 		calculateFinalRatings();
 	}, [attributes, entries]);
 

@@ -1,0 +1,6 @@
+.shared_comparison_page_container {
+	display: grid;
+	grid-template-columns: 1fr max-content;
+	grid-template-rows: 1fr;
+	background-color: var(--color-grey5);
+}

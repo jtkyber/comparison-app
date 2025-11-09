@@ -1,4 +1,4 @@
-import { AttributeType, IAttribute, IKeyRatingPair, TextRatingType } from '@/src/types/attributes.types';
+import { AttributeType, IAttribute, IKeyRatingPair, TextRating } from '@/src/types/attributes.types';
 import { IComparison } from '@/src/types/comparisons.types';
 import { CellValueType, ICellValue, IEntry } from '@/src/types/entries.types';
 import { moveArrayItem } from '@/src/utils/arrays';
@@ -17,6 +17,9 @@ export const comparisonSlice = createSlice({
 	reducers: {
 		setComparison: (_state, action: PayloadAction<IComparison>) => {
 			return action.payload;
+		},
+		setComparisonName: (state, action: PayloadAction<string>) => {
+			state.name = action.payload;
 		},
 		// Attributes -----------------------------------------------------
 		addAttribute: (state, action: PayloadAction<IAttribute>) => {
@@ -74,7 +77,7 @@ export const comparisonSlice = createSlice({
 		setAttributeBestIndex: (state, action: PayloadAction<{ index: number; value: 0 | 1 | 2 }>) => {
 			state.attributes[action.payload.index].bestIndex = action.payload.value;
 		},
-		setAttributeTextRatingType: (state, action: PayloadAction<{ index: number; value: TextRatingType }>) => {
+		setAttributeTextRatingType: (state, action: PayloadAction<{ index: number; value: TextRating }>) => {
 			state.attributes[action.payload.index].textRatingType = action.payload.value;
 		},
 		setAttributeImportance: (state, action: PayloadAction<{ index: number; value: number }>) => {
@@ -186,6 +189,7 @@ export const comparisonSlice = createSlice({
 
 export const {
 	setComparison,
+	setComparisonName,
 	// Attributes
 	addAttribute,
 	removeAttribute,

@@ -1,11 +1,13 @@
 'use client';
-import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
+import { setComparison, setComparisonName } from '@/src/lib/features/comparison/comparisonSlice';
 import { setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
 import { setUser, setUserComparisons } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IComparisonItem } from '@/src/types/comparisons.types';
 import { ISettings } from '@/src/types/settings.types';
 import { IUser } from '@/src/types/user.types';
+import { isNumeric } from '@/src/utils/general';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Combobox from '../inputs/combobox/combobox';
 import SpecialInput from '../inputs/special_input/special_input';
@@ -15,10 +17,14 @@ import styles from './nav.module.css';
 const Nav = () => {
 	const user = useAppSelector(state => state.user);
 	const { selectedComparison } = useAppSelector(state => state.settings);
+	const comparisonName = useAppSelector(state => state.comparison.name);
 	const [addingNew, setAddingNew] = useState<boolean>(false);
 	const [newComparisonName, setNewComparisonName] = useState<string>('');
 
 	const dispatch = useAppDispatch();
+
+	const pathname = usePathname();
+	const onHomePath = pathname === '/';
 
 	const setComparisonTable = async () => {
 		if (selectedComparison <= 0) return;
@@ -67,6 +73,13 @@ const Nav = () => {
 			dispatch(setUser(user));
 			dispatch(setSettings(settings));
 		}
+	};
+
+	const getAndSetComparisonName = async (id: string) => {
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/getComparisonName/${id}`);
+		const data = await res.json();
+
+		if (typeof data === 'string') dispatch(setComparisonName(data));
 	};
 
 	const buildReferenceTable = (): { [key: string]: string } => {
@@ -132,56 +145,74 @@ const Nav = () => {
 	const cancelAddComparison = () => setAddingNew(false);
 
 	useEffect(() => {
-		setComparisonTable();
+		if (onHomePath) setComparisonTable();
 	}, [selectedComparison]);
 
 	useEffect(() => {
-		getAndSetUserData();
+		if (onHomePath) getAndSetUserData();
 	}, []);
+
+	useEffect(() => {
+		if (onHomePath) return;
+		const lastIndex = pathname.lastIndexOf('/');
+
+		const beforeLast = pathname.slice(0, lastIndex);
+		const afterLast = pathname.slice(lastIndex + 1);
+
+		if (beforeLast === '/shared' && isNumeric(afterLast)) {
+			getAndSetComparisonName(afterLast);
+		}
+	}, [pathname]);
 
 	return (
 		<div className={styles.nav_container}>
-			<div className={styles.comparison_dropdown_wrapper}>
-				<div className={styles.comparison_dropdown}>
-					<Combobox
-						options={user.comparisons.map(c => c.id.toString())}
-						selected={selectedComparison.toString()}
-						setSelected={handleChangeComparison}
-						referenceTable={buildReferenceTable()}
-					/>
-				</div>
-				<button onClick={setAddComparison} className={styles.new_comparison_btn}>
-					+
-				</button>
-			</div>
-
-			{addingNew ? (
-				<div className={styles.new_comparison_container}>
-					<div className={styles.new_comparison_modal}>
-						<h3 className={styles.comparison_title}>New Comparison</h3>
-						<div className={styles.comparison_name_input}>
-							<SpecialInput
-								value={newComparisonName}
-								setValue={setNewComparisonName}
-								label='Name'
-								inputType='string'
+			{onHomePath ? (
+				<div className={styles.comparison_section}>
+					<div className={styles.comparison_dropdown_wrapper}>
+						<div className={styles.comparison_dropdown}>
+							<Combobox
+								options={user.comparisons.map(c => c.id.toString())}
+								selected={selectedComparison.toString()}
+								setSelected={handleChangeComparison}
+								referenceTable={buildReferenceTable()}
 							/>
 						</div>
-						<div className={styles.comparison_modal_btn_section}>
-							<Tooltip text='Cancel' key='cancel' delay='default'>
-								<button onClick={cancelAddComparison} className={styles.cancel_add_comparison_btn}>
-									X
-								</button>
-							</Tooltip>
-							<Tooltip text='Add' key='add' delay='default'>
-								<button onClick={handleAddComparison} className={styles.add_comparison_btn}>
-									&#10003;
-								</button>
-							</Tooltip>
-						</div>
+						<button onClick={setAddComparison} className={styles.new_comparison_btn}>
+							+
+						</button>
 					</div>
+
+					{addingNew ? (
+						<div className={styles.new_comparison_container}>
+							<div className={styles.new_comparison_modal}>
+								<h3 className={styles.comparison_title}>New Comparison</h3>
+								<div className={styles.comparison_name_input}>
+									<SpecialInput
+										value={newComparisonName}
+										setValue={setNewComparisonName}
+										label='Name'
+										inputType='string'
+									/>
+								</div>
+								<div className={styles.comparison_modal_btn_section}>
+									<Tooltip text='Cancel' key='cancel' delay='default'>
+										<button onClick={cancelAddComparison} className={styles.cancel_add_comparison_btn}>
+											X
+										</button>
+									</Tooltip>
+									<Tooltip text='Add' key='add' delay='default'>
+										<button onClick={handleAddComparison} className={styles.add_comparison_btn}>
+											&#10003;
+										</button>
+									</Tooltip>
+								</div>
+							</div>
+						</div>
+					) : null}
 				</div>
-			) : null}
+			) : (
+				<h2 className={styles.comparison_name}>{comparisonName}</h2>
+			)}
 		</div>
 	);
 };

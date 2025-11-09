@@ -1,12 +1,11 @@
+'use client';
 import { setDownloading } from '@/src/lib/features/comparison/displaySlice';
 import { toggleColorCellsByRating, toggleFitColMin } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
-import { PDFDownloadLink } from '@react-pdf/renderer';
 import React, { useEffect } from 'react';
 import ColorCellsSVG from '../svg/settings_bar/color_cells';
 import DownloadSVG from '../svg/settings_bar/download';
 import ShrinkSVG from '../svg/settings_bar/shrink';
-import TableDisplay from '../table_display/table_display';
 import Tooltip from '../tooltip/tooltip';
 import styles from './table_settings_bar.module.css';
 
