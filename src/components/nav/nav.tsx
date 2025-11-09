@@ -9,6 +9,7 @@ import { IUser } from '@/src/types/user.types';
 import { isNumeric } from '@/src/utils/general';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ErrorComponent from '../error/error';
 import Combobox from '../inputs/combobox/combobox';
 import SpecialInput from '../inputs/special_input/special_input';
 import Tooltip from '../tooltip/tooltip';
@@ -20,6 +21,7 @@ const Nav = () => {
 	const comparisonName = useAppSelector(state => state.comparison.name);
 	const [addingNew, setAddingNew] = useState<boolean>(false);
 	const [newComparisonName, setNewComparisonName] = useState<string>('');
+	const [error, setError] = useState<string>('');
 
 	const dispatch = useAppDispatch();
 
@@ -97,6 +99,10 @@ const Nav = () => {
 	};
 
 	const handleAddComparison = async () => {
+		if (!newComparisonName.length || newComparisonName.length > 36) {
+			setError('Name must be between 1 and 36 characters');
+			return;
+		}
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/addComparison`, {
 			method: 'POST',
 			headers: {
@@ -164,6 +170,10 @@ const Nav = () => {
 		}
 	}, [pathname]);
 
+	useEffect(() => {
+		if (!addingNew) setError('');
+	}, [addingNew]);
+
 	return (
 		<div className={styles.nav_container}>
 			{onHomePath ? (
@@ -186,6 +196,9 @@ const Nav = () => {
 						<div className={styles.new_comparison_container}>
 							<div className={styles.new_comparison_modal}>
 								<h3 className={styles.comparison_title}>New Comparison</h3>
+
+								{error ? <ErrorComponent msg={'Name must be between 1 and 36 characters'} /> : null}
+
 								<div className={styles.comparison_name_input}>
 									<SpecialInput
 										value={newComparisonName}

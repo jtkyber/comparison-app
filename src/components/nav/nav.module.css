@@ -27,7 +27,7 @@
 			gap: 0.5rem;
 
 			.comparison_dropdown {
-				border-radius: 0.5rem;
+				border-radius: 0.25rem;
 				width: 18rem;
 				height: inherit;
 				background-color: var(--color-grey2);
@@ -36,7 +36,7 @@
 			.new_comparison_btn {
 				height: inherit;
 				aspect-ratio: 1/1;
-				border-radius: 0.5rem;
+				border-radius: 0.25rem;
 				cursor: pointer;
 				background-color: var(--color-grey2);
 
@@ -65,12 +65,12 @@
 				height: max-content;
 				background-color: var(--color-grey4);
 				pointer-events: all;
-				border-radius: 1rem;
+				border-radius: 0.5rem;
 				display: flex;
 				flex-flow: column nowrap;
 				align-items: center;
 				gap: 1rem;
-				padding: 1rem;
+				padding: 1rem 2rem;
 
 				.comparison_title {
 				}
@@ -97,6 +97,10 @@
 						background-color: var(--color-grey2);
 						color: var(--color-grey0);
 						font-weight: 600;
+
+						&:hover {
+							opacity: 0.6;
+						}
 					}
 				}
 			}

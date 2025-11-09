@@ -2,8 +2,10 @@
 import { setDownloading } from '@/src/lib/features/comparison/displaySlice';
 import { toggleColorCellsByRating, toggleFitColMin } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
+import { usePathname } from 'next/navigation';
 import React, { useEffect } from 'react';
 import ColorCellsSVG from '../svg/settings_bar/color_cells';
+import CopySVG from '../svg/settings_bar/copy';
 import DownloadSVG from '../svg/settings_bar/download';
 import ShrinkSVG from '../svg/settings_bar/shrink';
 import Tooltip from '../tooltip/tooltip';
@@ -12,12 +14,14 @@ import styles from './table_settings_bar.module.css';
 const TableSettings = () => {
 	const dispatch = useAppDispatch();
 	const { id: userID } = useAppSelector(state => state.user);
-	const { fitColMin, colorCellsByRating } = useAppSelector(state => state.settings);
+	const { fitColMin, colorCellsByRating, selectedComparison } = useAppSelector(state => state.settings);
 	const { downloading } = useAppSelector(state => state.display);
 
 	const handleAutoResizeBtn = () => dispatch(toggleFitColMin());
 	const handleColorCellsByRatingBtn = () => dispatch(toggleColorCellsByRating());
 	const handleDownloadBtn = () => dispatch(setDownloading(true));
+
+	const onHomePath = usePathname() === '/';
 
 	const setfitColMinInDB = async () => {
 		if (!userID) return;
@@ -59,6 +63,11 @@ const TableSettings = () => {
 		}
 	};
 
+	const copyShareLinkToClipboard = async () => {
+		const baseURL = window.location.origin;
+		await navigator.clipboard.writeText(`${baseURL}/shared/${selectedComparison}`);
+	};
+
 	useEffect(() => {
 		setfitColMinInDB();
 	}, [fitColMin]);
@@ -71,6 +80,13 @@ const TableSettings = () => {
 		<div className={styles.table_settings_bar_container}>
 			<div className={styles.display_settings}>
 				<div className={styles.setting_section}>
+					<Tooltip text='Color cells based on their rating' delay={'default'}>
+						<button
+							onClick={handleColorCellsByRatingBtn}
+							className={`${styles.color_cells_btn} ${colorCellsByRating ? styles.active : null}`}>
+							<ColorCellsSVG />
+						</button>
+					</Tooltip>
 					<Tooltip text='Shrink columns to smallest possible size' delay={'default'}>
 						<button
 							onClick={handleAutoResizeBtn}
@@ -81,20 +97,19 @@ const TableSettings = () => {
 				</div>
 
 				<div className={styles.setting_section}>
-					<Tooltip text='Color cells based on their rating' delay={'default'}>
-						<button
-							onClick={handleColorCellsByRatingBtn}
-							className={`${styles.color_cells_btn} ${colorCellsByRating ? styles.active : null}`}>
-							<ColorCellsSVG />
-						</button>
-					</Tooltip>
-				</div>
-				<div className={styles.setting_section}>
 					<Tooltip text='Download table as PDF' delay={'default'}>
 						<button disabled={downloading} onClick={handleDownloadBtn} className={`${styles.download_btn}`}>
 							<DownloadSVG />
 						</button>
 					</Tooltip>
+
+					{onHomePath ? (
+						<Tooltip text='Copy link for sharing' delay={'default'}>
+							<button onClick={copyShareLinkToClipboard} className={`${styles.copy_btn}`}>
+								<CopySVG />
+							</button>
+						</Tooltip>
+					) : null}
 				</div>
 			</div>
 		</div>

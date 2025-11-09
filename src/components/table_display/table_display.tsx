@@ -205,6 +205,28 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 		const tableEl = tableRef?.current as HTMLTableElement;
 		if (!tableEl || !display.downloading || !attributes.length || !entries.length) return;
 
+		const thEls = tableEl.querySelectorAll('th');
+		const tdEls = tableEl.querySelectorAll('td');
+		const aEls = tableEl.querySelectorAll('a');
+
+		const thColor = thEls[0].style.color;
+		const thPadding = thEls[0].style.padding;
+
+		const tdColor = tdEls[0].style.color;
+		const tdPadding = tdEls[0].style.padding;
+
+		const aColor = aEls[0].style.color;
+
+		for (const th of thEls) {
+			th.style.color = 'black';
+			th.style.padding = '0.1rem 0.2rem';
+		}
+		for (const td of tdEls) {
+			td.style.color = 'black';
+			td.style.padding = '0.1rem 0.2rem';
+		}
+		for (const a of aEls) a.style.color = '#0000FF';
+
 		const mod = await import('html2pdf.js');
 		const html2pdf = (mod as any).default || mod;
 
@@ -215,7 +237,21 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 			html2canvas: { scale: 2 }, // Higher scale for better resolution
 			jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
 		} as const;
-		html2pdf().set(opt).from(tableEl).save();
+		html2pdf()
+			.set(opt)
+			.from(tableEl)
+			.save()
+			.then(() => {
+				for (const th of thEls) {
+					th.style.color = thColor;
+					th.style.padding = thPadding;
+				}
+				for (const td of tdEls) {
+					td.style.color = tdColor;
+					td.style.padding = tdPadding;
+				}
+				for (const a of aEls) a.style.color = aColor;
+			});
 
 		dispatch(setDownloading(false));
 	};
@@ -272,96 +308,95 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 	return (
 		<div ref={displayRef} className={styles.table_display_container}>
 			{attributes.length || entries.length ? (
-				<div ref={tableRef} style={{ backgroundColor: 'var(--color-grey5)' }}>
-					<table
-						className={`${styles.table} ${fitColMin ? styles.fit_cell_min : null} ${
-							colorCellsByRating ? styles.colored : null
-						}`}>
-						<thead>
-							<tr>
-								<th>&nbsp;</th>
-								{attributes
-									.filter(attr => !attr.hidden)
-									.map(attr => (
-										<th
-											className={`${styles.attribute_name} ${
-												display.highlightedAttribute === attr.id ? styles.highlighted : null
-											}`}
-											key={attr.id}>
-											{attr?.name}
-										</th>
-									))}
-								<th>Score</th>
-							</tr>
-						</thead>
-						<tbody>
-							{entries
-								.filter(entry => !entry.hidden)
-								.map(entry => {
-									const { id: entryID, name: entryName } = entry || {};
+				<table
+					ref={tableRef}
+					className={`${styles.table} ${fitColMin ? styles.fit_cell_min : null} ${
+						colorCellsByRating ? styles.colored : null
+					}`}>
+					<thead>
+						<tr>
+							<th>&nbsp;</th>
+							{attributes
+								.filter(attr => !attr.hidden)
+								.map(attr => (
+									<th
+										className={`${styles.attribute_name} ${
+											display.highlightedAttribute === attr.id ? styles.highlighted : null
+										}`}
+										key={attr.id}>
+										{attr?.name}
+									</th>
+								))}
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						{entries
+							.filter(entry => !entry.hidden)
+							.map(entry => {
+								const { id: entryID, name: entryName } = entry || {};
 
-									return (
-										<tr
-											className={`${styles.table_row} ${
-												display.highlightedEntry === entryID ? styles.highlighted : null
-											}`}
-											key={entryID}>
-											<th>{entryName}</th>
-											{attributes
-												.filter(attr => !attr.hidden)
-												.map(attr => {
-													const { value } = entry.cells[attr.id] || {};
-													const { id: attrID, prefix, suffix, type } = attr || {};
+								return (
+									<tr
+										className={`${styles.table_row} ${
+											display.highlightedEntry === entryID ? styles.highlighted : null
+										}`}
+										key={entryID}>
+										<th>{entryName}</th>
+										{attributes
+											.filter(attr => !attr.hidden)
+											.map(attr => {
+												const { value } = entry.cells[attr.id] || {};
+												const { id: attrID, prefix, suffix, type } = attr || {};
 
-													return (
-														<td
-															className={`${styles.cell} ${
-																display.highlightedAttribute === attrID ? styles.highlighted : null
-															}`}
-															style={{
-																backgroundColor: colorCellsByRating
-																	? determineCellColor(entryID, attrID)
-																	: 'transparent',
-															}}
-															key={`${entryID}_${attrID}`}
-															onClick={() => handleCellClick(entryID, attrID)}>
-															{prefix}
-															{type === 'link' ? (
-																<a
-																	className={`${styles.link} ${ctrlDown ? styles.clickable : null}`}
-																	href={value as string}
-																	target='_blank'
-																	rel='noopener noreferrer'>
-																	Link
-																</a>
-															) : type === 'yesNo' ? (
-																value === true ? (
-																	'Yes'
-																) : (
-																	'No'
-																)
+												return (
+													<td
+														className={`${styles.cell} ${
+															display.highlightedAttribute === attrID ? styles.highlighted : null
+														}`}
+														style={{
+															backgroundColor: colorCellsByRating
+																? determineCellColor(entryID, attrID)
+																: 'transparent',
+														}}
+														key={`${entryID}_${attrID}`}
+														onClick={() => handleCellClick(entryID, attrID)}>
+														{prefix}
+														{type === 'link' ? (
+															<a
+																className={`${styles.link} ${ctrlDown ? styles.clickable : null}`}
+																href={value as string}
+																target='_blank'
+																rel='noopener noreferrer'>
+																Link
+															</a>
+														) : type === 'yesNo' ? (
+															value === true ? (
+																'Yes'
 															) : (
-																value
-															)}
-															{suffix}
-														</td>
-													);
-												})}
-											<td
-												style={{
-													backgroundColor: colorCellsByRating
-														? ratingToColor(display.entryRatings[entry.id]?.rating)
-														: 'transparent',
-												}}
-												className={styles.rating_cell}>
-												{display.entryRatings[entry.id]?.rating || ''}
-											</td>
-										</tr>
-									);
-								})}
-						</tbody>
-					</table>
-				</div>
+																'No'
+															)
+														) : (
+															value
+														)}
+														{suffix}
+													</td>
+												);
+											})}
+										<td
+											style={{
+												backgroundColor: colorCellsByRating
+													? ratingToColor(display.entryRatings[entry.id]?.rating)
+													: 'transparent',
+											}}
+											className={styles.rating_cell}>
+											{display.entryRatings[entry.id]?.rating || ''}
+										</td>
+									</tr>
+								);
+							})}
+					</tbody>
+				</table>
 			) : null}
 		</div>
 	);
