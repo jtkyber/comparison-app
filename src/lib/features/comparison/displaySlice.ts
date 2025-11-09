@@ -11,12 +11,14 @@ export interface IDisplay {
 			//key = attributeID
 		};
 	};
+	downloading: boolean;
 }
 
 const initialState: IDisplay = {
 	highlightedAttribute: 0,
 	highlightedEntry: 0,
 	entryRatings: {},
+	downloading: false,
 };
 
 export const displaySlice = createSlice({
@@ -50,10 +52,18 @@ export const displaySlice = createSlice({
 				},
 			};
 		},
+		setDownloading: (state, action: PayloadAction<boolean>) => {
+			state.downloading = action.payload;
+		},
 	},
 });
 
-export const { setHighlightedAttribute, setHighlightedEntry, setEntryCellRating, setEntryFinalRating } =
-	displaySlice.actions;
+export const {
+	setHighlightedAttribute,
+	setHighlightedEntry,
+	setEntryCellRating,
+	setEntryFinalRating,
+	setDownloading,
+} = displaySlice.actions;
 
 export default displaySlice.reducer;

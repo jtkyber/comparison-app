@@ -12,13 +12,16 @@ import styles from './table_display.module.css';
 const TableDisplay = () => {
 	const userID = useAppSelector(state => state.user.id);
 	const attributes = useAppSelector(state => state.comparison.attributes);
-	const entries = useAppSelector(state => state.comparison.entries);
+	const { entries, name: comparisonName } = useAppSelector(state => state.comparison);
 	const display = useAppSelector(state => state.display);
-	const { fitColMin, colorCellsByRating, tableZoom } = useAppSelector(state => state.settings);
+	const { fitColMin, colorCellsByRating, tableZoom, selectedComparison } = useAppSelector(
+		state => state.settings
+	);
 
 	const [ctrlDown, setCtrlDown] = useState<boolean>(false);
 
 	const displayRef = useRef<HTMLDivElement>(null);
+	const tableRef = useRef<HTMLTableElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -192,6 +195,23 @@ const TableDisplay = () => {
 
 	const updateTableZoomInDBDebounce = useDebounceCallback(updateTableZoomInDB, 1000);
 
+	const saveTableAsPDF = async () => {
+		const tableEl = tableRef?.current as HTMLTableElement;
+		if (!tableEl || !display.downloading || !attributes.length || !entries.length) return;
+
+		const mod = await import('html2pdf.js');
+		const html2pdf = (mod as any).default || mod;
+
+		const opt = {
+			margin: 0.5,
+			filename: 'my-table.pdf',
+			image: { type: 'jpeg', quality: 0.98 },
+			html2canvas: { scale: 2 }, // Higher scale for better resolution
+			jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+		} as const;
+		html2pdf().set(opt).from(tableEl).save();
+	};
+
 	useEffect(() => {
 		const displayEl = displayRef?.current as HTMLDivElement;
 		if (!displayEl || !tableZoom) return;
@@ -234,13 +254,18 @@ const TableDisplay = () => {
 	}, []);
 
 	useEffect(() => {
+		saveTableAsPDF();
 		calculateFinalRatings();
 	}, [attributes, entries]);
+
+	useEffect(() => {
+		saveTableAsPDF();
+	}, [display.downloading]);
 
 	return (
 		<div ref={displayRef} className={styles.table_display_container}>
 			{attributes.length || entries.length ? (
-				<>
+				<div ref={tableRef} style={{ backgroundColor: 'var(--color-grey5)' }}>
 					<table
 						className={`${styles.table} ${fitColMin ? styles.fit_cell_min : null} ${
 							colorCellsByRating ? styles.colored : null
@@ -329,7 +354,7 @@ const TableDisplay = () => {
 								})}
 						</tbody>
 					</table>
-				</>
+				</div>
 			) : null}
 		</div>
 	);
