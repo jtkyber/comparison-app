@@ -355,9 +355,10 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 															display.highlightedAttribute === attrID ? styles.highlighted : null
 														}`}
 														style={{
-															backgroundColor: colorCellsByRating
-																? determineCellColor(entryID, attrID)
-																: 'transparent',
+															backgroundColor:
+																value !== '' && colorCellsByRating
+																	? determineCellColor(entryID, attrID)
+																	: 'transparent',
 														}}
 														key={`${entryID}_${attrID}`}
 														onClick={() => handleCellClick(entryID, attrID)}>

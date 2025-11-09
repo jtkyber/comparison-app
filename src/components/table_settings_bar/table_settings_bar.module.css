@@ -7,13 +7,23 @@
 
 	.display_settings {
 		width: 100%;
-		display: flex;
-		flex-flow: column nowrap;
-		align-items: center;
+		height: 100%;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		grid-auto-rows: 1fr;
+		align-content: start;
+
+		.setting_section:has(.delete_btn) {
+			align-self: end;
+		}
 
 		.setting_section {
 			width: 100%;
+			height: max-content;
 			padding: 0.5rem 0;
+			display: flex;
+			flex-flow: column nowrap;
 
 			&:not(&:last-child) {
 				border-bottom: 1px solid var(--color-grey5);
@@ -30,14 +40,15 @@
 			.shrink_btn,
 			.color_cells_btn,
 			.download_btn,
-			.copy_btn {
+			.copy_btn,
+			.delete_btn {
 				width: 100%;
 				padding: 0.5rem 0;
 				cursor: pointer;
 
 				svg {
-					width: 20px;
-					height: auto;
+					height: 18px;
+					width: auto;
 				}
 
 				&:hover {
@@ -49,10 +60,8 @@
 				}
 
 				&.color_cells_btn {
-					svg {
-						* {
-							stroke: none;
-						}
+					svg * {
+						stroke: none;
 					}
 				}
 
@@ -78,9 +87,11 @@
 					svg * {
 						fill: var(--color-grey0);
 					}
+				}
 
-					&:disabled {
-						opacity: 0.6;
+				&.delete_btn {
+					svg * {
+						fill: var(--color-grey0);
 					}
 				}
 			}

@@ -1,9 +1,16 @@
 'use client';
+import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
 import { setDownloading } from '@/src/lib/features/comparison/displaySlice';
-import { toggleColorCellsByRating, toggleFitColMin } from '@/src/lib/features/user/settingsSlice';
+import {
+	setSelectedComparison,
+	toggleColorCellsByRating,
+	toggleFitColMin,
+} from '@/src/lib/features/user/settingsSlice';
+import { removeComparison } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { usePathname } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import DeleteSVG from '../svg/action_center/delete.svg';
 import ColorCellsSVG from '../svg/settings_bar/color_cells';
 import CopySVG from '../svg/settings_bar/copy';
 import DownloadSVG from '../svg/settings_bar/download';
@@ -68,6 +75,33 @@ const TableSettings = () => {
 		await navigator.clipboard.writeText(`${baseURL}/shared/${selectedComparison}`);
 	};
 
+	const removeComparisonFromDB = async () => {
+		const comparisonToRemove = selectedComparison;
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/removeComparison`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: comparisonToRemove,
+			}),
+		});
+		const data = await res.json();
+
+		if (data.id) {
+			dispatch(setSelectedComparison(data.id));
+			dispatch(removeComparison(comparisonToRemove));
+		} else {
+			console.log('Could not delete comparison from DB');
+		}
+	};
+
+	const handleDeleteBtn = () => {
+		const isConfirmed = window.confirm('Are you sure you want to permanently delete this comparison?');
+		if (isConfirmed) removeComparisonFromDB();
+	};
+
 	useEffect(() => {
 		setfitColMinInDB();
 	}, [fitColMin]);
@@ -107,6 +141,16 @@ const TableSettings = () => {
 						<Tooltip text='Copy link for sharing' delay={'default'}>
 							<button onClick={copyShareLinkToClipboard} className={`${styles.copy_btn}`}>
 								<CopySVG />
+							</button>
+						</Tooltip>
+					) : null}
+				</div>
+
+				<div className={styles.setting_section}>
+					{onHomePath ? (
+						<Tooltip text='Delete Comparison' delay={'default'}>
+							<button onClick={handleDeleteBtn} className={`${styles.delete_btn}`}>
+								<DeleteSVG />
 							</button>
 						</Tooltip>
 					) : null}

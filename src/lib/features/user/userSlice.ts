@@ -18,9 +18,13 @@ export const userSlice = createSlice({
 		setUserComparisons: (state, action: PayloadAction<IComparisonItem[]>) => {
 			state.comparisons = action.payload;
 		},
+		removeComparison: (state, action: PayloadAction<number>) => {
+			const indexToDelete = state.comparisons.findIndex(c => c.id === action.payload);
+			state.comparisons.splice(indexToDelete, 1);
+		},
 	},
 });
 
-export const { setUser, setUserComparisons } = userSlice.actions;
+export const { setUser, setUserComparisons, removeComparison } = userSlice.actions;
 
 export default userSlice.reducer;

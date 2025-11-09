@@ -21,6 +21,7 @@ export const comparisonSlice = createSlice({
 		setComparisonName: (state, action: PayloadAction<string>) => {
 			state.name = action.payload;
 		},
+
 		// Attributes -----------------------------------------------------
 		addAttribute: (state, action: PayloadAction<IAttribute>) => {
 			const idExists: boolean = state.attributes.some(attr => attr.id === action.payload.id);
