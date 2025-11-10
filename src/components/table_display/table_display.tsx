@@ -177,7 +177,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 	};
 
 	const handleCellClick = (entryID: number, attrID: number) => {
-		if (!onHomePath) return;
+		if (!onHomePath || ctrlDown) return;
 
 		const entryIndex: number = entries.findIndex(entry => entry.id === entryID);
 		dispatch(setMode('entries'));

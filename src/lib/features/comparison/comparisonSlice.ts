@@ -164,6 +164,11 @@ export const comparisonSlice = createSlice({
 				};
 			} else state.entries[action.payload.index].cells[action.payload.valueKey].value = action.payload.value;
 		},
+		setEntryValuesForAttribute: (state, action: PayloadAction<{ attrID: number; value: CellValueType }>) => {
+			for (const entry of state.entries) {
+				entry.cells[action.payload.attrID].value = action.payload.value;
+			}
+		},
 		setEntryRating: (
 			state,
 			action: PayloadAction<{ index: number; attrID: number; rating: number | null }>
@@ -214,6 +219,7 @@ export const {
 	removeEntry,
 	setEntryName,
 	setEntryValue,
+	setEntryValuesForAttribute,
 	setEntryRating,
 	toggleEntryHidden,
 	setNewEntryIndex,

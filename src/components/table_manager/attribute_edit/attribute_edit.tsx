@@ -16,6 +16,7 @@ import {
 	setAttributeSuffix,
 	setAttributeTextRatingType,
 	setAttributeType,
+	setEntryValuesForAttribute,
 } from '@/src/lib/features/comparison/comparisonSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import {
@@ -57,8 +58,16 @@ const AttributeEdit = ({
 		dispatch(setAttributeSuffix({ index: attributeIndex, value: value }));
 	};
 
-	const setType = (value: AttributeType) => {
-		dispatch(setAttributeType({ index: attributeIndex, value: value }));
+	const setType = (type: AttributeType) => {
+		if (type === 'link') {
+			dispatch(
+				setEntryValuesForAttribute({
+					attrID: attribute.id,
+					value: 'javascript:void(0);',
+				})
+			);
+		}
+		dispatch(setAttributeType({ index: attributeIndex, value: type }));
 	};
 
 	const setRange = (rangeIndex: 0 | 1 | 2) => (value: number) => {
