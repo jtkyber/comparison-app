@@ -170,7 +170,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 			type === 'link' ||
 			(type === 'text' && (!textRatingType || textRatingType === 'none'))
 		) {
-			return 'inherit';
+			return 'var(--color-grey5)';
 		}
 		return ratingToColor(rating);
 	};
@@ -249,10 +249,29 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 
 		autoTable(doc, {
 			html: tableClone,
-			theme: 'striped',
-			headStyles: { fillColor: [41, 128, 185] },
+			theme: 'grid',
+			headStyles: { fillColor: '#424242' },
 			styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
 			margin: { top: 20, left: 10, right: 10, bottom: 10 },
+			didParseCell: function (data) {
+				// Optional: Enhance color parsing if needed (autoTable already handles inline background-color)
+				if (
+					data.cell.raw &&
+					data.cell.raw instanceof HTMLTableCellElement &&
+					data.cell.raw.style &&
+					data.cell.raw.style.backgroundColor
+				) {
+					const color = data.cell.raw.style.backgroundColor; // e.g., 'rgb(26, 141, 0)'
+					const rgb = color.match(/\d+/g)?.map(Number) as [number, number, number]; // Extract RGB
+					if (rgb) data.cell.styles.fillColor = rgb;
+					if (rgb) data.cell.styles.textColor = 'black';
+				}
+				// Make links blue/underlined if desired
+				if (data.cell.raw && data.cell.raw instanceof HTMLTableCellElement && data.cell.raw.tagName === 'A') {
+					data.cell.styles.textColor = [0, 0, 255];
+					data.cell.text = [(data.cell.raw as HTMLTableCellElement).innerText]; // Just the link text
+				}
+			},
 			didDrawPage: () => {
 				const page = doc.getNumberOfPages();
 				doc.setFontSize(9);
