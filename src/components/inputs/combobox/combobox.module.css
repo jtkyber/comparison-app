@@ -9,7 +9,6 @@
 
 	.select_display {
 		width: 100%;
-		min-width: max-content;
 		height: inherit;
 		display: flex;
 		flex: none;

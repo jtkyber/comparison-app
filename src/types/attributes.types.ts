@@ -1,8 +1,9 @@
-export const attributeTypeList = ['number', 'yesNo', 'text', 'link'] as const;
+export const attributeTypeList = ['text', 'number', 'score', 'yesNo', 'link'] as const;
 export const attributeTypeListDisplayed = {
-	number: 'Number',
-	yesNo: 'Yes / No',
 	text: 'Text',
+	number: 'Number',
+	score: 'Score',
+	yesNo: 'Yes / No',
 	link: 'Link',
 };
 export type AttributeType = (typeof attributeTypeList)[number];

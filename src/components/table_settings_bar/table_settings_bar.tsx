@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DeleteSVG from '../svg/action_center/delete.svg';
+import CheckSVG from '../svg/settings_bar/check.svg';
 import ColorCellsSVG from '../svg/settings_bar/color_cells';
 import CopySVG from '../svg/settings_bar/copy';
 import DownloadSVG from '../svg/settings_bar/download';
@@ -27,6 +28,8 @@ const TableSettings = () => {
 	const handleAutoResizeBtn = () => dispatch(toggleFitColMin());
 	const handleColorCellsByRatingBtn = () => dispatch(toggleColorCellsByRating());
 	const handleDownloadBtn = () => dispatch(setDownloading(true));
+
+	const [copied, setCopied] = useState<boolean>(false);
 
 	const onHomePath = usePathname() === '/';
 
@@ -73,6 +76,11 @@ const TableSettings = () => {
 	const copyShareLinkToClipboard = async () => {
 		const baseURL = window.location.origin;
 		await navigator.clipboard.writeText(`${baseURL}/shared/${selectedComparison}`);
+
+		setCopied(true);
+		setTimeout(() => {
+			setCopied(false);
+		}, 2000);
 	};
 
 	const removeComparisonFromDB = async () => {
@@ -138,11 +146,17 @@ const TableSettings = () => {
 					</Tooltip>
 
 					{onHomePath ? (
-						<Tooltip text='Copy link for sharing' delay={'default'}>
-							<button onClick={copyShareLinkToClipboard} className={`${styles.copy_btn}`}>
-								<CopySVG />
-							</button>
-						</Tooltip>
+						copied ? (
+							<div className={styles.copied_check}>
+								<CheckSVG />
+							</div>
+						) : (
+							<Tooltip text='Copy link for sharing' delay={'default'}>
+								<button onClick={copyShareLinkToClipboard} className={`${styles.copy_btn}`}>
+									<CopySVG />
+								</button>
+							</Tooltip>
+						)
 					) : null}
 				</div>
 

@@ -38,6 +38,8 @@ const RatingSlider = ({ rating, setRating }: { rating: number; setRating: (value
 		if (!sliderRef?.current) return;
 		const slider = sliderRef.current;
 
+		if (rating === -1) setRating(5);
+
 		slider.style.setProperty('--slider-progress', `${rating * 10}%`);
 		slider.style.setProperty('--slider-color', `${sliderColors[Math.round(rating) * 10]}`);
 

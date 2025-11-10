@@ -22,7 +22,7 @@ export async function PUT(req: Request) {
 		} else {
 			values.push(cells?.[attr.id]?.value?.toString() || null);
 		}
-		ratings.push(cells?.[attr.id]?.rating || null);
+		ratings.push(cells?.[attr.id]?.rating ?? null);
 	}
 
 	const query = `

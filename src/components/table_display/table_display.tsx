@@ -11,6 +11,8 @@ import { IAttribute } from '@/src/types/attributes.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { ratingToColor } from '@/src/utils/colors';
 import { useDebounceCallback } from '@react-hook/debounce';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './table_display.module.css';
@@ -19,6 +21,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 	const userID = useAppSelector(state => state.user.id);
 	const display = useAppSelector(state => state.display);
 	const { fitColMin, colorCellsByRating, tableZoom } = useAppSelector(state => state.settings);
+	const { name: comparisonName } = useAppSelector(state => state.comparison);
 
 	const [ctrlDown, setCtrlDown] = useState<boolean>(false);
 
@@ -86,9 +89,9 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 		if (!entryCell) return;
 		const { value, rating } = entryCell;
 
-		if (value === null || value === undefined) return;
-
 		const { type, range, bestIndex, textRatingType, keyRatingPairs } = attribute;
+
+		if ((value === null || value === undefined) && type !== 'score') return;
 
 		switch (type) {
 			case 'number':
@@ -96,6 +99,8 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 					return getRatingFromRange(value, range, bestIndex);
 				}
 				return;
+			case 'score':
+				return rating ?? undefined;
 			case 'yesNo':
 				if (typeof value !== 'boolean') return undefined;
 				if (bestIndex === 0) return value === false ? 10 : 0;
@@ -204,18 +209,12 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 	const saveTableAsPDF = async () => {
 		const tableEl = tableRef?.current as HTMLTableElement;
 		if (!tableEl || !display.downloading || !attributes.length || !entries.length) return;
+		const tableClone = tableEl.cloneNode(true) as HTMLTableElement;
+		tableClone.style.breakInside = 'avoid';
 
-		const thEls = tableEl.querySelectorAll('th');
-		const tdEls = tableEl.querySelectorAll('td');
-		const aEls = tableEl.querySelectorAll('a');
-
-		const thColor = thEls[0].style.color;
-		const thPadding = thEls[0].style.padding;
-
-		const tdColor = tdEls[0].style.color;
-		const tdPadding = tdEls[0].style.padding;
-
-		const aColor = aEls[0].style.color;
+		const thEls = tableClone.querySelectorAll('th');
+		const tdEls = tableClone.querySelectorAll('td');
+		const aEls = tableClone.querySelectorAll('a');
 
 		for (const th of thEls) {
 			th.style.color = 'black';
@@ -227,31 +226,45 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 		}
 		for (const a of aEls) a.style.color = '#0000FF';
 
-		const mod = await import('html2pdf.js');
-		const html2pdf = (mod as any).default || mod;
+		// const mod = await import('html2pdf.js');
+		// const html2pdf = (mod as any).default || mod;
 
-		const opt = {
-			margin: 0.5,
-			filename: 'my-table.pdf',
-			image: { type: 'jpeg', quality: 0.98 },
-			html2canvas: { scale: 2 }, // Higher scale for better resolution
-			jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
-		} as const;
-		html2pdf()
-			.set(opt)
-			.from(tableEl)
-			.save()
-			.then(() => {
-				for (const th of thEls) {
-					th.style.color = thColor;
-					th.style.padding = thPadding;
-				}
-				for (const td of tdEls) {
-					td.style.color = tdColor;
-					td.style.padding = tdPadding;
-				}
-				for (const a of aEls) a.style.color = aColor;
-			});
+		// const opt = {
+		// 	margin: 0.5,
+		// 	filename: `${comparisonName}-table.pdf`,
+		// 	image: { type: 'jpeg', quality: 0.98 },
+		// 	html2canvas: { scale: 2 }, // Higher scale for better resolution
+		// 	jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+		// 	pagebreak: {
+		// 		mode: ['avoid-all', 'css', 'legacy'],
+		// 	},
+		// } as const;
+		// html2pdf().set(opt).from(tableClone).save();
+
+		const doc = new jsPDF({
+			orientation: 'landscape',
+			unit: 'pt',
+			format: 'letter',
+		});
+
+		autoTable(doc, {
+			html: tableClone,
+			theme: 'striped',
+			headStyles: { fillColor: [41, 128, 185] },
+			styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
+			margin: { top: 20, left: 10, right: 10, bottom: 10 },
+			didDrawPage: () => {
+				const page = doc.getNumberOfPages();
+				doc.setFontSize(9);
+				doc.text(
+					`Page ${page}`,
+					doc.internal.pageSize.getWidth() - 20,
+					doc.internal.pageSize.getHeight() - 8
+				);
+			},
+		});
+
+		doc.save(`${comparisonName}-table.pdf`);
 
 		dispatch(setDownloading(false));
 	};
@@ -346,7 +359,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 										{attributes
 											.filter(attr => !attr.hidden)
 											.map(attr => {
-												const { value } = entry.cells[attr.id] || {};
+												const { value, rating } = entry.cells[attr.id] || {};
 												const { id: attrID, prefix, suffix, type } = attr || {};
 
 												return (
@@ -377,6 +390,8 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 															) : (
 																'No'
 															)
+														) : type === 'score' ? (
+															rating
 														) : (
 															value
 														)}

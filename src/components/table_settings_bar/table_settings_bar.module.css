@@ -1,6 +1,6 @@
 .table_settings_bar_container {
 	grid-area: table_settings;
-	width: 2.2rem;
+	width: 2.5rem;
 	height: 100%;
 	background-color: var(--color-grey3);
 	padding: 0.5rem 0;
@@ -41,7 +41,8 @@
 			.color_cells_btn,
 			.download_btn,
 			.copy_btn,
-			.delete_btn {
+			.delete_btn,
+			.copied_check {
 				width: 100%;
 				padding: 0.5rem 0;
 				cursor: pointer;
@@ -51,7 +52,7 @@
 					width: auto;
 				}
 
-				&:hover {
+				&:not(&.copied_check):hover {
 					opacity: 0.6;
 				}
 
@@ -60,8 +61,11 @@
 				}
 
 				&.color_cells_btn {
-					svg * {
-						stroke: none;
+					svg {
+						height: 22px;
+						* {
+							stroke: none;
+						}
 					}
 				}
 
@@ -92,6 +96,16 @@
 				&.delete_btn {
 					svg * {
 						fill: var(--color-grey0);
+					}
+				}
+
+				&.copied_check {
+					text-align: center;
+					transform: scale(0.8);
+					cursor: default;
+
+					svg * {
+						fill: green;
 					}
 				}
 			}

@@ -145,64 +145,64 @@ const EntryEdit = ({
 
 							<ErrorComponent msg={validation.cells[attrID]} />
 
-							<div className={styles.input_section}>
-								<h5 className={styles.prefix}>{attr.prefix}</h5>
-								{(attrType === 'text' && attr.textRatingType !== 'keyratingpairs') ||
-								attrType === 'number' ||
-								attrType === 'link' ? (
-									<div className={styles.value_input_wrapper}>
-										<SpecialInput
-											value={entry.cells?.[attrID]?.value?.toString() || ''}
-											setValue={handleValueChange(attrID)}
-											label={`Enter ${attrType}`}
-											inputType={attrType === 'number' ? 'number' : 'string'}
-										/>
-									</div>
-								) : attrType === 'text' && attr.textRatingType === 'keyratingpairs' ? (
-									<div className={styles.textNamePicker}>
-										<Combobox
-											options={keyRatingPairKeys}
-											selected={entry.cells[attrID]?.value?.toString() || ''}
-											setSelected={handleValueChange(attrID)}
-										/>
-									</div>
-								) : attrType === 'yesNo' ? (
-									<div className={styles.boolean_value_input_wrapper}>
-										<div className={styles.radio_input}>
-											<label htmlFor={attrID + 'yesValue'}>Yes</label>
-											<input
-												name={attrID + 'boolean_value_input'}
-												className={styles.yes_no_input}
-												id={attrID + 'yesValue'}
-												type='radio'
-												checked={
-													entry.cells?.[attrID]?.value === true || entry.cells?.[attrID]?.value === undefined
-												}
-												onChange={handleRadioValueChange(attrID)}
+							{attrType !== 'score' ? (
+								<div className={styles.input_section}>
+									<h5 className={styles.prefix}>{attr.prefix}</h5>
+									{(attrType === 'text' && attr.textRatingType !== 'keyratingpairs') ||
+									attrType === 'number' ||
+									attrType === 'link' ? (
+										<div className={styles.value_input_wrapper}>
+											<SpecialInput
+												value={entry.cells?.[attrID]?.value?.toString() || ''}
+												setValue={handleValueChange(attrID)}
+												label={`Enter ${attrType}`}
+												inputType={attrType === 'number' ? 'number' : 'string'}
 											/>
 										</div>
-										<div className={styles.radio_input}>
-											<label htmlFor={attrID + 'noValue'}>No</label>
-											<input
-												name={attrID + 'boolean_value_input'}
-												className={styles.yes_no_input}
-												id={attrID + 'noValue'}
-												type='radio'
-												checked={entry.cells?.[attrID]?.value === false}
-												onChange={handleRadioValueChange(attrID)}
+									) : attrType === 'text' && attr.textRatingType === 'keyratingpairs' ? (
+										<div className={styles.textNamePicker}>
+											<Combobox
+												options={keyRatingPairKeys}
+												selected={entry.cells[attrID]?.value?.toString() || ''}
+												setSelected={handleValueChange(attrID)}
 											/>
 										</div>
-									</div>
-								) : null}
-								<h5 className={styles.suffix}>{attr.suffix}</h5>
-							</div>
-							{attrType === 'text' &&
-							attr.textRatingType === 'selfrated' &&
-							rating !== null &&
-							rating !== undefined ? (
+									) : attrType === 'yesNo' ? (
+										<div className={styles.boolean_value_input_wrapper}>
+											<div className={styles.radio_input}>
+												<label htmlFor={attrID + 'yesValue'}>Yes</label>
+												<input
+													name={attrID + 'boolean_value_input'}
+													className={styles.yes_no_input}
+													id={attrID + 'yesValue'}
+													type='radio'
+													checked={
+														entry.cells?.[attrID]?.value === true ||
+														entry.cells?.[attrID]?.value === undefined
+													}
+													onChange={handleRadioValueChange(attrID)}
+												/>
+											</div>
+											<div className={styles.radio_input}>
+												<label htmlFor={attrID + 'noValue'}>No</label>
+												<input
+													name={attrID + 'boolean_value_input'}
+													className={styles.yes_no_input}
+													id={attrID + 'noValue'}
+													type='radio'
+													checked={entry.cells?.[attrID]?.value === false}
+													onChange={handleRadioValueChange(attrID)}
+												/>
+											</div>
+										</div>
+									) : null}
+									<h5 className={styles.suffix}>{attr.suffix}</h5>
+								</div>
+							) : null}
+							{attrType === 'score' || (attrType === 'text' && attr.textRatingType === 'selfrated') ? (
 								<div className={styles.rating_input_section}>
 									<div className={styles.rating_input_wrapper}>
-										<RatingSlider rating={rating} setRating={handleRatingChange(attrID)} />
+										<RatingSlider rating={rating ?? -1} setRating={handleRatingChange(attrID)} />
 									</div>
 								</div>
 							) : null}

@@ -158,6 +158,7 @@ const AttributeEdit = ({
 		const attributeType = attribute.type;
 		return (
 			attributeType === 'number' ||
+			attributeType === 'score' ||
 			attributeType === 'yesNo' ||
 			(attributeType === 'text' &&
 				(attribute.textRatingType === 'selfrated' || attribute.textRatingType === 'keyratingpairs'))

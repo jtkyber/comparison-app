@@ -25,8 +25,14 @@ export const settingsSlice = createSlice({
 			state.colorCellsByRating = !state.colorCellsByRating;
 		},
 		updateTableZoom: (state, action: PayloadAction<number>) => {
-			if (!state.tableZoom || typeof action.payload !== 'number') state.tableZoom = 1;
-			else state.tableZoom -= action.payload;
+			const zoomInc = action.payload;
+
+			if (!state.tableZoom || typeof zoomInc !== 'number') state.tableZoom = 1;
+			else if (state.tableZoom - zoomInc >= 3) {
+				state.tableZoom = 3;
+			} else if (state.tableZoom - zoomInc <= 0.5) {
+				state.tableZoom = 0.5;
+			} else state.tableZoom -= zoomInc;
 		},
 	},
 });

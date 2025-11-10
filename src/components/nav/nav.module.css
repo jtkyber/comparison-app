@@ -19,7 +19,7 @@
 
 		.comparison_dropdown_wrapper {
 			z-index: 1;
-			width: 20rem;
+			width: max-content;
 			height: 2rem;
 			display: flex;
 			flex-flow: row nowrap;
