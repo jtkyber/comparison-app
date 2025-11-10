@@ -170,8 +170,9 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 			type === 'link' ||
 			(type === 'text' && (!textRatingType || textRatingType === 'none'))
 		) {
-			return 'var(--color-grey5)';
+			return 'inherit';
 		}
+
 		return ratingToColor(rating);
 	};
 
@@ -209,37 +210,6 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 	const saveTableAsPDF = async () => {
 		const tableEl = tableRef?.current as HTMLTableElement;
 		if (!tableEl || !display.downloading || !attributes.length || !entries.length) return;
-		const tableClone = tableEl.cloneNode(true) as HTMLTableElement;
-		tableClone.style.breakInside = 'avoid';
-
-		const thEls = tableClone.querySelectorAll('th');
-		const tdEls = tableClone.querySelectorAll('td');
-		const aEls = tableClone.querySelectorAll('a');
-
-		for (const th of thEls) {
-			th.style.color = 'black';
-			th.style.padding = '0.1rem 0.2rem';
-		}
-		for (const td of tdEls) {
-			td.style.color = 'black';
-			td.style.padding = '0.1rem 0.2rem';
-		}
-		for (const a of aEls) a.style.color = '#0000FF';
-
-		// const mod = await import('html2pdf.js');
-		// const html2pdf = (mod as any).default || mod;
-
-		// const opt = {
-		// 	margin: 0.5,
-		// 	filename: `${comparisonName}-table.pdf`,
-		// 	image: { type: 'jpeg', quality: 0.98 },
-		// 	html2canvas: { scale: 2 }, // Higher scale for better resolution
-		// 	jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
-		// 	pagebreak: {
-		// 		mode: ['avoid-all', 'css', 'legacy'],
-		// 	},
-		// } as const;
-		// html2pdf().set(opt).from(tableClone).save();
 
 		const doc = new jsPDF({
 			orientation: 'landscape',
@@ -248,38 +218,42 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 		});
 
 		autoTable(doc, {
-			html: tableClone,
+			html: tableEl,
 			theme: 'grid',
 			headStyles: { fillColor: '#424242' },
 			styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
 			margin: { top: 20, left: 10, right: 10, bottom: 10 },
 			didParseCell: function (data) {
-				// Optional: Enhance color parsing if needed (autoTable already handles inline background-color)
 				if (
 					data.cell.raw &&
 					data.cell.raw instanceof HTMLTableCellElement &&
 					data.cell.raw.style &&
 					data.cell.raw.style.backgroundColor
 				) {
-					const color = data.cell.raw.style.backgroundColor; // e.g., 'rgb(26, 141, 0)'
+					const color = data.cell.raw.style.backgroundColor;
 					const rgb = color.match(/\d+/g)?.map(Number) as [number, number, number]; // Extract RGB
-					if (rgb) data.cell.styles.fillColor = rgb;
-					if (rgb) data.cell.styles.textColor = 'black';
+					if (rgb) {
+						data.cell.styles.fillColor = rgb;
+						data.cell.styles.textColor = 'black';
+					}
 				}
-				// Make links blue/underlined if desired
-				if (data.cell.raw && data.cell.raw instanceof HTMLTableCellElement && data.cell.raw.tagName === 'A') {
-					data.cell.styles.textColor = [0, 0, 255];
-					data.cell.text = [(data.cell.raw as HTMLTableCellElement).innerText]; // Just the link text
+
+				if (data.cell.section === 'body' && data.column.index === 1) {
+					const anchor = (data.cell.raw as any)?.querySelector('a');
+
+					if (anchor) {
+						(data.cell.styles as any).myHref = anchor.href;
+						data.cell.text = [anchor.innerText];
+						data.cell.styles.textColor = [0, 0, 255];
+					}
 				}
 			},
-			didDrawPage: () => {
-				const page = doc.getNumberOfPages();
-				doc.setFontSize(9);
-				doc.text(
-					`Page ${page}`,
-					doc.internal.pageSize.getWidth() - 20,
-					doc.internal.pageSize.getHeight() - 8
-				);
+			didDrawCell: function (data) {
+				if ((data.cell?.styles as any)?.myHref) {
+					doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, {
+						url: (data.cell.styles as any).myHref,
+					});
+				}
 			},
 		});
 
@@ -387,10 +361,9 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 															display.highlightedAttribute === attrID ? styles.highlighted : null
 														}`}
 														style={{
-															backgroundColor:
-																value !== '' && colorCellsByRating
-																	? determineCellColor(entryID, attrID)
-																	: 'transparent',
+															backgroundColor: colorCellsByRating
+																? determineCellColor(entryID, attrID)
+																: 'inherit',
 														}}
 														key={`${entryID}_${attrID}`}
 														onClick={() => handleCellClick(entryID, attrID)}>

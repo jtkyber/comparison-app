@@ -1,5 +1,6 @@
 .table_display_container {
 	--highlight-filter: brightness(150%);
+	--highlight-color: white;
 	--table-font-size-default: 0.9rem;
 	--table-font-size: var(--table-font-size-default);
 	--table-border: 1px solid var(--color-grey0);
@@ -23,25 +24,26 @@
 			tbody td {
 				color: black;
 			}
+		}
 
-			tr.highlighted {
-				filter: none;
-				transform-origin: 0 50%;
-				transform: scale(1.05);
-				box-shadow: 0px 0px 0.3rem 0px var(--color-grey4);
-
-				td,
-				th {
-					border-top: none;
-					border-bottom: none;
+		thead,
+		tbody {
+			tr {
+				th.highlighted,
+				td.highlighted {
+					box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color);
+					filter: none;
 				}
 			}
 
-			thead th.highlighted,
-			tbody td.highlighted {
-				/* filter: brightness(130%) contrast(200%); */
-				filter: none;
-				outline: 2px solid var(--color-grey0);
+			&thead th.highlighted {
+				box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
+					inset 0 2px 0 0 var(--highlight-color);
+			}
+
+			&tbody tr:last-child td.highlighted {
+				box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
+					inset 0 -2px 0 0 var(--highlight-color);
 			}
 		}
 
@@ -66,10 +68,6 @@
 
 		tr {
 			height: 1rem;
-
-			&.highlighted {
-				filter: var(--highlight-filter);
-			}
 		}
 
 		thead {
@@ -84,10 +82,6 @@
 					&:last-child {
 						border-right-color: var(--color-grey0);
 					}
-
-					&.highlighted {
-						filter: var(--highlight-filter);
-					}
 				}
 			}
 		}
@@ -98,6 +92,25 @@
 					td,
 					th {
 						border-bottom: var(--table-border);
+					}
+				}
+
+				&.highlighted {
+					filter: none;
+
+					th,
+					td {
+						box-shadow: inset 0 2px 0 0 var(--highlight-color), inset 0 -2px 0 0 var(--highlight-color);
+
+						&th {
+							box-shadow: inset 0 2px 0 0 var(--highlight-color), inset 0 -2px 0 0 var(--highlight-color),
+								inset 2px 0 0 0 var(--highlight-color);
+						}
+
+						&td:last-child {
+							box-shadow: inset 0 2px 0 0 var(--highlight-color), inset 0 -2px 0 0 var(--highlight-color),
+								inset -2px 0 0 0 var(--highlight-color);
+						}
 					}
 				}
 
@@ -119,10 +132,6 @@
 					&.rating_cell {
 						font-weight: 600;
 						text-align: center;
-					}
-
-					&.highlighted {
-						filter: var(--highlight-filter);
 					}
 
 					.link {
