@@ -6,6 +6,7 @@ import styles from './auth_page.module.css';
 
 export default function SharedComparisonPage() {
 	const [isNewUser, setIsNewUser] = useState<boolean>(false);
+	console.log(process.env.NEXT_PUBLIC_API_URL);
 
 	const toggleIsNewUser = () => setIsNewUser(!isNewUser);
 
