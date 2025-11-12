@@ -12,7 +12,7 @@ const SpecialInput = ({
 	value: string | number | null;
 	setValue: (value: any) => void;
 	label: string;
-	inputType: 'string' | 'number';
+	inputType: 'string' | 'number' | 'password';
 	styling?: CSSProperties;
 }) => {
 	const handle_input_change = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +28,9 @@ const SpecialInput = ({
 				if ((Number(sanitized) || sanitized === '0') && sanitized[sanitized.length - 1] !== '.') {
 					setValue(Number(sanitized));
 				} else setValue(sanitized);
+				break;
+			case 'password':
+				setValue(text);
 				break;
 		}
 	};
@@ -52,13 +55,13 @@ const SpecialInput = ({
 	return (
 		<div className={styles.special_input_container}>
 			<input
-				type='text'
+				type={inputType === 'password' ? 'password' : 'text'}
 				inputMode='decimal'
 				value={value?.toString() || ''}
 				onChange={handle_input_change}
 				className={styles.special_input}
 				style={styling}
-				autoComplete='off'
+				autoComplete={inputType === 'password' ? 'new-password' : 'off'}
 			/>
 			<h5 className={`${styles.special_input_label} ${value !== '' ? styles.filled : null}`}>{label}</h5>
 		</div>

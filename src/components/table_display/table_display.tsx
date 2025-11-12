@@ -9,6 +9,7 @@ import { updateTableZoom } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { ICellValue, IEntry } from '@/src/types/entries.types';
+import { endpoints } from '@/src/utils/api_calls';
 import { ratingToColor } from '@/src/utils/colors';
 import { useDebounceCallback } from '@react-hook/debounce';
 import jsPDF from 'jspdf';
@@ -187,22 +188,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 
 	const updateTableZoomInDB = async () => {
 		if (!userID || !onHomePath) return;
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setTableZoom`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userID: userID,
-				tableZoom: tableZoom,
-			}),
-		});
-		const data = await res.json();
-
-		if (!data) {
-			console.log('Could not update tableZoom in DB');
-		}
+		await endpoints.settings.tableZoom.set(userID, tableZoom);
 	};
 
 	const updateTableZoomInDBDebounce = useDebounceCallback(updateTableZoomInDB, 1000);

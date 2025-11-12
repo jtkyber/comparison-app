@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
 import { TableManagerMode } from '@/src/types/table_manager.types';
+import { endpoints } from '@/src/utils/api_calls';
 import React, { MouseEvent } from 'react';
 import EditSVG from '../../svg/element/edit.svg';
 import HiddenSVG from '../../svg/element/hidden.svg';
@@ -58,34 +59,12 @@ const ManagerElement = ({
 
 	const handleAttributeHideToggle = async (index: number): Promise<void> => {
 		dispatch(toggleAttributeHidden(index));
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/toggleAttributeHidden`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				id: attributes[index].id,
-			}),
-		});
-
-		await res.json();
+		await endpoints.attributes.toggleHidden(attributes[index].id);
 	};
 
 	const handleEntryHideToggle = async (index: number): Promise<void> => {
 		dispatch(toggleEntryHidden(index));
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/toggleEntryHidden`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				id: entries[index].id,
-			}),
-		});
-
-		await res.json();
+		await endpoints.entries.toggleHidden(entries[index].id);
 	};
 
 	return (

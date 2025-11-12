@@ -8,6 +8,7 @@ import {
 } from '@/src/lib/features/user/settingsSlice';
 import { removeComparison } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
+import { endpoints } from '@/src/utils/api_calls';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DeleteSVG from '../svg/action_center/delete.svg';
@@ -35,42 +36,12 @@ const TableSettings = () => {
 
 	const setfitColMinInDB = async () => {
 		if (!userID) return;
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setAutoResize`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userID: userID,
-				fitColMin: fitColMin,
-			}),
-		});
-		const data = await res.json();
-
-		if (!data) {
-			console.log('Could not update fitColMin in DB');
-		}
+		await endpoints.settings.fitColMin.set(userID, fitColMin);
 	};
 
 	const setColorCellsByRatingInDB = async () => {
 		if (!userID) return;
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setColorCellsByRating`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userID: userID,
-				colorCellsByRating: colorCellsByRating,
-			}),
-		});
-		const data = await res.json();
-
-		if (!data) {
-			console.log('Could not update colorCellsByRating in DB');
-		}
+		await endpoints.settings.colorCellsByRating.set(userID, colorCellsByRating);
 	};
 
 	const copyShareLinkToClipboard = async () => {
@@ -86,23 +57,10 @@ const TableSettings = () => {
 	const removeComparisonFromDB = async () => {
 		const comparisonToRemove = selectedComparison;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/removeComparison`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				id: comparisonToRemove,
-			}),
-		});
-		const data = await res.json();
+		const firstComparison = await endpoints.comparisons.delete(comparisonToRemove);
 
-		if (data.id) {
-			dispatch(setSelectedComparison(data.id));
-			dispatch(removeComparison(comparisonToRemove));
-		} else {
-			console.log('Could not delete comparison from DB');
-		}
+		dispatch(setSelectedComparison(firstComparison.id));
+		dispatch(removeComparison(comparisonToRemove));
 	};
 
 	const handleDeleteBtn = () => {

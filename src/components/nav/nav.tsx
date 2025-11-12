@@ -1,11 +1,10 @@
 'use client';
 import { setComparison, setComparisonName } from '@/src/lib/features/comparison/comparisonSlice';
 import { setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
-import { setUser, setUserComparisons } from '@/src/lib/features/user/userSlice';
+import { setUserComparisons } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IComparisonItem } from '@/src/types/comparisons.types';
-import { ISettings } from '@/src/types/settings.types';
-import { IUser } from '@/src/types/user.types';
+import { endpoints } from '@/src/utils/api_calls';
 import { isNumeric } from '@/src/utils/general';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -28,60 +27,22 @@ const Nav = () => {
 	const pathname = usePathname();
 	const onHomePath = pathname === '/';
 
-	const setComparisonTable = async () => {
-		if (selectedComparison <= 0) return;
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/table`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: selectedComparison,
-			}),
-		});
-
-		const data = await res.json();
+	const setComparisonTable = async (id: number) => {
+		const table = await endpoints.comparisons.getTable(id);
 
 		dispatch(
 			setComparison({
-				id: data.id,
-				name: data.name,
-				attributes: data.attributes,
-				entries: data.entries,
+				id: table.id,
+				name: table.name,
+				attributes: table.attributes,
+				entries: table.entries,
 			})
 		);
 	};
 
-	const getAndSetUserData = async () => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				username: 'jtkyber',
-				password: 'testing123',
-			}),
-		});
-		const userData = await res.json();
-
-		if (userData.user && userData.settings) {
-			const { user, settings }: { user: IUser; settings: ISettings } = userData;
-			if (user.comparisons.length && settings.selectedComparison === 0) {
-				settings.selectedComparison = user.comparisons[0].id;
-			}
-
-			dispatch(setUser(user));
-			dispatch(setSettings(settings));
-		}
-	};
-
 	const getAndSetComparisonName = async (id: string) => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/getComparisonName/${id}`);
-		const data = await res.json();
-
-		if (typeof data === 'string') dispatch(setComparisonName(data));
+		const fetchedComparisonName = await endpoints.comparisons.getName(id);
+		dispatch(setComparisonName(fetchedComparisonName));
 	};
 
 	const buildReferenceTable = (): { [key: string]: string } => {
@@ -103,60 +64,31 @@ const Nav = () => {
 			setError('Name must be between 1 and 36 characters');
 			return;
 		}
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/addComparison`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userID: user.id,
-				name: newComparisonName,
-			}),
-		});
-		const data = await res.json();
+		const { comparisons: fetchedComparisons, newComparisonID } = await endpoints.comparisons.add(
+			user.id,
+			newComparisonName
+		);
 
-		if (data) {
-			const comparisons: IComparisonItem[] = data;
-			dispatch(setUserComparisons(comparisons));
+		await setComparisonTable(newComparisonID);
 
-			if (data.length === 1) dispatch(setSelectedComparison(data[0].id));
-			else await setComparisonTable();
-			setAddingNew(false);
-		}
+		dispatch(setUserComparisons(fetchedComparisons));
+		dispatch(setSelectedComparison(newComparisonID));
+		setAddingNew(false);
 	};
 
 	const handleChangeComparison = async (idString: string) => {
 		const id = parseInt(idString);
+		if (id === selectedComparison) return;
 
 		dispatch(setSelectedComparison(id));
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setSelectedComparison`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userID: user.id,
-				comparisonID: id,
-			}),
-		});
-		const data = await res.json();
+		await setComparisonTable(id);
 
-		if (!data) {
-			console.log('Could not update selected comparisonID');
-		}
+		await endpoints.settings.selectedComparison.set(user.id, id);
 	};
 
 	const setAddComparison = () => setAddingNew(true);
 	const cancelAddComparison = () => setAddingNew(false);
-
-	useEffect(() => {
-		if (onHomePath) setComparisonTable();
-	}, [selectedComparison]);
-
-	useEffect(() => {
-		if (onHomePath) getAndSetUserData();
-	}, []);
 
 	useEffect(() => {
 		if (onHomePath) return;

@@ -1,0 +1,48 @@
+.login_form {
+	width: 20rem;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	gap: 1rem;
+	border: 2px solid var(--color-grey2);
+	border-radius: 1rem;
+	padding: 1.5rem;
+	color: var(--color-grey2);
+
+	.form_heading {
+		margin-bottom: 1rem;
+		color: inherit;
+	}
+
+	.username,
+	.password,
+	.confirm_password {
+		width: 100%;
+		background-color: var(--color-grey0);
+		color: inherit;
+	}
+
+	.submit_btn {
+		width: 100%;
+		background-color: var(--color-grey2);
+		padding: 0.5rem 1rem;
+		border-radius: 0.5rem;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.6;
+		}
+	}
+
+	.logRegSwitchText {
+		color: inherit;
+		font-weight: 400;
+		margin-top: 1rem;
+
+		.logRegSwitchLink {
+			font-weight: 800;
+			color: #0000ff;
+			cursor: pointer;
+		}
+	}
+}

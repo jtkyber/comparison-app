@@ -6,20 +6,52 @@ import { ICellValue, IEntry } from '@/src/types/entries.types';
 import { underscoreToCamelObject } from '@/src/utils/server';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-	const { comparisonID } = await req.json();
+type AllTableData = {
+	comparisons: DBComparison[];
+	attributes: DBAttribute[];
+	entries: DBEntry[];
+	cells: DBCell[];
+	keyratingpairs: DBKeyRatingPair[];
+};
 
+const getAllTableData = async (id: number): Promise<AllTableData | any> => {
 	const query = `
-	SELECT
-		(SELECT row_to_json(c) FROM comparisons c WHERE c.id = $1) AS comparison,
+		SELECT
+			(SELECT row_to_json(c) FROM comparisons c WHERE c.id = $1) AS comparison,
+	
+			COALESCE((SELECT json_agg(a ORDER BY a.pos) FROM attributes a WHERE a.comparison_id = $1), '[]'::json) AS attributes,
+			COALESCE((SELECT json_agg(e ORDER BY e.pos) FROM entries e WHERE e.comparison_id = $1), '[]'::json) AS entries,
+			COALESCE((SELECT json_agg(c ORDER BY c.id) FROM cells c WHERE c.comparison_id = $1), '[]'::json) AS cells,
+			COALESCE((SELECT json_agg(k ORDER BY k.id) FROM keyratingpairs k WHERE k.comparison_id = $1), '[]'::json) AS keyratingpairs
+		;`;
 
-		COALESCE((SELECT json_agg(a ORDER BY a.pos) FROM attributes a WHERE a.comparison_id = $1), '[]'::json) AS attributes,
-		COALESCE((SELECT json_agg(e ORDER BY e.pos) FROM entries e WHERE e.comparison_id = $1), '[]'::json) AS entries,
-		COALESCE((SELECT json_agg(c ORDER BY c.id) FROM cells c WHERE c.comparison_id = $1), '[]'::json) AS cells,
-		COALESCE((SELECT json_agg(k ORDER BY k.id) FROM keyratingpairs k WHERE k.comparison_id = $1), '[]'::json) AS keyratingpairs
-	;`;
+	const [data] = await sql.query(query, [id]);
 
-	const [data] = await sql.query(query, [comparisonID]);
+	return data;
+};
+
+export async function POST(req: Request) {
+	const { comparisonID, userID } = await req.json();
+
+	let returnData: IComparison = {
+		id: 0,
+		name: '',
+		attributes: [],
+		entries: [],
+	};
+
+	let data = await getAllTableData(comparisonID);
+	if (!data.comparison && userID) {
+		const [firstComparison] = await sql`
+			SELECT id FROM comparisons
+			WHERE user_id = ${userID}
+			ORDER BY id DESC
+			LIMIT 1
+		;`;
+		if (firstComparison.id) {
+			data = await getAllTableData(firstComparison.id);
+		} else return NextResponse.json(returnData);
+	} else if (!data.comparison) throw new Error('Comparison does not exist');
 
 	const comparisonDB: DBComparison = data.comparison;
 	const attributesDB: DBAttribute[] = data.attributes;
@@ -99,7 +131,7 @@ export async function POST(req: Request) {
 		}
 	}
 
-	const returnData: IComparison = {
+	returnData = {
 		id: comparisonDB.id,
 		name: comparisonDB.name,
 		attributes: attributes || [],

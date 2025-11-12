@@ -16,6 +16,7 @@ import {
 	IAttributeValidation,
 	IEntryValidation,
 } from '@/src/types/validation.types';
+import { endpoints } from '@/src/utils/api_calls';
 import { validateAttribute, validateEntry } from '@/src/validation/table_manager.val';
 import React, { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
@@ -114,24 +115,14 @@ const TableManager = () => {
 	};
 
 	const refreshComparison = async () => {
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/comparisons/table`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-			}),
-		});
-
-		const data = await res.json();
+		const table = await endpoints.comparisons.getTable(comparisonID);
 
 		dispatch(
 			setComparison({
-				id: data.id,
-				name: data.name,
-				attributes: data.attributes,
-				entries: data.entries,
+				id: table.id,
+				name: table.name,
+				attributes: table.attributes,
+				entries: table.entries,
 			})
 		);
 	};
@@ -146,24 +137,10 @@ const TableManager = () => {
 			return;
 		}
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/addAttribute`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				attribute: attr,
-			}),
-		});
+		await endpoints.attributes.add(comparisonID, attr);
+		await refreshComparison();
 
-		const data = (await res.json()) as IAttribute;
-
-		if (data) {
-			await refreshComparison();
-
-			dispatch(setEditingIndex(null));
-		}
+		dispatch(setEditingIndex(null));
 	};
 
 	const addEntryInDB = async () => {
@@ -176,23 +153,10 @@ const TableManager = () => {
 			return;
 		}
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/addEntry`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				entry: entry,
-			}),
-		});
+		await endpoints.entries.add(comparisonID, entry);
+		await refreshComparison();
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-			dispatch(setEditingIndex(null));
-		}
+		dispatch(setEditingIndex(null));
 	};
 
 	const updateAttributeInDB = async () => {
@@ -206,24 +170,10 @@ const TableManager = () => {
 			return;
 		}
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/updateAttribute`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				attribute: attr,
-			}),
-		});
+		await endpoints.attributes.update(comparisonID, attr);
+		await refreshComparison();
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-
-			dispatch(setEditingIndex(null));
-		}
+		dispatch(setEditingIndex(null));
 	};
 
 	const updateEntryInDB = async () => {
@@ -237,70 +187,28 @@ const TableManager = () => {
 			return;
 		}
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/updateEntry`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				entry: entry,
-			}),
-		});
+		await endpoints.entries.update(comparisonID, entry);
+		await refreshComparison();
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-
-			dispatch(setEditingIndex(null));
-		}
+		dispatch(setEditingIndex(null));
 	};
 
 	const deleteAttributesInDB = async () => {
 		if (editingIndex !== null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/removeAttributes`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				attributeIDs: idsChecked,
-			}),
-		});
+		await endpoints.attributes.delete(comparisonID, idsChecked);
+		await refreshComparison();
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-
-			setIdsChecked([]);
-		}
+		setIdsChecked([]);
 	};
 
 	const deleteEntriesInDB = async () => {
 		if (editingIndex !== null) return;
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/removeEntries`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				entryIDs: idsChecked,
-			}),
-		});
+		await endpoints.entries.delete(comparisonID, idsChecked);
+		await refreshComparison();
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-
-			setIdsChecked([]);
-		}
+		setIdsChecked([]);
 	};
 
 	const handleCancelEdit = async () => {
@@ -320,44 +228,15 @@ const TableManager = () => {
 	const moveAttributeInDB = async (id: number) => {
 		const indexOfMoved: number = attributes.findIndex(attr => attr.id == id);
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/attributes/moveAttribute`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				attributeID: id,
-				newAttrPos: indexOfMoved,
-			}),
-		});
-
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-		}
+		await endpoints.attributes.move(comparisonID, id, indexOfMoved);
+		await refreshComparison();
 	};
 
 	const moveEntryInDB = async (id: number) => {
 		const indexOfMoved: number = entries.findIndex(entry => entry.id == id);
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data/entries/moveEntry`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				comparisonID: comparisonID,
-				entryID: id,
-				newEntryPos: indexOfMoved,
-			}),
-		});
 
-		const data = await res.json();
-
-		if (data) {
-			await refreshComparison();
-		}
+		await endpoints.entries.move(comparisonID, id, indexOfMoved);
+		await refreshComparison();
 	};
 
 	const handleElementMouseDown = (e: MouseEvent<HTMLHeadingElement>, id: number): void => {
