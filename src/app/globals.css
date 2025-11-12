@@ -68,11 +68,10 @@ input {
 	border: none;
 }
 
-h5,
-p,
 input,
 label,
 div,
+button,
 a {
 	font-size: 0.9rem;
 }

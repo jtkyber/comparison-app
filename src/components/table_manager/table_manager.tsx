@@ -337,7 +337,7 @@ const TableManager = () => {
 	return (
 		<div className={`${styles.table_manager_container} ${comparisonID === 0 ? styles.disabled : null}`}>
 			<div className={styles.manager_title_section}>
-				<h4 className={styles.manager_title}>Comparison Manager</h4>
+				<h4 className={styles.manager_title}>Manager</h4>
 			</div>
 
 			<div className={styles.tab_section}>
@@ -379,22 +379,30 @@ const TableManager = () => {
 					</div>
 				) : (
 					<div ref={elementListRef} className={styles.element_list}>
-						{(mode === 'attributes' ? attributes : entries).map((el, index) => (
-							<Fragment key={el.id}>
-								<ManagerElement
-									el={el}
-									index={index}
-									idsChecked={idsChecked}
-									mode={mode}
-									handleElementSelect={handleElementSelect}
-									handleEditElement={handleEditElement}
-									handleElementMouseDown={handleElementMouseDown}
-								/>
-								{el.id === draggingID ? (
-									<div id='temp_el' key={el.id + '_temp'} className={styles.container}></div>
-								) : null}
-							</Fragment>
-						))}
+						{(mode === 'attributes' ? attributes : entries).length ? (
+							(mode === 'attributes' ? attributes : entries).map((el, index) => (
+								<Fragment key={el.id}>
+									<ManagerElement
+										el={el}
+										index={index}
+										idsChecked={idsChecked}
+										mode={mode}
+										handleElementSelect={handleElementSelect}
+										handleEditElement={handleEditElement}
+										handleElementMouseDown={handleElementMouseDown}
+									/>
+									{el.id === draggingID ? (
+										<div id='temp_el' key={el.id + '_temp'} className={styles.container}></div>
+									) : null}
+								</Fragment>
+							))
+						) : (
+							<h4 className={styles.no_element_text}>
+								{mode === 'attributes'
+									? "One of these will hold information for a spec, feature or quality that'll be used to compare entries. Each entry's value will be compared against it's respective attribute information to generate a rating for that cell. All of those ratings will be combined into a final score for each entry. Click the plus button below to add your first attribute."
+									: "These are the options (rows) you'll be comparing against eachother. Click the plus button below to add your first entry."}
+							</h4>
+						)}
 					</div>
 				)}
 			</div>

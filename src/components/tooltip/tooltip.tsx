@@ -43,12 +43,17 @@ const Tooltip = ({
 				if (!childEl || !mouseOver) return;
 
 				let x: number = childEl.getBoundingClientRect().right;
-				const y: number = childEl.getBoundingClientRect().top;
+				let y: number = childEl.getBoundingClientRect().top;
 				const width: number = childEl.getBoundingClientRect().width;
+				const height: number = childEl.getBoundingClientRect().height;
 
 				if (x - width > window.innerWidth / 2) {
 					x = childEl.getBoundingClientRect().left;
 					setOnRightSide(true);
+				}
+				if (y - height < 0) {
+					y = childEl.getBoundingClientRect().bottom + height;
+					// setOnRightSide(true);
 				}
 
 				setXPos(x);

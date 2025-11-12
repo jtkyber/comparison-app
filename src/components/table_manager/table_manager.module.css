@@ -43,7 +43,7 @@
 			background-color: var(--color-grey3);
 			flex: none;
 			cursor: pointer;
-			font-weight: 600;
+			font-weight: 400;
 			color: var(--color-grey0);
 
 			&.active {
@@ -110,6 +110,12 @@
 			flex-flow: column nowrap;
 			gap: 0.5rem;
 			padding-bottom: 2rem;
+
+			.no_element_text {
+				color: var(--color-grey0);
+				font-weight: 400;
+				opacity: 0.6;
+			}
 
 			.element {
 				width: 100%;

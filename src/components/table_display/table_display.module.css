@@ -8,8 +8,12 @@
 	overflow: auto;
 	padding: 0.5rem;
 
+	.no_table_text {
+		font-weight: 400;
+		color: var(--color-grey1);
+	}
+
 	.table {
-		/* border-spacing: 0 0.25rem; */
 		border-spacing: 0;
 
 		&.fit_cell_min {
@@ -73,6 +77,12 @@
 		thead {
 			tr {
 				background-color: #424242;
+
+				&.add_bottom_border {
+					th {
+						border-bottom: var(--table-border);
+					}
+				}
 
 				th {
 					color: var(--color-grey0);

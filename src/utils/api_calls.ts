@@ -47,6 +47,31 @@ export const endpoints = {
 				throw new Error('Could not retrieve user');
 			}
 		},
+		async register(
+			username: string,
+			password: string
+		): Promise<{
+			user: IUser;
+			settings: ISettings;
+		}> {
+			try {
+				const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/register`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						username,
+						password,
+					}),
+				});
+
+				const data = await res.json();
+				return data;
+			} catch (err) {
+				throw new Error('Could not retrieve user');
+			}
+		},
 	},
 	comparisons: {
 		async getTable(id: Id, userID?: Id): Promise<IComparison> {

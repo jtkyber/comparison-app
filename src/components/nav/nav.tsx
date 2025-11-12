@@ -1,12 +1,14 @@
 'use client';
 import { setComparison, setComparisonName } from '@/src/lib/features/comparison/comparisonSlice';
-import { setSelectedComparison, setSettings } from '@/src/lib/features/user/settingsSlice';
+import { setSelectedComparison } from '@/src/lib/features/user/settingsSlice';
 import { setUserComparisons } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
-import { IComparisonItem } from '@/src/types/comparisons.types';
+import { resetStore } from '@/src/lib/store';
 import { endpoints } from '@/src/utils/api_calls';
+import { setCookie } from '@/src/utils/cookies';
 import { isNumeric } from '@/src/utils/general';
-import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ErrorComponent from '../error/error';
 import Combobox from '../inputs/combobox/combobox';
@@ -23,6 +25,8 @@ const Nav = () => {
 	const [error, setError] = useState<string>('');
 
 	const dispatch = useAppDispatch();
+
+	const router = useRouter();
 
 	const pathname = usePathname();
 	const onHomePath = pathname === '/';
@@ -87,6 +91,12 @@ const Nav = () => {
 		await endpoints.settings.selectedComparison.set(user.id, id);
 	};
 
+	const handleLogout = () => {
+		dispatch(resetStore());
+		router.replace('/auth');
+		setCookie('userID', '', -1);
+	};
+
 	const setAddComparison = () => setAddingNew(true);
 	const cancelAddComparison = () => setAddingNew(false);
 
@@ -108,56 +118,76 @@ const Nav = () => {
 
 	return (
 		<div className={styles.nav_container}>
-			{onHomePath ? (
-				<div className={styles.comparison_section}>
-					<div className={styles.comparison_dropdown_wrapper}>
-						<div className={styles.comparison_dropdown}>
-							<Combobox
-								options={user.comparisons.map(c => c.id.toString())}
-								selected={selectedComparison.toString()}
-								setSelected={handleChangeComparison}
-								referenceTable={buildReferenceTable()}
-							/>
+			<div className={styles.left}>
+				<Link href='/'>
+					<h1 className={styles.app_name}>EasyCompare</h1>
+				</Link>
+			</div>
+			<div className={styles.middle}>
+				{onHomePath && user.id ? (
+					<div className={styles.comparison_section}>
+						<div className={styles.comparison_dropdown_wrapper}>
+							<div className={styles.comparison_dropdown}>
+								<Combobox
+									options={user.comparisons.map(c => c.id.toString())}
+									selected={selectedComparison.toString()}
+									setSelected={handleChangeComparison}
+									referenceTable={buildReferenceTable()}
+								/>
+							</div>
+							<Tooltip text='Create new comparison' delay={'default'}>
+								<button
+									onClick={setAddComparison}
+									className={`${styles.new_comparison_btn} ${
+										!user.comparisons.length ? styles.pulse : null
+									}`}>
+									+
+								</button>
+							</Tooltip>
 						</div>
-						<button onClick={setAddComparison} className={styles.new_comparison_btn}>
-							+
-						</button>
-					</div>
 
-					{addingNew ? (
-						<div className={styles.new_comparison_container}>
-							<div className={styles.new_comparison_modal}>
-								<h3 className={styles.comparison_title}>New Comparison</h3>
+						{addingNew ? (
+							<div className={styles.new_comparison_container}>
+								<div className={styles.new_comparison_modal}>
+									<h3 className={styles.comparison_title}>New Comparison</h3>
 
-								{error ? <ErrorComponent msg={'Name must be between 1 and 36 characters'} /> : null}
+									{error ? <ErrorComponent msg={'Name must be between 1 and 36 characters'} /> : null}
 
-								<div className={styles.comparison_name_input}>
-									<SpecialInput
-										value={newComparisonName}
-										setValue={setNewComparisonName}
-										label='Name'
-										inputType='string'
-									/>
-								</div>
-								<div className={styles.comparison_modal_btn_section}>
-									<Tooltip text='Cancel' key='cancel' delay='default'>
-										<button onClick={cancelAddComparison} className={styles.cancel_add_comparison_btn}>
-											X
-										</button>
-									</Tooltip>
-									<Tooltip text='Add' key='add' delay='default'>
-										<button onClick={handleAddComparison} className={styles.add_comparison_btn}>
-											&#10003;
-										</button>
-									</Tooltip>
+									<div className={styles.comparison_name_input}>
+										<SpecialInput
+											value={newComparisonName}
+											setValue={setNewComparisonName}
+											label='Name'
+											inputType='string'
+										/>
+									</div>
+									<div className={styles.comparison_modal_btn_section}>
+										<Tooltip text='Cancel' key='cancel' delay='default'>
+											<button onClick={cancelAddComparison} className={styles.cancel_add_comparison_btn}>
+												X
+											</button>
+										</Tooltip>
+										<Tooltip text='Add' key='add' delay='default'>
+											<button onClick={handleAddComparison} className={styles.add_comparison_btn}>
+												&#10003;
+											</button>
+										</Tooltip>
+									</div>
 								</div>
 							</div>
-						</div>
-					) : null}
-				</div>
-			) : (
-				<h2 className={styles.comparison_name}>{comparisonName}</h2>
-			)}
+						) : null}
+					</div>
+				) : (
+					<h2 className={styles.comparison_name}>{comparisonName}</h2>
+				)}
+			</div>
+			<div className={styles.right}>
+				{user.id ? (
+					<button onClick={handleLogout} className={styles.logout_btn}>
+						Logout
+					</button>
+				) : null}
+			</div>
 		</div>
 	);
 };

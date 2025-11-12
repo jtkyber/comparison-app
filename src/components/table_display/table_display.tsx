@@ -19,7 +19,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './table_display.module.css';
 
 const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entries: IEntry[] }) => {
-	const userID = useAppSelector(state => state.user.id);
+	const { id: userID, comparisons } = useAppSelector(state => state.user);
 	const display = useAppSelector(state => state.display);
 	const { fitColMin, colorCellsByRating, tableZoom } = useAppSelector(state => state.settings);
 	const { name: comparisonName } = useAppSelector(state => state.comparison);
@@ -306,7 +306,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 						colorCellsByRating ? styles.colored : null
 					}`}>
 					<thead>
-						<tr>
+						<tr className={`${styles.row} ${!entries.length ? styles.add_bottom_border : null}`}>
 							<th>&nbsp;</th>
 							{attributes
 								.filter(attr => !attr.hidden)
@@ -391,7 +391,13 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 							})}
 					</tbody>
 				</table>
-			) : null}
+			) : (
+				<h4 className={styles.no_table_text}>
+					{comparisons.length
+						? 'Your table will begin forming here once you create an attribute or entry.'
+						: 'Your table will begin forming here once you create a comparison, along with an attribute or entry.'}
+				</h4>
+			)}
 		</div>
 	);
 };

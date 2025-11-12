@@ -1,6 +1,5 @@
 import { sql } from '@/src/lib/db';
 import { IAttribute } from '@/src/types/attributes.types';
-import { DBAttribute } from '@/src/types/db.types';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {

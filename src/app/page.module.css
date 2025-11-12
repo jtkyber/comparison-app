@@ -7,4 +7,5 @@
 	grid-template-rows: 1fr;
 	grid-template-areas: 'table_manager table_display table_settings';
 	overflow: hidden;
+	background-color: var(--color-grey5);
 }

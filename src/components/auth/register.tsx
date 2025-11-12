@@ -1,6 +1,12 @@
+import { setComparison } from '@/src/lib/features/comparison/comparisonSlice';
+import { setSettings } from '@/src/lib/features/user/settingsSlice';
+import { setUser } from '@/src/lib/features/user/userSlice';
 import { useAppDispatch } from '@/src/lib/hooks';
+import { endpoints } from '@/src/utils/api_calls';
+import { setCookie } from '@/src/utils/cookies';
+import { validateLogin, validateRegister } from '@/src/validation/auth.val';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import ErrorComponent from '../error/error';
 import SpecialInput from '../inputs/special_input/special_input';
 import styles from './login.module.css';
@@ -14,8 +20,30 @@ const Register = ({ toggleIsNewUser }: { toggleIsNewUser: () => void }) => {
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 
+	const register = async (e: FormEvent) => {
+		try {
+			e.preventDefault();
+			const val = validateRegister(username, password, passwordConfirm);
+			if (val !== 'passed') {
+				setError(val);
+				return;
+			}
+
+			const { user, settings } = await endpoints.user.register(username, password);
+
+			dispatch(setUser(user));
+			dispatch(setSettings(settings));
+
+			setCookie('userID', user.id.toString(), 7);
+
+			router.replace('/');
+		} catch (err) {
+			setError('User not found');
+		}
+	};
+
 	return (
-		<form autoComplete='off' onSubmit={() => console.log('Submit')} className={styles.login_form}>
+		<form autoComplete='off' onSubmit={register} className={styles.login_form}>
 			<h2 className={styles.form_heading}>Register</h2>
 			<ErrorComponent msg={error} />
 			<div className={styles.username}>

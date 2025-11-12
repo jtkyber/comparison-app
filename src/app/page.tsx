@@ -19,6 +19,7 @@ declare global {
 }
 
 export default function Home() {
+	const { id: userID } = useAppSelector(state => state.user);
 	const { attributes, entries } = useAppSelector(state => state.comparison);
 
 	const router = useRouter();
@@ -78,9 +79,13 @@ export default function Home() {
 
 	return (
 		<div className={styles.page}>
-			<TableManager />
-			<TableDisplay attributes={attributes} entries={entries} />
-			<TableSettings />
+			{userID ? (
+				<>
+					<TableManager />
+					<TableDisplay attributes={attributes} entries={entries} />
+					<TableSettings />
+				</>
+			) : null}
 		</div>
 	);
 }
