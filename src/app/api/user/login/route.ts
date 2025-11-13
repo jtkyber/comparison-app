@@ -8,8 +8,6 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
 	const { username, password } = await req.json();
 
-	console.log(process.env.DATABASE_URL);
-
 	const [user] = (await sql`
         SELECT * FROM users
         WHERE username = ${username}
