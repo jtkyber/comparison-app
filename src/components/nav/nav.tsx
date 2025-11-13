@@ -120,7 +120,7 @@ const Nav = () => {
 		<div className={styles.nav_container}>
 			<div className={styles.left}>
 				<Link href='/'>
-					<h1 className={styles.app_name}>EasyCompare</h1>
+					<h1 className={styles.app_name}>CompareIt</h1>
 				</Link>
 			</div>
 			<div className={styles.middle}>
