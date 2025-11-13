@@ -6,6 +6,7 @@
 	flex-flow: column nowrap;
 	border-radius: inherit;
 	background-color: inherit;
+	line-height: 0.9rem;
 
 	.select_display {
 		width: 100%;
@@ -13,32 +14,25 @@
 		display: flex;
 		flex: none;
 		justify-content: space-between;
-		background-color: var(--color-grey2);
 		background-color: inherit;
 		border-radius: inherit;
+		overflow: hidden;
 
-		&:has(.display_text[contenteditable='true']) {
+		&:not(&:has(.display_text:read-only)) {
 			outline: 2px solid var(--color-grey5);
 		}
 
 		.display_text {
-			display: flex;
-			align-items: center;
 			width: 100%;
 			height: 100%;
-			cursor: pointer;
 			padding-left: 0.7rem;
 			color: var(--color-grey0);
-			line-height: 2rem;
+			cursor: text;
+			font-weight: 600;
 
-			&[contenteditable='true'] {
+			&:read-only {
 				outline: none;
-				cursor: text;
-
-				&:focus:empty {
-					display: table-cell;
-					vertical-align: middle;
-				}
+				cursor: pointer;
 			}
 		}
 
@@ -78,6 +72,7 @@
 				padding: 0 0.7rem;
 				cursor: pointer;
 				color: var(--color-grey0);
+				font-weight: 400;
 
 				&:hover {
 					backdrop-filter: brightness(60%);

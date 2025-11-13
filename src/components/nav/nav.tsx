@@ -133,6 +133,7 @@ const Nav = () => {
 									selected={selectedComparison.toString()}
 									setSelected={handleChangeComparison}
 									referenceTable={buildReferenceTable()}
+									label='Select a comparison'
 								/>
 							</div>
 							<Tooltip text='Create new comparison' delay={'default'}>

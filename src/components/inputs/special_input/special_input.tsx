@@ -35,22 +35,22 @@ const SpecialInput = ({
 		}
 	};
 
-	const formattedValue = (): string => {
-		const val: string = value?.toString() || '';
-		if (inputType === 'string' || !val) return val;
+	// const formattedValue = (): string => {
+	// 	const val: string = value?.toString() || '';
+	// 	if (inputType === 'string' || !val) return val;
 
-		const splitValue: string[] = val.split('.');
+	// 	const splitValue: string[] = val.split('.');
 
-		let integerPart: string = splitValue[0];
-		integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-		let fractionPart: string = splitValue[1];
-		if (fractionPart !== undefined) fractionPart = '.'.concat(fractionPart);
-		else fractionPart = '';
+	// 	let integerPart: string = splitValue[0];
+	// 	integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	// 	let fractionPart: string = splitValue[1];
+	// 	if (fractionPart !== undefined) fractionPart = '.'.concat(fractionPart);
+	// 	else fractionPart = '';
 
-		const finalValue: string = integerPart.concat(fractionPart);
+	// 	const finalValue: string = integerPart.concat(fractionPart);
 
-		return finalValue;
-	};
+	// 	return finalValue;
+	// };
 
 	return (
 		<div className={styles.special_input_container}>
@@ -63,7 +63,7 @@ const SpecialInput = ({
 				style={styling}
 				autoComplete={inputType === 'password' ? 'new-password' : 'off'}
 			/>
-			<h5 className={`${styles.special_input_label} ${value !== '' ? styles.filled : null}`}>{label}</h5>
+			<h4 className={`${styles.special_input_label} ${value !== '' ? styles.filled : null}`}>{label}</h4>
 		</div>
 	);
 };

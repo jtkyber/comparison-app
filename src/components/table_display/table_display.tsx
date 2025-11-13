@@ -3,6 +3,7 @@ import {
 	setDownloading,
 	setEntryCellRating,
 	setEntryFinalRating,
+	setHighlightedAttribute,
 } from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setEntryAttributeID, setMode } from '@/src/lib/features/comparison/managerSlice';
 import { updateTableZoom } from '@/src/lib/features/user/settingsSlice';

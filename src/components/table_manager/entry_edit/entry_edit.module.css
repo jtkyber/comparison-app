@@ -107,6 +107,10 @@
 			.rating_input_wrapper {
 				width: 8rem;
 				padding-bottom: 1rem;
+
+				&.score {
+					padding-top: 0.5rem;
+				}
 			}
 		}
 	}

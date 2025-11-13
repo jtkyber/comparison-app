@@ -20,7 +20,7 @@
 		flex-shrink: 0;
 
 		.manager_title {
-			font-weight: 600;
+			font-weight: 300;
 			color: var(--color-grey0);
 		}
 	}
@@ -44,6 +44,7 @@
 			flex: none;
 			cursor: pointer;
 			color: var(--color-grey0);
+			font-weight: 600;
 
 			&.active {
 				background-color: var(--color-grey2);

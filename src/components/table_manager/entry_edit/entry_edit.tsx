@@ -1,5 +1,6 @@
 import { setEntryName, setEntryRating, setEntryValue } from '@/src/lib/features/comparison/comparisonSlice';
-import { IManager, setEntryAttributeID } from '@/src/lib/features/comparison/managerSlice';
+import { setHighlightedEntry } from '@/src/lib/features/comparison/displaySlice';
+import { IManager, setEditingIndex, setEntryAttributeID } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IEntryValidation } from '@/src/types/validation.types';
 import { validateEntry } from '@/src/validation/table_manager.val';
@@ -120,6 +121,14 @@ const EntryEdit = ({
 		validate();
 	}, [entry]);
 
+	useEffect(() => {
+		dispatch(setHighlightedEntry(entry.id));
+
+		return () => {
+			dispatch(setHighlightedEntry(0));
+		};
+	}, []);
+
 	return (
 		<div className={styles.entry_edit_container}>
 			<div className={styles.name_input_section}>
@@ -201,7 +210,10 @@ const EntryEdit = ({
 							) : null}
 							{attrType === 'score' || (attrType === 'text' && attr.textRatingType === 'selfrated') ? (
 								<div className={styles.rating_input_section}>
-									<div className={styles.rating_input_wrapper}>
+									<div
+										className={`${styles.rating_input_wrapper} ${
+											attrType === 'score' ? styles.score : null
+										}`}>
 										<RatingSlider rating={rating ?? -1} setRating={handleRatingChange(attrID)} />
 									</div>
 								</div>

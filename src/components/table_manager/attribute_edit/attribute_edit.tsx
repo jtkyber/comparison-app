@@ -18,6 +18,7 @@ import {
 	setAttributeType,
 	setEntryValuesForAttribute,
 } from '@/src/lib/features/comparison/comparisonSlice';
+import { setHighlightedAttribute } from '@/src/lib/features/comparison/displaySlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import {
 	AttributeType,
@@ -230,6 +231,14 @@ const AttributeEdit = ({
 	useEffect(() => {
 		validate();
 	}, [attribute]);
+
+	useEffect(() => {
+		dispatch(setHighlightedAttribute(attribute.id));
+
+		return () => {
+			dispatch(setHighlightedAttribute(0));
+		};
+	}, []);
 
 	return (
 		<div className={styles.attribute_edit_container}>

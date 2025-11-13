@@ -66,6 +66,7 @@ select {
 input {
 	outline: none;
 	border: none;
+	background-color: inherit;
 }
 
 input,

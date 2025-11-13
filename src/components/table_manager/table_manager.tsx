@@ -7,6 +7,7 @@ import {
 	setNewAttributeIndex,
 	setNewEntryIndex,
 } from '@/src/lib/features/comparison/comparisonSlice';
+import { setHighlightedAttribute, setHighlightedEntry } from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setMode } from '@/src/lib/features/comparison/managerSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
@@ -18,7 +19,7 @@ import {
 } from '@/src/types/validation.types';
 import { endpoints } from '@/src/utils/api_calls';
 import { validateAttribute, validateEntry } from '@/src/validation/table_manager.val';
-import React, { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
@@ -337,7 +338,7 @@ const TableManager = () => {
 	return (
 		<div className={`${styles.table_manager_container} ${comparisonID === 0 ? styles.disabled : null}`}>
 			<div className={styles.manager_title_section}>
-				<h4 className={styles.manager_title}>Manager</h4>
+				<h3 className={styles.manager_title}>Manager</h3>
 			</div>
 
 			<div className={styles.tab_section}>
