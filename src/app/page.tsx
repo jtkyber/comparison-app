@@ -35,7 +35,7 @@ export default function Home() {
 				settings.selectedComparison = user.comparisons[0].id;
 			}
 
-			if (settings.selectedComparison) {
+			if (settings.selectedComparison && user.comparisons.length) {
 				const { id, name, attributes, entries } =
 					(await endpoints.comparisons.getTable(settings.selectedComparison, user.id)) || {};
 
