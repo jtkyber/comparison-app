@@ -72,10 +72,12 @@ export default function Home() {
 	useEffect(() => {
 		window.tooltipDelay = 800;
 
-		const userIDCookie = getCookie('userID');
-		if (userIDCookie) loginWithID(userIDCookie);
-		else router.push('/auth');
-	}, []);
+		if (!userID) {
+			const userIDCookie = getCookie('userID');
+			if (userIDCookie) loginWithID(userIDCookie);
+			else router.push('/auth');
+		}
+	}, [userID]);
 
 	return (
 		<div className={styles.page}>
