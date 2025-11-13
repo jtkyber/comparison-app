@@ -57,6 +57,7 @@
 			white-space: nowrap;
 			padding: 0.2rem 0.25rem;
 			font-size: var(--table-font-size);
+			font-weight: 600;
 
 			border-top: var(--table-border);
 			border-right: var(--table-border);
@@ -87,6 +88,7 @@
 				th {
 					color: var(--color-grey0);
 					vertical-align: top;
+					font-weight: 800;
 
 					border-right-color: var(--color-grey1);
 					&:last-child {
@@ -140,7 +142,7 @@
 					}
 
 					&.rating_cell {
-						font-weight: 600;
+						font-weight: 800;
 						text-align: center;
 					}
 
