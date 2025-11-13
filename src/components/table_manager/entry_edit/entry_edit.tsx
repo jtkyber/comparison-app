@@ -105,14 +105,14 @@ const EntryEdit = ({
 
 		if (el) {
 			el.scrollIntoView({
-				behavior: 'smooth',
+				behavior: 'instant',
 			});
 
 			setTimeout(() => {
 				el?.classList.add(styles.highlighted);
 				setTimeout(() => {
 					el?.classList.remove(styles.highlighted);
-				}, 1000);
+				}, 1500);
 			}, 500);
 		}
 	}, [entryIndex, entryAttributeID]);
@@ -120,6 +120,10 @@ const EntryEdit = ({
 	useEffect(() => {
 		validate();
 	}, [entry]);
+
+	useEffect(() => {
+		dispatch(setHighlightedEntry(entry.id));
+	}, [entry.id]);
 
 	useEffect(() => {
 		dispatch(setHighlightedEntry(entry.id));

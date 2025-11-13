@@ -1,7 +1,15 @@
 @keyframes brightnessFade {
 	0% {
-		filter: brightness(120%);
-		backdrop-filter: brightness(120%);
+		filter: brightness(100%);
+		backdrop-filter: brightness(100%);
+	}
+	10% {
+		filter: brightness(130%);
+		backdrop-filter: brightness(130%);
+	}
+	50% {
+		filter: brightness(130%);
+		backdrop-filter: brightness(130%);
 	}
 	100% {
 		filter: brightness(100%);
@@ -43,9 +51,10 @@
 		width: 100%;
 		display: flex;
 		flex-flow: column nowrap;
+		border-radius: 0.5rem;
 
 		&.highlighted {
-			animation: brightnessFade 1s ease-in forwards;
+			animation: brightnessFade 1.5s linear forwards;
 		}
 
 		.input_section {
