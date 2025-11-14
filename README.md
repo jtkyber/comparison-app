@@ -29,6 +29,15 @@ An attribute holds information for a spec, feature or quality that will be used 
   ### Entry Editing Panel
   These are the options (rows) you'll be comparing against eachother. Simply give the entry a name and enter a value and/or rating for each attribute.
 
+  ### Table Manager
+  The space where all table editing is done
+  * Adding a new attribute or entry: Click the plus icon at the bottom right
+  * Switching between "Attributes" an "Entries" mode: Click one of the tabs at the top
+  * Element (attribute or entry) options
+    - Select: selects an attribute or entry. Click the delete icon at the bottom left to delete the selected elements
+    - Hide / Show: Will hide or unhide the selected attributes or entries on the table
+    - Edit: Update an attribute or entry
+
   ### Settings Panel
   * (toggle) Color cells based on their rating. The color scale goes from red (0/10) to yellow (5/10) to green (10/10)
   * (toggle) Shrink the columns to their smallest possible widths
