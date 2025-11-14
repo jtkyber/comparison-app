@@ -6,7 +6,7 @@ import './globals.css';
 import StoreProvider from './StoreProvider';
 
 export const metadata: Metadata = {
-	title: 'CompareIt',
+	title: 'EasyCompare',
 };
 
 const roboto = Roboto({
