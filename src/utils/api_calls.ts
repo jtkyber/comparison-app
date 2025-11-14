@@ -398,5 +398,24 @@ export const endpoints = {
 				}
 			},
 		},
+		managerWidth: {
+			async set(userID: Id, width: number): Promise<void> {
+				try {
+					const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/settings/setManagerWidth`, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							userID: userID,
+							width: width,
+						}),
+					});
+					await res.json();
+				} catch (err) {
+					throw new Error('Could not set manager width');
+				}
+			},
+		},
 	},
 };

@@ -1,6 +1,9 @@
 .table_manager_container {
+	position: relative;
 	--manager-border: 1px solid var(--color-text-light-soft);
 	width: 20rem;
+	max-width: 40rem;
+	min-width: 15rem;
 	height: 100%;
 	grid-area: table_manager;
 	background-color: var(--color-primary);
@@ -9,6 +12,15 @@
 	flex-flow: column nowrap;
 	overflow: hidden;
 	scrollbar-color: var(--color-text-light-soft) var(--color-primary);
+
+	.resizer {
+		position: absolute;
+		height: 100%;
+		width: 2px;
+		top: 0;
+		right: 0;
+		cursor: col-resize;
+	}
 
 	&.disabled {
 		pointer-events: none;

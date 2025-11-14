@@ -6,6 +6,7 @@ const initialState: ISettings = {
 	selectedComparison: 0,
 	colorCellsByRating: true,
 	tableZoom: 1,
+	managerWidth: null,
 };
 
 export const settingsSlice = createSlice({
@@ -34,6 +35,9 @@ export const settingsSlice = createSlice({
 				state.tableZoom = 0.5;
 			} else state.tableZoom -= zoomInc;
 		},
+		setManagerWidth: (state, action: PayloadAction<number>) => {
+			state.managerWidth = action.payload;
+		},
 	},
 });
 
@@ -43,6 +47,7 @@ export const {
 	setSelectedComparison,
 	toggleColorCellsByRating,
 	updateTableZoom,
+	setManagerWidth,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

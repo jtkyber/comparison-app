@@ -3,4 +3,5 @@ export interface ISettings {
 	selectedComparison: number;
 	colorCellsByRating: boolean;
 	tableZoom: number;
+	managerWidth: number | null;
 }

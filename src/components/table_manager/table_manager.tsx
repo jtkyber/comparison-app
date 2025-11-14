@@ -7,8 +7,8 @@ import {
 	setNewAttributeIndex,
 	setNewEntryIndex,
 } from '@/src/lib/features/comparison/comparisonSlice';
-import { setHighlightedAttribute, setHighlightedEntry } from '@/src/lib/features/comparison/displaySlice';
 import { setEditingIndex, setMode } from '@/src/lib/features/comparison/managerSlice';
+import { setManagerWidth } from '@/src/lib/features/user/settingsSlice';
 import { useAppDispatch, useAppSelector } from '@/src/lib/hooks';
 import { IAttribute } from '@/src/types/attributes.types';
 import { IEntry } from '@/src/types/entries.types';
@@ -19,7 +19,7 @@ import {
 } from '@/src/types/validation.types';
 import { endpoints } from '@/src/utils/api_calls';
 import { validateAttribute, validateEntry } from '@/src/validation/table_manager.val';
-import { Fragment, MouseEvent, MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { Fragment, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import AddSVG from '../svg/action_center/add.svg';
 import CancelSVG from '../svg/action_center/cancel.svg';
 import DeleteSVG from '../svg/action_center/delete.svg';
@@ -56,6 +56,7 @@ const defaultEntry: IEntry = {
 const TableManager = () => {
 	const [idsChecked, setIdsChecked] = useState<number[]>([]);
 	const [draggingID, setDraggingID] = useState<number>(0);
+	const [resizing, setResizing] = useState<boolean>(false);
 	const [attributeValidation, setAttributeValidation] = useState<IAttributeValidation>({
 		...attributeValidationDefault,
 	});
@@ -65,13 +66,14 @@ const TableManager = () => {
 	});
 
 	const draggingRef = useRef<HTMLDivElement>(null);
+	const managerContainerRef = useRef<HTMLDivElement>(null);
 	const managerSectionRef = useRef<HTMLDivElement>(null);
 	const elementListRef = useRef<HTMLDivElement>(null);
 
-	const comparisonID = useAppSelector(state => state.comparison.id);
-	const attributes = useAppSelector(state => state.comparison.attributes);
-	const entries = useAppSelector(state => state.comparison.entries);
+	const { id: userID } = useAppSelector(state => state.user);
+	const { id: comparisonID, attributes, entries } = useAppSelector(state => state.comparison);
 	const { mode, editingIndex } = useAppSelector(state => state.manager);
+	const { managerWidth } = useAppSelector(state => state.settings);
 
 	const dispatch = useAppDispatch();
 
@@ -240,7 +242,12 @@ const TableManager = () => {
 		await refreshComparison();
 	};
 
-	const handleElementMouseDown = (e: MouseEvent<HTMLHeadingElement>, id: number): void => {
+	const updateManagerWidthInDB = async (w: number) => {
+		await endpoints.settings.managerWidth.set(userID, w);
+		dispatch(setManagerWidth(w));
+	};
+
+	const handleElementMouseDown = (e: React.MouseEvent, id: number): void => {
 		let target = e?.target as HTMLHeadingElement;
 		target = target.parentElement as HTMLDivElement;
 		const managerSectionEl = managerSectionRef?.current;
@@ -261,6 +268,12 @@ const TableManager = () => {
 	};
 
 	const handleMouseUp = (): void => {
+		const managerContainer = managerContainerRef?.current;
+		if (resizing && managerContainer) {
+			setResizing(false);
+			updateManagerWidthInDB(managerContainer.getBoundingClientRect().width);
+		}
+
 		const target = draggingRef?.current;
 		if (!target) return;
 
@@ -281,11 +294,11 @@ const TableManager = () => {
 		}
 	};
 
-	const handleMouseMove = (e: MouseEvent) => {
+	const handleManagerMouseMove = (e: React.MouseEvent) => {
 		const target = draggingRef?.current;
 		const elementList = elementListRef?.current;
 
-		if (!(draggingID && target && elementList)) return;
+		if (!draggingID || resizing || !target || !elementList) return;
 		const index: number = parseInt(target.id);
 
 		const offset: number =
@@ -322,21 +335,53 @@ const TableManager = () => {
 		}
 	};
 
+	const handleMouseMove = (e: MouseEvent) => {
+		const managerContainer = managerContainerRef?.current;
+
+		if (resizing && managerContainer) {
+			const x = e.clientX;
+			managerContainer.style.setProperty('width', `${x}px`);
+		}
+	};
+
+	const handleResizerMouseDown = () => setResizing(true);
+
 	useEffect(() => {
 		document.addEventListener('mouseup', handleMouseUp);
 
 		return () => {
 			document.removeEventListener('mouseup', handleMouseUp);
 		};
-	}, [draggingID, attributes, entries]);
+	}, [draggingID, attributes, entries, resizing, managerContainerRef.current]);
 
 	useEffect(() => {
 		dispatch(setEditingIndex(null));
 		setIdsChecked([]);
 	}, [comparisonID]);
 
+	useEffect(() => {
+		document.addEventListener('mousemove', handleMouseMove);
+
+		return () => {
+			document.removeEventListener('mousemove', handleMouseMove);
+		};
+	}, [resizing, managerContainerRef.current]);
+
+	useEffect(() => {
+		const managerContainer = managerContainerRef?.current;
+		if (managerWidth && managerContainer) {
+			managerContainer.style.setProperty('width', `${managerWidth}px`);
+		}
+	}, [managerContainerRef?.current]);
+
 	return (
-		<div className={`${styles.table_manager_container} ${comparisonID === 0 ? styles.disabled : null}`}>
+		<div
+			ref={managerContainerRef}
+			className={`${styles.table_manager_container} ${
+				comparisonID === 0 || resizing ? styles.disabled : null
+			}`}>
+			<div onMouseDown={handleResizerMouseDown} className={styles.resizer}></div>
+
 			<div className={styles.manager_title_section}>
 				<h4 className={styles.manager_title}>Manager</h4>
 			</div>
@@ -357,7 +402,7 @@ const TableManager = () => {
 				<div className={styles.tab_section_fill}></div>
 			</div>
 
-			<div ref={managerSectionRef} onMouseMove={handleMouseMove} className={styles.manager_section}>
+			<div ref={managerSectionRef} onMouseMove={handleManagerMouseMove} className={styles.manager_section}>
 				{editingIndex !== null && mode === 'attributes' ? (
 					<div className={styles.element_editor_section}>
 						<div className={styles.element_editor_title_wrapper}>
