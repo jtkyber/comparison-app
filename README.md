@@ -37,6 +37,13 @@ An attribute holds information for a spec, feature or quality that will be used 
     - Select: selects an attribute or entry. Click the delete icon at the bottom left to delete the selected elements
     - Hide / Show: Will hide or unhide the selected attributes or entries on the table
     - Edit: Update an attribute or entry
+   
+  ### Table Display
+  * Click on a cell to edit it in the table manager
+  * Ctrl + Click on a link to open it in a new tab
+  * Ctrl + Scroll to change the table size
+  * Shift + Scroll to scroll horizontally
+  * Scroll to scroll vertically
 
   ### Settings Panel
   * (toggle) Color cells based on their rating. The color scale goes from red (0/10) to yellow (5/10) to green (10/10)
