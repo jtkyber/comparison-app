@@ -4,12 +4,12 @@
 		backdrop-filter: brightness(100%);
 	}
 	10% {
-		filter: brightness(130%);
-		backdrop-filter: brightness(130%);
+		filter: brightness(150%);
+		backdrop-filter: brightness(150%);
 	}
-	50% {
-		filter: brightness(130%);
-		backdrop-filter: brightness(130%);
+	30% {
+		filter: brightness(150%);
+		backdrop-filter: brightness(150%);
 	}
 	100% {
 		filter: brightness(100%);
