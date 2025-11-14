@@ -263,8 +263,9 @@ const AttributeEdit = ({
 			</div>
 
 			<div className={`${styles.attribute_edit_section} ${styles.type_section}`}>
-				<SectionLabel text='Data Type' color='var(--color-grey4)' />
-
+				<div className={styles.section_label_wrapper}>
+					<SectionLabel text='Data Type' />
+				</div>
 				<div className={styles.section_info_wrapper}>
 					<Tooltip text='The type of value you want this column to hold'>
 						<Info />
@@ -283,14 +284,15 @@ const AttributeEdit = ({
 
 			{attribute.type === 'number' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.range_setup_section}`}>
-					<SectionLabel text='Range Setup' color='var(--color-grey4)' />
+					<div className={styles.section_label_wrapper}>
+						<SectionLabel text='Range Setup' />
+					</div>
 
 					<ErrorComponent msg={validation.rangeValues} />
 
 					<div className={styles.section_info_wrapper}>
 						<Tooltip
-							text={`
-							* Range Type: The number of values you want in your range\n
+							text={`* Range Type: The number of values you want in your range\n
 							* Range Values: Entry values will be compared against these numbers to generate a rating\n
 							* Range Best: The value you consider to "best". Entry values that match this number will be rated a 10
 							`}>
@@ -436,8 +438,9 @@ const AttributeEdit = ({
 				</div>
 			) : attribute.type === 'yesNo' ? (
 				<div className={`${styles.attribute_edit_section} ${styles.best_boolean_section}`}>
-					<SectionLabel text='Best Value' color='var(--color-grey4)' />
-
+					<div className={styles.section_label_wrapper}>
+						<SectionLabel text='Best Value' />
+					</div>
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text='The value you consider to be "best". Entry values that match this selection will be rated a 10'>
 							<Info />
@@ -470,8 +473,9 @@ const AttributeEdit = ({
 			) : attribute.type === 'text' ? (
 				<>
 					<div className={`${styles.attribute_edit_section} ${styles.rating_method_section}`}>
-						<SectionLabel text='Text Rating Type' color='var(--color-grey4)' />
-
+						<div className={styles.section_label_wrapper}>
+							<SectionLabel text='Text Rating Type' />
+						</div>
 						<div className={styles.section_info_wrapper}>
 							<Tooltip
 								text={`* No Rating: This attribute will not be used to calculate an entry's final rating\n
@@ -516,8 +520,9 @@ const AttributeEdit = ({
 					</div>
 					{attribute.textRatingType === 'keyratingpairs' ? (
 						<div className={`${styles.attribute_edit_section} ${styles.name_rating_pairs}`}>
-							<SectionLabel text='Name-Rating Pairs' color='var(--color-grey4)' />
-
+							<div className={styles.section_label_wrapper}>
+								<SectionLabel text='Name-Rating Pairs' />
+							</div>
 							<ErrorComponent msg={validation.pairName} />
 
 							<div className={styles.section_info_wrapper}>
@@ -558,8 +563,9 @@ const AttributeEdit = ({
 
 			{show_importance() ? (
 				<div className={`${styles.attribute_edit_section} ${styles.importance_section}`}>
-					<SectionLabel text='Importance Level' color='var(--color-grey4)' />
-
+					<div className={styles.section_label_wrapper}>
+						<SectionLabel text='Importance Level' />
+					</div>
 					<div className={styles.section_info_wrapper}>
 						<Tooltip text="This determines how much weight should be applied to a rating. Values with low importance will have less impact on the entry's final rating">
 							<Info />

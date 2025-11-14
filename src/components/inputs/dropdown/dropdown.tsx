@@ -1,6 +1,6 @@
 import styles from './dropdown.module.css';
 
-import React, { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
 
 const Dropdown = ({
 	selected,

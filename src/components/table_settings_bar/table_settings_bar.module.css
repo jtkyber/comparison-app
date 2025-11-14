@@ -1,8 +1,10 @@
 .table_settings_bar_container {
+	--border: 1px solid var(--color-text-light-soft);
 	grid-area: table_settings;
 	width: 2.5rem;
 	height: 100%;
-	background-color: var(--color-grey3);
+	background-color: var(--color-primary);
+	border-left: 1px solid var(--color-text-light-soft);
 	padding: 0.5rem 0;
 
 	.display_settings {
@@ -26,7 +28,7 @@
 			flex-flow: column nowrap;
 
 			&:not(&:last-child) {
-				border-bottom: 1px solid var(--color-grey5);
+				border-bottom: var(--border);
 			}
 
 			&:first-child {
@@ -52,11 +54,11 @@
 					width: auto;
 				}
 
-				&:not(&.copied_check):hover {
-					opacity: 0.6;
+				&:not(&.color_cells_btn) svg * {
+					fill: var(--color-text-light-soft);
 				}
 
-				&.shrink_btn.active {
+				&:not(&.copied_check):hover {
 					opacity: 0.6;
 				}
 
@@ -71,33 +73,25 @@
 
 				&.color_cells_btn:not(&.active) {
 					svg * {
-						fill: var(--color-grey0);
-						stroke: black;
+						fill: var(--color-text-light);
+						stroke: var(--color-text-dark);
 						stroke-width: 2px;
 					}
 				}
 
 				&.download_btn {
-					svg * {
-						fill: var(--color-grey0);
-					}
-
 					&:disabled {
 						opacity: 0.6;
 					}
 				}
 
-				&.copy_btn {
-					svg * {
-						fill: var(--color-grey0);
-					}
+				/* &.copy_btn {
+				
 				}
 
 				&.delete_btn {
-					svg * {
-						fill: var(--color-grey0);
-					}
-				}
+				
+				} */
 
 				&.copied_check {
 					text-align: center;

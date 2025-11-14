@@ -6,16 +6,16 @@
 
 .tooltip {
 	position: fixed;
-	background-color: var(--color-grey5);
+	background-color: var(--color-dark);
 	pointer-events: none;
 	width: max-content;
 	max-width: 18rem;
 	height: max-content;
 	padding: 0.2rem 0.5rem;
-	color: var(--color-light-text);
-	font-weight: 400;
+	color: var(--color-text-light);
+	font-weight: 500;
 	font-size: small;
-	border: 1px solid var(--color-grey1);
+	border: 1px solid var(--color-text-light);
 	border-radius: 0.3rem;
 	transform: translateY(-100%);
 	white-space: pre-line;

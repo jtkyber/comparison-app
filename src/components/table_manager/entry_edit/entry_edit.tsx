@@ -154,7 +154,9 @@ const EntryEdit = ({
 					const rating = entry.cells?.[attrID]?.rating;
 					return (
 						<div key={attrID} id={'attr-' + attrID} className={styles.entry_attribute_section}>
-							<SectionLabel text={attrName} color='var(--color-grey0)' />
+							<div className={styles.section_label_wrapper}>
+								<SectionLabel text={attrName} />
+							</div>
 
 							<ErrorComponent msg={validation.cells[attrID]} />
 

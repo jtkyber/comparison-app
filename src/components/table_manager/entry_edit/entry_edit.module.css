@@ -37,8 +37,8 @@
 			padding: 0.2rem 0.5rem;
 			text-align: center;
 			background-color: inherit;
-			border-bottom: var(--manager-border);
-			color: var(--color-grey0);
+			border-bottom: 1px solid var(--color-text-light-extra-soft);
+			color: var(--color-text-light);
 
 			&::placeholder {
 				color: inherit;
@@ -52,6 +52,12 @@
 		display: flex;
 		flex-flow: column nowrap;
 		border-radius: 0.5rem;
+
+		.section_label_wrapper {
+			width: 100%;
+			color: var(--color-text-light-soft);
+			border-color: var(--color-text-light-soft);
+		}
 
 		&.highlighted {
 			animation: brightnessFade 1.5s linear forwards;
@@ -68,17 +74,20 @@
 			.prefix {
 				justify-self: end;
 				align-self: center;
+				color: var(--color-text-light-soft);
 			}
 
 			.value_input_wrapper {
-				background-color: var(--color-grey2);
-				color: var(--color-grey0);
+				background-color: var(--color-primary);
+				color: var(--color-text-light);
 			}
 
 			.textNamePicker {
 				height: 2rem;
-				background-color: var(--color-grey3);
+				background-color: var(--color-secondary);
 				border-radius: 0.5rem;
+				color: var(--color-text-light);
+				border-color: var(--color-text-light-soft);
 			}
 
 			.boolean_value_input_wrapper {
@@ -95,6 +104,7 @@
 
 					label {
 						padding: 0 0.5rem;
+						color: var(--color-text-light);
 					}
 
 					input {
@@ -105,6 +115,7 @@
 			.suffix {
 				justify-self: start;
 				align-self: center;
+				color: var(--color-text-light-soft);
 			}
 		}
 
@@ -116,6 +127,7 @@
 			.rating_input_wrapper {
 				width: 8rem;
 				padding-bottom: 1rem;
+				color: var(--color-text-light);
 
 				&.score {
 					padding-top: 0.5rem;

@@ -9,8 +9,10 @@
 }
 
 .nav_container {
+	--dropdown-color: var(--color-secondary);
 	height: var(--nav-height);
-	background-color: var(--color-grey4);
+	background-color: var(--color-primary);
+	border-bottom: 1px solid var(--color-text-light-soft);
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr;
@@ -23,16 +25,16 @@
 		justify-self: start;
 
 		a .app_name {
-			font-weight: 800;
+			font-weight: 600;
 			font-size: x-large;
-			color: var(--color-grey0);
+			color: var(--color-accent);
 		}
 	}
 
 	.middle {
 		.comparison_name {
 			grid-area: comparisons;
-			color: var(--color-grey0);
+			color: var(--color-text-light);
 			font-weight: 400;
 		}
 
@@ -49,10 +51,12 @@
 				gap: 0.5rem;
 
 				.comparison_dropdown {
-					border-radius: 0.25rem;
 					width: 18rem;
 					height: inherit;
-					background-color: var(--color-grey2);
+					background-color: var(--dropdown-color);
+					border-color: var(--color-text-light-soft);
+					border-radius: 0.25rem;
+					color: var(--color-text-light);
 				}
 
 				.new_comparison_btn {
@@ -60,7 +64,7 @@
 					aspect-ratio: 1/1;
 					border-radius: 0.25rem;
 					cursor: pointer;
-					background-color: var(--color-grey2);
+					background-color: var(--dropdown-color);
 
 					&:hover {
 						opacity: 0.6;
@@ -89,7 +93,8 @@
 				.new_comparison_modal {
 					width: max-content;
 					height: max-content;
-					background-color: var(--color-grey4);
+					background-color: var(--color-primary);
+					border: 1px solid var(--color-text-light-soft);
 					pointer-events: all;
 					border-radius: 0.5rem;
 					display: flex;
@@ -99,11 +104,14 @@
 					padding: 1rem 2rem;
 
 					.comparison_title {
+						color: var(--color-text-light);
 					}
 
 					.comparison_name_input {
 						width: 18rem;
 						background-color: inherit;
+						border-color: var(--color-text-light-soft);
+						color: var(--color-text-light);
 					}
 
 					.comparison_modal_btn_section {
@@ -118,11 +126,12 @@
 						.cancel_add_comparison_btn {
 							width: 1.2rem;
 							aspect-ratio: 1/1;
+							border: 1px solid var(--color-accent);
 							border-radius: 0.25rem;
 							cursor: pointer;
-							background-color: var(--color-grey2);
-							color: var(--color-grey0);
-							font-weight: 600;
+							color: var(--color-accent);
+							font-weight: 800;
+							font-size: 0.8rem;
 
 							&:hover {
 								opacity: 0.6;
@@ -138,7 +147,7 @@
 		justify-self: end;
 
 		.logout_btn {
-			color: var(--color-grey0);
+			color: var(--color-text-light);
 			cursor: pointer;
 
 			&:hover {

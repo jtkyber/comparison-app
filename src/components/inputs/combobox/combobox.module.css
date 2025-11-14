@@ -7,6 +7,8 @@
 	border-radius: inherit;
 	background-color: inherit;
 	line-height: 0.9rem;
+	border-color: inherit;
+	color: inherit;
 
 	.select_display {
 		width: 100%;
@@ -17,16 +19,18 @@
 		background-color: inherit;
 		border-radius: inherit;
 		overflow: hidden;
+		border: 1px solid transparent;
+		color: inherit;
 
 		&:not(&:has(.display_text:read-only)) {
-			outline: 2px solid var(--color-grey5);
+			border-color: inherit;
 		}
 
 		.display_text {
 			width: 100%;
 			height: 100%;
 			padding-left: 0.7rem;
-			color: var(--color-grey0);
+			color: inherit;
 			cursor: text;
 			font-weight: 600;
 
@@ -45,6 +49,7 @@
 			cursor: pointer;
 			padding: 0 0.7rem;
 			user-select: none;
+			color: inherit;
 		}
 	}
 
@@ -71,11 +76,11 @@
 				align-items: center;
 				padding: 0 0.7rem;
 				cursor: pointer;
-				color: var(--color-grey0);
+				color: inherit;
 				font-weight: 400;
 
 				&:hover {
-					backdrop-filter: brightness(60%);
+					backdrop-filter: brightness(70%);
 				}
 			}
 		}

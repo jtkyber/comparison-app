@@ -1,16 +1,17 @@
 .table_display_container {
 	--highlight-filter: brightness(150%);
-	--highlight-color: white;
+	--highlight-color: var(--color-text-light);
 	--table-font-size-default: 0.9rem;
 	--table-font-size: var(--table-font-size-default);
-	--table-border: 1px solid var(--color-grey0);
-	background-color: var(--color-grey5);
+	--table-border: 1px solid var(--color-text-light);
+	background-color: var(--color-dark);
 	overflow: auto;
-	padding: 0.5rem;
+	padding: 1rem;
+	scrollbar-color: var(--color-text-light-soft) var(--color-dark);
 
 	.no_table_text {
 		font-weight: 400;
-		color: var(--color-grey1);
+		color: var(--color-text-light-extra-soft);
 	}
 
 	.table {
@@ -25,29 +26,17 @@
 		}
 
 		&.colored {
-			tbody td {
-				color: black;
-			}
-		}
-
-		thead,
-		tbody {
-			tr {
-				th.highlighted,
-				td.highlighted {
-					box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color);
-					filter: none;
+			tbody {
+				td {
+					color: var(--color-text-dark);
+					font-weight: 600;
 				}
-			}
-
-			&thead th.highlighted {
-				box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
-					inset 0 2px 0 0 var(--highlight-color);
-			}
-
-			&tbody tr:last-child td.highlighted {
-				box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
-					inset 0 -2px 0 0 var(--highlight-color);
+				th {
+					font-weight: 800;
+				}
+				.link {
+					font-weight: 600;
+				}
 			}
 		}
 
@@ -57,8 +46,6 @@
 			white-space: nowrap;
 			padding: 0.2rem 0.25rem;
 			font-size: var(--table-font-size);
-			font-weight: 600;
-
 			border-top: var(--table-border);
 			border-right: var(--table-border);
 
@@ -71,13 +58,10 @@
 			}
 		}
 
-		tr {
-			height: 1rem;
-		}
-
 		thead {
 			tr {
-				background-color: #424242;
+				background-color: var(--color-primary);
+				height: 1rem;
 
 				&.add_bottom_border {
 					th {
@@ -86,13 +70,19 @@
 				}
 
 				th {
-					color: var(--color-grey0);
+					color: var(--color-text-light-soft);
 					vertical-align: top;
 					font-weight: 800;
+					border-right-color: var(--color-secondary);
 
-					border-right-color: var(--color-grey1);
 					&:last-child {
-						border-right-color: var(--color-grey0);
+						border-right-color: var(--color-text-light);
+					}
+
+					&.highlighted {
+						box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
+							inset 0 2px 0 0 var(--highlight-color);
+						filter: none;
 					}
 				}
 			}
@@ -100,10 +90,25 @@
 
 		tbody {
 			tr {
+				height: 1rem;
+
 				&:last-child {
 					td,
 					th {
 						border-bottom: var(--table-border);
+					}
+
+					td.highlighted {
+						box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color),
+							inset 0 -2px 0 0 var(--highlight-color);
+					}
+				}
+
+				th,
+				td {
+					&.highlighted {
+						box-shadow: inset 2px 0 0 0 var(--highlight-color), inset -2px 0 0 0 var(--highlight-color);
+						filter: none;
 					}
 				}
 
@@ -127,14 +132,16 @@
 				}
 
 				th {
-					color: var(--color-grey0);
+					color: var(--color-text-light);
 					text-align: start;
-					background-color: var(--color-grey5);
+					font-weight: 600;
+					background-color: var(--color-dark);
 				}
 
 				td {
-					color: var(--color-grey0);
-					background-color: var(--color-grey5);
+					color: var(--color-text-light);
+					background-color: var(--color-dark);
+					font-weight: 400;
 
 					&:not(&.rating_cell):hover {
 						cursor: pointer;
@@ -147,8 +154,9 @@
 					}
 
 					.link {
-						color: #00ff00;
+						color: var(--color-accent);
 						pointer-events: none;
+						font-weight: 400;
 
 						&.clickable {
 							pointer-events: all;

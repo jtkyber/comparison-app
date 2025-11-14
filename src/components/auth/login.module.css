@@ -4,10 +4,10 @@
 	flex-flow: column nowrap;
 	align-items: center;
 	gap: 1rem;
-	border: 2px solid var(--color-grey2);
+	border: 2px solid var(--color-text-dark-soft);
 	border-radius: 1rem;
 	padding: 1.5rem;
-	color: var(--color-grey2);
+	color: var(--color-text-dark-soft);
 
 	.form_heading {
 		margin-bottom: 1rem;
@@ -18,13 +18,16 @@
 	.password,
 	.confirm_password {
 		width: 100%;
-		background-color: var(--color-grey0);
+		background-color: var(--color-text-light);
 		color: inherit;
+		border-color: var(--color-text-dark-soft);
 	}
 
 	.submit_btn {
 		width: 100%;
-		background-color: var(--color-grey2);
+		background-color: var(--color-text-dark-soft);
+		color: var(--color-text-light);
+		font-weight: 600;
 		padding: 0.5rem 1rem;
 		border-radius: 0.5rem;
 		cursor: pointer;
@@ -36,12 +39,12 @@
 
 	.logRegSwitchText {
 		color: inherit;
-		font-weight: 400;
+		font-weight: 500;
 		margin-top: 1rem;
 
 		.logRegSwitchLink {
 			font-weight: 800;
-			color: #0000ff;
+			color: var(--color-accent);
 			cursor: pointer;
 		}
 	}

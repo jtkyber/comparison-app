@@ -16,6 +16,7 @@ import CheckSVG from '../svg/settings_bar/check.svg';
 import ColorCellsSVG from '../svg/settings_bar/color_cells';
 import CopySVG from '../svg/settings_bar/copy';
 import DownloadSVG from '../svg/settings_bar/download';
+import ExpandSVG from '../svg/settings_bar/expand';
 import ShrinkSVG from '../svg/settings_bar/shrink';
 import Tooltip from '../tooltip/tooltip';
 import styles from './table_settings_bar.module.css';
@@ -87,11 +88,15 @@ const TableSettings = () => {
 							<ColorCellsSVG />
 						</button>
 					</Tooltip>
-					<Tooltip text='Shrink columns to smallest possible size' delay={'default'}>
-						<button
-							onClick={handleAutoResizeBtn}
-							className={`${styles.shrink_btn} ${fitColMin ? styles.active : null}`}>
-							<ShrinkSVG />
+					<Tooltip
+						text={
+							fitColMin
+								? 'Expand columns to fit text into one line'
+								: 'Shrink columns to smallest possible size'
+						}
+						delay={'default'}>
+						<button onClick={handleAutoResizeBtn} className={styles.shrink_btn}>
+							{fitColMin ? <ExpandSVG /> : <ShrinkSVG />}
 						</button>
 					</Tooltip>
 				</div>

@@ -1,10 +1,14 @@
 .section_label_container {
 	width: 100%;
 	height: 1rem;
+	color: inherit;
+	border-color: inherit;
 
 	.line {
 		width: 100%;
 		height: 50%;
+		border-bottom: 1px solid transparent;
+		border-color: inherit;
 	}
 
 	.label_text_wrapper {
@@ -12,12 +16,14 @@
 		height: 100%;
 		display: flex;
 		justify-content: center;
+		color: inherit;
 
 		.label_text {
 			width: max-content;
 			transform: translate(0, -50%);
-			background-color: var(--color-grey2);
+			background-color: var(--color-primary);
 			padding: 0 0.5rem;
+			color: inherit;
 		}
 	}
 }
