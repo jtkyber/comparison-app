@@ -51,3 +51,13 @@ An attribute holds information for a spec, feature or quality that will be used 
   * Download table as PDF
   * Copy a url to clipboard for sharing your table. Users that visit this link will be able to view and download your table but cannot edit it
   * Delete comparison
+ 
+## Tech Stack
+* Typescript
+* Next.js
+* Redux Toolkit
+* jspdf-autotable
+* PostreSQL
+* bcrypt
+* Neon (Database)
+* Vercel (Host)
