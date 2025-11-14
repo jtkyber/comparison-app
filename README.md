@@ -55,6 +55,7 @@ An attribute holds information for a spec, feature or quality that will be used 
  
   ### MISC
   * Hover over an icon to see a tooltip
+  * Hover over a manager element to highlight that attribute or entry in the table display
  
 ## Tech Stack
 * Typescript
