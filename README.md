@@ -56,6 +56,7 @@ An attribute holds information for a spec, feature or quality that will be used 
   ### MISC
   * Hover over an icon to see a tooltip
   * Hover over a manager element to highlight that attribute or entry in the table display
+  * When using the rating slider, holding ctrl will allow you to adjust in increments of 0.1 instead of 1
  
 ## Tech Stack
 * Typescript
