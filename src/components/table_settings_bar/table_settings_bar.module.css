@@ -54,7 +54,7 @@
 					width: auto;
 				}
 
-				&:not(&.color_cells_btn) svg * {
+				&:not(&.color_cells_btn):not(&.copied_check) svg * {
 					fill: var(--color-text-light-soft);
 				}
 
