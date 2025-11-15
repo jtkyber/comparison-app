@@ -27,6 +27,7 @@ import {
 	TextRating,
 } from '@/src/types/attributes.types';
 import { IAttributeValidation } from '@/src/types/validation.types';
+import { endpoints } from '@/src/utils/api_calls';
 import { validateAttribute } from '@/src/validation/table_manager.val';
 import { useDebounceCallback } from '@react-hook/debounce';
 import React, { ChangeEvent, useEffect, useState } from 'react';
