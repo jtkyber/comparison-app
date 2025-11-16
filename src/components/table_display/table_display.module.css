@@ -143,6 +143,10 @@
 					background-color: var(--color-dark);
 					font-weight: 400;
 
+					&.no_background {
+						color: var(--color-text-light);
+					}
+
 					&:not(&.rating_cell):hover {
 						cursor: pointer;
 						filter: brightness(150%);

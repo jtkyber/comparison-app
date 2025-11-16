@@ -340,13 +340,13 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 											.filter(attr => !attr.hidden)
 											.map(attr => {
 												const { value, rating } = entry.cells[attr.id] || {};
-												const { id: attrID, prefix, suffix, type } = attr || {};
+												const { id: attrID, prefix, suffix, type, textRatingType } = attr || {};
 
 												return (
 													<td
 														className={`${styles.cell} ${
 															display.highlightedAttribute === attrID ? styles.highlighted : null
-														}`}
+														} ${type === 'text' && textRatingType === 'none' ? styles.no_background : null}`}
 														style={{
 															backgroundColor: colorCellsByRating
 																? determineCellColor(entryID, attrID)
@@ -382,7 +382,7 @@ const TableDisplay = ({ attributes, entries }: { attributes: IAttribute[]; entri
 											style={{
 												backgroundColor: colorCellsByRating
 													? ratingToColor(display.entryRatings[entry.id]?.rating)
-													: 'transparent',
+													: 'inherit',
 											}}
 											className={styles.rating_cell}>
 											{display.entryRatings[entry.id]?.rating || ''}
