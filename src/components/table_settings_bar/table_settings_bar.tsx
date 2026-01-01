@@ -91,8 +91,8 @@ const TableSettings = () => {
 					<Tooltip
 						text={
 							fitColMin
-								? 'Expand columns to fit text into one line'
-								: 'Shrink columns to smallest possible size'
+								? 'Expand cells to fit text into one line'
+								: 'Shrink cells to smallest possible size'
 						}
 						delay={'default'}>
 						<button onClick={handleAutoResizeBtn} className={styles.shrink_btn}>
