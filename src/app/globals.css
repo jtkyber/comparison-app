@@ -1,68 +1,70 @@
 :root {
-	--color-primary: hsl(205, 20%, 16%);
-	--color-secondary: hsl(205, 20%, 24%);
-	--color-dark: hsl(205, 20%, 10%);
-	--color-accent: #cf5c36;
-	--color-text-light: hsl(0, 0%, 80%);
-	--color-text-light-soft: hsl(205, 5%, 70%);
-	--color-text-light-extra-soft: hsl(205, 8%, 55%);
-	--color-text-dark: hsl(205, 15%, 5%);
-	--color-text-dark-soft: hsl(205, 15%, 30%);
+  --color-primary: hsl(205, 20%, 16%);
+  --color-secondary: hsl(205, 20%, 24%);
+  --color-dark: hsl(205, 20%, 10%);
+  --color-accent: #cf5c36;
+  --color-text-light: hsl(0, 0%, 80%);
+  --color-text-light-soft: hsl(205, 5%, 70%);
+  --color-text-light-extra-soft: hsl(205, 8%, 55%);
+  --color-text-dark: hsl(205, 15%, 5%);
+  --color-text-dark-soft: hsl(205, 15%, 30%);
 
-	--nav-height: 3rem;
-	--dropdown-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.6);
+  --nav-height: 3rem;
+  --dropdown-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.6);
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
-	}
+  :root {
+  }
 }
 
 html,
 body {
-	height: 100vh;
-	width: 100vw;
-	max-width: 100vw;
-	overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden;
 }
 
 body {
-	display: grid;
-	grid-template-rows: max-content 1fr max-content;
-	grid-template-columns: 1fr;
-	color: var(--color-text-light);
-	background: var(--color-dark);
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  display: grid;
+  grid-template-rows: max-content 1fr max-content;
+  grid-template-columns: 1fr;
+  display: flex;
+  flex-flow: column nowrap;
+  color: var(--color-text-light);
+  background: var(--color-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
-	user-select: none;
-	letter-spacing: 0.02rem;
-	font-family: var(--font-roboto), Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  user-select: none;
+  letter-spacing: 0.02rem;
+  font-family: var(--font-roboto), Arial, Helvetica, sans-serif;
 }
 
 a {
-	color: inherit;
-	text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 button {
-	border: none;
-	background-color: inherit;
+  border: none;
+  background-color: inherit;
 }
 
 select {
-	outline: none;
+  outline: none;
 }
 
 input {
-	outline: none;
-	border: none;
-	background-color: inherit;
+  outline: none;
+  border: none;
+  background-color: inherit;
 }
 
 input,
@@ -70,7 +72,7 @@ label,
 div,
 button,
 a {
-	font-size: 0.9rem;
+  font-size: 0.9rem;
 }
 
 h1,
@@ -84,11 +86,11 @@ input,
 label,
 div,
 a {
-	color: var(--color-light-text);
+  color: var(--color-light-text);
 }
 
 @media (prefers-color-scheme: dark) {
-	html {
-		color-scheme: dark;
-	}
+  html {
+    color-scheme: dark;
+  }
 }

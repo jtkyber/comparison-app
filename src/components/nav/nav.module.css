@@ -1,158 +1,159 @@
 @keyframes pulse {
-	from {
-		filter: brightness(100%);
-	}
+  from {
+    filter: brightness(100%);
+  }
 
-	to {
-		filter: brightness(150%);
-	}
+  to {
+    filter: brightness(150%);
+  }
 }
 
 .nav_container {
-	--dropdown-color: var(--color-secondary);
-	height: var(--nav-height);
-	background-color: var(--color-primary);
-	border-bottom: 1px solid var(--color-text-light-soft);
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr;
-	grid-template-areas: '. comparisons .';
-	align-items: center;
-	justify-items: center;
-	padding: 0 1rem;
+  --dropdown-color: var(--color-secondary);
+  height: var(--nav-height);
+  flex-shrink: 0;
+  background-color: var(--color-primary);
+  border-bottom: 1px solid var(--color-text-light-soft);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: ". comparisons .";
+  align-items: center;
+  justify-items: center;
+  padding: 0 1rem;
 
-	.left {
-		justify-self: start;
+  .left {
+    justify-self: start;
 
-		a .app_name {
-			font-weight: 600;
-			font-size: x-large;
-			color: var(--color-accent);
-		}
-	}
+    a .app_name {
+      font-weight: 600;
+      font-size: x-large;
+      color: var(--color-accent);
+    }
+  }
 
-	.middle {
-		.comparison_name {
-			grid-area: comparisons;
-			color: var(--color-text-light);
-			font-weight: 400;
-		}
+  .middle {
+    .comparison_name {
+      grid-area: comparisons;
+      color: var(--color-text-light);
+      font-weight: 400;
+    }
 
-		.comparison_section {
-			grid-area: comparisons;
+    .comparison_section {
+      grid-area: comparisons;
 
-			.comparison_dropdown_wrapper {
-				z-index: 1;
-				width: max-content;
-				height: 2rem;
-				display: flex;
-				flex-flow: row nowrap;
-				align-items: center;
-				gap: 0.5rem;
+      .comparison_dropdown_wrapper {
+        z-index: 1;
+        width: max-content;
+        height: 2rem;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: 0.5rem;
 
-				.comparison_dropdown {
-					width: 18rem;
-					height: inherit;
-					background-color: var(--dropdown-color);
-					border-color: var(--color-text-light-soft);
-					border-radius: 0.25rem;
-					color: var(--color-text-light);
-				}
+        .comparison_dropdown {
+          width: 18rem;
+          height: inherit;
+          background-color: var(--dropdown-color);
+          border-color: var(--color-text-light-soft);
+          border-radius: 0.25rem;
+          color: var(--color-text-light);
+        }
 
-				.new_comparison_btn {
-					height: inherit;
-					aspect-ratio: 1/1;
-					border-radius: 0.25rem;
-					cursor: pointer;
-					background-color: var(--dropdown-color);
+        .new_comparison_btn {
+          height: inherit;
+          aspect-ratio: 1/1;
+          border-radius: 0.25rem;
+          cursor: pointer;
+          background-color: var(--dropdown-color);
 
-					&:hover {
-						opacity: 0.6;
-					}
+          &:hover {
+            opacity: 0.6;
+          }
 
-					&.pulse {
-						animation: pulse 1s ease-in-out 0s infinite alternate;
-					}
-				}
-			}
+          &.pulse {
+            animation: pulse 1s ease-in-out 0s infinite alternate;
+          }
+        }
+      }
 
-			.new_comparison_container {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100vw;
-				height: 100vh;
-				backdrop-filter: blur(2px) brightness(75%);
-				z-index: 10;
-				pointer-events: none;
-				display: flex;
-				justify-content: center;
-				align-items: start;
-				padding-top: 10rem;
+      .new_comparison_container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        backdrop-filter: blur(2px) brightness(75%);
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        padding-top: 10rem;
 
-				.new_comparison_modal {
-					width: max-content;
-					height: max-content;
-					background-color: var(--color-primary);
-					border: 1px solid var(--color-text-light-soft);
-					pointer-events: all;
-					border-radius: 0.5rem;
-					display: flex;
-					flex-flow: column nowrap;
-					align-items: center;
-					gap: 1rem;
-					padding: 1rem 2rem;
+        .new_comparison_modal {
+          width: max-content;
+          height: max-content;
+          background-color: var(--color-primary);
+          border: 1px solid var(--color-text-light-soft);
+          pointer-events: all;
+          border-radius: 0.5rem;
+          display: flex;
+          flex-flow: column nowrap;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 2rem;
 
-					.comparison_title {
-						color: var(--color-text-light);
-					}
+          .comparison_title {
+            color: var(--color-text-light);
+          }
 
-					.comparison_name_input {
-						width: 18rem;
-						background-color: inherit;
-						border-color: var(--color-text-light-soft);
-						color: var(--color-text-light);
-					}
+          .comparison_name_input {
+            width: 18rem;
+            background-color: inherit;
+            border-color: var(--color-text-light-soft);
+            color: var(--color-text-light);
+          }
 
-					.comparison_modal_btn_section {
-						width: 100%;
-						display: flex;
-						flex-flow: row nowrap;
-						justify-content: end;
-						align-items: end;
-						gap: 0.5rem;
+          .comparison_modal_btn_section {
+            width: 100%;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: end;
+            align-items: end;
+            gap: 0.5rem;
 
-						.add_comparison_btn,
-						.cancel_add_comparison_btn {
-							width: 1.2rem;
-							aspect-ratio: 1/1;
-							border: 1px solid var(--color-accent);
-							border-radius: 0.25rem;
-							cursor: pointer;
-							color: var(--color-accent);
-							font-weight: 800;
-							font-size: 0.8rem;
+            .add_comparison_btn,
+            .cancel_add_comparison_btn {
+              width: 1.2rem;
+              aspect-ratio: 1/1;
+              border: 1px solid var(--color-accent);
+              border-radius: 0.25rem;
+              cursor: pointer;
+              color: var(--color-accent);
+              font-weight: 800;
+              font-size: 0.8rem;
 
-							&:hover {
-								opacity: 0.6;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+              &:hover {
+                opacity: 0.6;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
-	.right {
-		justify-self: end;
+  .right {
+    justify-self: end;
 
-		.logout_btn {
-			color: var(--color-text-light);
-			cursor: pointer;
+    .logout_btn {
+      color: var(--color-text-light);
+      cursor: pointer;
 
-			&:hover {
-				opacity: 0.6;
-			}
-		}
-	}
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
 }

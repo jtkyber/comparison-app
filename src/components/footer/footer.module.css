@@ -1,5 +1,6 @@
 .footer_container {
-	background-color: var(--color-primary);
-	border-top: 1px solid var(--color-text-light-soft);
-	height: 1rem;
+  background-color: var(--color-primary);
+  border-top: 1px solid var(--color-text-light-soft);
+  height: 1rem;
+  flex-shrink: 0;
 }
